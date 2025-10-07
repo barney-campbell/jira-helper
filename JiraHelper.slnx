@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="JiraHelper.Core/JiraHelper.Core.csproj" />
+  <Project Path="JiraHelper.JiraApi/JiraHelper.JiraApi.csproj" />
+</Solution>

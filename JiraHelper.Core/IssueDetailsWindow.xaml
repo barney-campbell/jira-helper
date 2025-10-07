@@ -1,0 +1,26 @@
+<Window x:Class="JiraHelper.Core.IssueDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Issue Details" Height="400" Width="600">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Key:" FontWeight="Bold"/>
+        <TextBlock x:Name="KeyText" Grid.Row="0" Margin="60,0,0,0"/>
+        <TextBlock Text="Summary:" Grid.Row="1" FontWeight="Bold"/>
+        <TextBlock x:Name="SummaryText" Grid.Row="1" Margin="60,0,0,0"/>
+        <TextBlock Text="Status:" Grid.Row="2" FontWeight="Bold"/>
+        <TextBlock x:Name="StatusText" Grid.Row="2" Margin="60,0,0,0"/>
+        <TextBlock Text="Assignee:" Grid.Row="3" FontWeight="Bold"/>
+        <TextBlock x:Name="AssigneeText" Grid.Row="3" Margin="60,0,0,0"/>
+        <TextBlock Text="Description:" Grid.Row="4" FontWeight="Bold" Margin="0,10,0,0"/>
+        <ScrollViewer Grid.Row="4" Margin="0,30,0,0" VerticalScrollBarVisibility="Auto">
+            <TextBlock x:Name="DescriptionText" TextWrapping="Wrap"/>
+        </ScrollViewer>
+    </Grid>
+</Window>
