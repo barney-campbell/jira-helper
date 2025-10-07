@@ -1,3 +1,4 @@
+using JiraHelper.Settings;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -27,12 +28,20 @@ namespace JiraHelper.JiraApi
 
     public class JiraService : IJiraService
     {
-        private static readonly string jiraBaseUrl = Environment.GetEnvironmentVariable("JIRA_BASE_URL");
-        private static readonly string jiraEmail = Environment.GetEnvironmentVariable("JIRA_EMAIL");
-        private static readonly string jiraApiToken = Environment.GetEnvironmentVariable("JIRA_API_TOKEN");
-        private static readonly HttpClient httpClient = CreateHttpClient();
+        private readonly string jiraBaseUrl;
+        private readonly string jiraEmail;
+        private readonly string jiraApiToken;
+        private readonly HttpClient httpClient;
 
-        private static HttpClient CreateHttpClient()
+        public JiraService(UserSettings settings)
+        {
+            jiraBaseUrl = settings.BaseUrl;
+            jiraEmail = settings.Email;
+            jiraApiToken = settings.ApiToken;
+            httpClient = CreateHttpClient();
+        }
+
+        private HttpClient CreateHttpClient()
         {
             var client = new HttpClient();
             var auth = $"{jiraEmail}:{jiraApiToken}";

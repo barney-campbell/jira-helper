@@ -10,6 +10,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JiraHelper.JiraApi\JiraHelper.JiraApi.csproj" />
+    <ProjectReference Include="..\JiraHelper.Settings\JiraHelper.Settings.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.9" />
   </ItemGroup>
 
 </Project>

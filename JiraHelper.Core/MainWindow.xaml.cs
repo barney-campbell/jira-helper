@@ -1,6 +1,6 @@
 ﻿using JiraHelper.JiraApi;
+using JiraHelper.Settings;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace JiraHelper.Core
 {
@@ -10,10 +10,12 @@ namespace JiraHelper.Core
     public partial class MainWindow : Window
     {
         private readonly IJiraService _jiraService;
+        private readonly UserSettingsService _settingsService = new UserSettingsService();
         public MainWindow()
         {
             InitializeComponent();
-            _jiraService = new JiraService();
+            var settings = _settingsService.Load();
+            _jiraService = new JiraService(settings);
             Loaded += MainWindow_Loaded;
             IssuesList.MouseDoubleClick += IssuesList_MouseDoubleClick;
         }
@@ -38,6 +40,16 @@ namespace JiraHelper.Core
                 detailsWindow.Owner = this;
                 detailsWindow.ShowDialog();
             }
+        }
+
+        // Add a menu or button handler to open the settings window
+        private void OpenSettings_Click(object sender, RoutedEventArgs e)
+        {
+            var settingsWindow = new SettingsWindow();
+            settingsWindow.Owner = this;
+            settingsWindow.ShowDialog();
+            var settings = _settingsService.Load();
+            // Optionally, re-instantiate _jiraService with new settings
         }
     }
 }
