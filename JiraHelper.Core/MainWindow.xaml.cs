@@ -1,6 +1,7 @@
 ﻿using JiraHelper.JiraApi;
 using JiraHelper.Settings;
 using System.Windows;
+using System.Windows.Input;
 
 namespace JiraHelper.Core
 {
@@ -11,6 +12,8 @@ namespace JiraHelper.Core
     {
         private readonly IJiraService _jiraService;
         private readonly UserSettingsService _settingsService = new UserSettingsService();
+        public static RoutedCommand RefreshCommand = new RoutedCommand();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -18,6 +21,7 @@ namespace JiraHelper.Core
             _jiraService = new JiraService(settings);
             Loaded += MainWindow_Loaded;
             IssuesList.MouseDoubleClick += IssuesList_MouseDoubleClick;
+            CommandBindings.Add(new CommandBinding(RefreshCommand, Refresh_Executed));
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -27,11 +31,20 @@ namespace JiraHelper.Core
 
         public async Task LoadAssignedIssuesAsync()
         {
-            var issues = await _jiraService.GetAssignedIssuesAsync("currentuser()");
-            IssuesList.ItemsSource = issues;
+            RefreshSpinner.Visibility = Visibility.Visible;
+            try
+            {
+                var issues = await _jiraService.GetAssignedIssuesAsync("currentuser()");
+                IssuesList.ItemsSource = issues;
+                UpdatedText.Text = DateTime.Now.ToString("g");
+            }
+            finally
+            {
+                RefreshSpinner.Visibility = Visibility.Collapsed;
+            }
         }
 
-        private async void IssuesList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void IssuesList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (IssuesList.SelectedItem is JiraIssue selectedIssue)
             {
@@ -50,6 +63,16 @@ namespace JiraHelper.Core
             settingsWindow.ShowDialog();
             var settings = _settingsService.Load();
             // Optionally, re-instantiate _jiraService with new settings
+        }
+
+        private async void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadAssignedIssuesAsync();
+        }
+
+        private async void Refresh_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            await LoadAssignedIssuesAsync();
         }
     }
 }

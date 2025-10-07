@@ -6,18 +6,31 @@
         xmlns:local="clr-namespace:JiraHelper.Core"
         mc:Ignorable="d"
         Title="Jira Helper" Height="700" Width="1300">
+    <Window.InputBindings>
+        <KeyBinding Key="R" Modifiers="Control" Command="{x:Static local:MainWindow.RefreshCommand}" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
             <MenuItem Header="File">
                 <MenuItem Header="Settings" Click="OpenSettings_Click"/>
+                <MenuItem Header="Refresh" Click="Refresh_Click" InputGestureText="Ctrl+R"/>
             </MenuItem>
         </Menu>
-        <TextBlock Text="Assigned Jira Issues" FontWeight="Bold" FontSize="18" Margin="10" Grid.Row="0" VerticalAlignment="Bottom"/>
-        <ListView x:Name="IssuesList" Grid.Row="1" Margin="10">
+        <TextBlock Text="Assigned Jira Issues" FontWeight="Bold" FontSize="18" Margin="10" Grid.Row="1" VerticalAlignment="Bottom"/>
+        <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" Margin="10,0,10,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Updated: " FontWeight="Normal" FontSize="12"/>
+                <TextBlock x:Name="UpdatedText" FontWeight="Bold" FontSize="12"/>
+            </StackPanel>
+            <ProgressBar x:Name="RefreshSpinner" Height="18" Width="120" IsIndeterminate="True" Visibility="Collapsed" Margin="0,4,0,0"/>
+        </StackPanel>
+        <ListView x:Name="IssuesList" Grid.Row="3" Margin="10">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Key" DisplayMemberBinding="{Binding Key}" Width="100"/>
