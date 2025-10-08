@@ -56,7 +56,7 @@ namespace JiraHelper.JiraApi
         {
             try
             {
-                var jql = $"assignee={user}";
+                var jql = $"assignee={user} ORDER BY Updated";
                 var url = $"{jiraBaseUrl}/rest/api/3/search/jql?jql={Uri.EscapeDataString(jql)}&fields=key&fields=summary&fields=status&fields=assignee";
                 var resp = await httpClient.GetAsync(url);
                 var status = resp.StatusCode;

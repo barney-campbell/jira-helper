@@ -11,6 +11,7 @@ namespace JiraHelper.Core
         private readonly IJiraService _jiraService;
         private readonly UserSettingsService _settingsService = new UserSettingsService();
         public static RoutedCommand RefreshCommand = new RoutedCommand();
+        public static RoutedCommand ShowSearchCommand = new RoutedCommand();
 
         public MainWindow()
         {
@@ -20,6 +21,7 @@ namespace JiraHelper.Core
             Loaded += MainWindow_Loaded;
             IssuesList.MouseDoubleClick += IssuesList_MouseDoubleClick;
             CommandBindings.Add(new CommandBinding(RefreshCommand, Refresh_Executed));
+            CommandBindings.Add(new CommandBinding(ShowSearchCommand, ToggleSearch_Executed));
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -66,6 +68,66 @@ namespace JiraHelper.Core
         private async void Refresh_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             await LoadAssignedIssuesAsync();
+        }
+
+        private void ToggleSearch_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            ToggleSearchBar();
+        }
+
+        private void ToggleSearch_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleSearchBar();
+        }
+
+        private void ToggleSearchBar()
+        {
+            if (SearchBarPanel.Visibility == Visibility.Visible)
+            {
+                SearchBarPanel.Visibility = Visibility.Collapsed;
+                SearchBox.Text = string.Empty;
+            }
+            else
+            {
+                SearchBarPanel.Visibility = Visibility.Visible;
+                SearchBox.Text = string.Empty;
+                SearchBox.Focus();
+            }
+        }
+
+        private async void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            await SearchAndShowIssue();
+        }
+
+        private async void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await SearchAndShowIssue();
+            }
+            else if (e.Key == Key.Escape)
+            {
+                SearchBarPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private async Task SearchAndShowIssue()
+        {
+            var key = SearchBox.Text.Trim();
+            if (string.IsNullOrEmpty(key)) return;
+            var detailsView = new IssueDetailsView();
+            var issue = await _jiraService.GetIssueAsync(key);
+            if (issue != null)
+            {
+                await detailsView.LoadIssueAsync(_jiraService, key);
+                MainContentView.Content = detailsView;
+            }
+            else
+            {
+                MainContentView.Content = null;
+                MessageBox.Show($"Issue '{key}' not found.", "Not Found", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }
