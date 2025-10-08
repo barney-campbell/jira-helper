@@ -12,7 +12,6 @@ namespace JiraHelper.Core
         private readonly UserSettingsService _settingsService = new UserSettingsService();
         private readonly TimeTrackingService _timeTrackingService = new TimeTrackingService();
         public static RoutedCommand RefreshCommand = new RoutedCommand();
-        public static RoutedCommand ShowSearchCommand = new RoutedCommand();
         private AssignedIssuesView _assignedIssuesView;
 
         public MainWindow()
@@ -22,7 +21,6 @@ namespace JiraHelper.Core
             _jiraService = new JiraService(settings);
             Loaded += MainWindow_Loaded;
             CommandBindings.Add(new CommandBinding(RefreshCommand, Refresh_Executed));
-            CommandBindings.Add(new CommandBinding(ShowSearchCommand, ToggleSearch_Executed));
             ShowDashboard();
         }
 
@@ -101,66 +99,6 @@ namespace JiraHelper.Core
             }
         }
 
-        private void ToggleSearch_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            ToggleSearchBar();
-        }
-
-        private void ToggleSearch_Click(object sender, RoutedEventArgs e)
-        {
-            ToggleSearchBar();
-        }
-
-        private void ToggleSearchBar()
-        {
-            if (SearchBarPanel.Visibility == Visibility.Visible)
-            {
-                SearchBarPanel.Visibility = Visibility.Collapsed;
-                SearchBox.Text = string.Empty;
-            }
-            else
-            {
-                SearchBarPanel.Visibility = Visibility.Visible;
-                SearchBox.Text = string.Empty;
-                SearchBox.Focus();
-            }
-        }
-
-        private async void SearchButton_Click(object sender, RoutedEventArgs e)
-        {
-            await SearchAndShowIssue();
-        }
-
-        private async void SearchBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                await SearchAndShowIssue();
-            }
-            else if (e.Key == Key.Escape)
-            {
-                SearchBarPanel.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private async Task SearchAndShowIssue()
-        {
-            var key = SearchBox.Text.Trim();
-            if (string.IsNullOrEmpty(key)) return;
-            var detailsView = new IssueDetailsView();
-            var issue = await _jiraService.GetIssueAsync(key);
-            if (issue != null)
-            {
-                await detailsView.LoadIssueAsync(_jiraService, key);
-                MainContentView.Content = detailsView;
-            }
-            else
-            {
-                MainContentView.Content = null;
-                MessageBox.Show($"Issue '{key}' not found.", "Not Found", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-        }
-
         private async void SaveTimeTracking_Click(object sender, RoutedEventArgs e)
         {
             var records = _timeTrackingService.GetUnsentCompletedRecords();
@@ -213,6 +151,27 @@ namespace JiraHelper.Core
                 await detailsView.LoadIssueAsync(_jiraService, selectedIssue.Key);
                 MainContentView.Content = detailsView;
             }
+        }
+
+        private void ShowSearchPage_Click(object sender, RoutedEventArgs e)
+        {
+            ShowSearchPage();
+        }
+
+        private void ShowSearchPage()
+        {
+            var searchView = new IssueSearchView();
+            searchView.SetJiraService(_jiraService);
+            searchView.IssueFound += async (issueObj, args) =>
+            {
+                if (issueObj is JiraIssue foundIssue)
+                {
+                    var detailsView = new IssueDetailsView();
+                    await detailsView.LoadIssueAsync(_jiraService, foundIssue.Key);
+                    MainContentView.Content = detailsView;
+                }
+            };
+            MainContentView.Content = searchView;
         }
     }
 }

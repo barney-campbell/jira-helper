@@ -12,15 +12,11 @@
                 <MenuItem Header="Dashboard" Click="ShowDashboard_Click"/>
                 <MenuItem Header="Assigned Issues" Click="ShowAssignedIssues_Click"/>
                 <MenuItem Header="Settings" Click="OpenSettings_Click"/>
-                <MenuItem Header="Search" Click="ToggleSearch_Click" InputGestureText="Ctrl+S"/>
+                <MenuItem Header="Search" Click="ShowSearchPage_Click" InputGestureText="Ctrl+S"/>
                 <MenuItem Header="Refresh" Click="Refresh_Click" InputGestureText="Ctrl+R"/>
                 <MenuItem Header="Save Time Tracking" Click="SaveTimeTracking_Click"/>
             </MenuItem>
         </Menu>
-        <StackPanel Orientation="Horizontal" Margin="10,0,10,0" x:Name="SearchBarPanel" Visibility="Collapsed" VerticalAlignment="Center" Height="40">
-            <TextBox x:Name="SearchBox" Width="200" Height="30" Margin="0,5,5,5" VerticalAlignment="Center" KeyDown="SearchBox_KeyDown"/>
-            <Button Content="Search" Height="30" MinWidth="70" Margin="0,5,0,5" VerticalAlignment="Center" Click="SearchButton_Click"/>
-        </StackPanel>
         <ContentControl x:Name="MainContentView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </DockPanel>
 </Window>
