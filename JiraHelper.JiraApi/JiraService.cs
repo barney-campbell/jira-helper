@@ -12,7 +12,7 @@ namespace JiraHelper.JiraApi
         public string Summary { get; set; }
         public string Status { get; set; }
         public string Assignee { get; set; }
-        public string Description { get; set; } // Added
+        public string Description { get; set; }
     }
 
     public interface IJiraService
@@ -21,9 +21,10 @@ namespace JiraHelper.JiraApi
         Task<JiraIssue> GetIssueAsync(string key);
         void StartWork(string issueId);
         void EndWork(string issueId);
-        void UploadTimeTracking(string issueId, TimeSpan timeSpent);
+        void UploadTimeTracking(string issueId, TimeSpan timeSpent, DateTime? started);
         void UpdateStatus(string issueId, string newStatus);
         void AddComment(string issueId, string comment);
+        Task<List<JiraWorklog>> GetWorklogsAsync(string issueKey);
     }
 
     public class JiraService : IJiraService
@@ -196,8 +197,61 @@ namespace JiraHelper.JiraApi
 
         public void StartWork(string issueId) { /* TODO: Implement */ }
         public void EndWork(string issueId) { /* TODO: Implement */ }
-        public void UploadTimeTracking(string issueId, TimeSpan timeSpent) { /* TODO: Implement */ }
+        public void UploadTimeTracking(string issueId, TimeSpan timeSpent, DateTime? started = null)
+        {
+            // Example: send worklog to Jira
+            var url = $"{jiraBaseUrl}/rest/api/3/issue/{issueId}/worklog";
+            var seconds = (int)timeSpent.TotalSeconds;
+            string startedStr = string.Empty;
+            if (started.HasValue)
+            {
+                // Jira expects yyyy-MM-dd'T'HH:mm:ss.SSSZ (Z = +0000 or offset)
+                var dt = started.Value.ToUniversalTime();
+                startedStr = dt.ToString("yyyy-MM-dd'T'HH:mm:ss.fffzzz");
+                // Remove the colon in the timezone offset (e.g. -04:00 -> -0400)
+                if (startedStr.Length > 5 && startedStr[^3] == ':')
+                    startedStr = startedStr.Remove(startedStr.Length - 3, 1);
+            }
+            var body = !string.IsNullOrEmpty(startedStr)
+                ? $"{{\"timeSpentSeconds\":{seconds},\"started\":\"{startedStr}\"}}"
+                : $"{{\"timeSpentSeconds\":{seconds}}}";
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            var resp = httpClient.PostAsync(url, content).GetAwaiter().GetResult();
+            if (!resp.IsSuccessStatusCode)
+            {
+                var json = resp.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                throw new Exception($"Failed to upload time tracking: {resp.StatusCode} {json}");
+            }
+        }
         public void UpdateStatus(string issueId, string newStatus) { /* TODO: Implement */ }
         public void AddComment(string issueId, string comment) { /* TODO: Implement */ }
+
+        public async Task<List<JiraWorklog>> GetWorklogsAsync(string issueKey)
+        {
+            var url = $"{jiraBaseUrl}/rest/api/3/issue/{issueKey}/worklog";
+            var resp = await httpClient.GetAsync(url);
+            var json = await resp.Content.ReadAsStringAsync();
+            if (!resp.IsSuccessStatusCode)
+                throw new Exception($"HTTP error: {resp.StatusCode}\nResponse: {json}");
+            using var doc = JsonDocument.Parse(json);
+            var worklogs = new List<JiraWorklog>();
+            foreach (var wl in doc.RootElement.GetProperty("worklogs").EnumerateArray())
+            {
+                var started = wl.TryGetProperty("started", out var startedProp) ? startedProp.GetString() : null;
+                var timeSpentSeconds = wl.TryGetProperty("timeSpentSeconds", out var tssProp) ? tssProp.GetInt32() : 0;
+                worklogs.Add(new JiraWorklog
+                {
+                    Started = started,
+                    TimeSpentSeconds = timeSpentSeconds
+                });
+            }
+            return worklogs;
+        }
+    }
+
+    public class JiraWorklog
+    {
+        public string Started { get; set; }
+        public int TimeSpentSeconds { get; set; }
     }
 }

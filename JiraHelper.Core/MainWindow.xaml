@@ -23,6 +23,7 @@
                 <MenuItem Header="Settings" Click="OpenSettings_Click"/>
                 <MenuItem Header="Search" Click="ToggleSearch_Click" InputGestureText="Ctrl+S"/>
                 <MenuItem Header="Refresh" Click="Refresh_Click" InputGestureText="Ctrl+R"/>
+                <MenuItem Header="Save Time Tracking" Click="SaveTimeTracking_Click"/>
             </MenuItem>
         </Menu>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,0,10,0" x:Name="SearchBarPanel" Visibility="Collapsed" VerticalAlignment="Center" Height="40">

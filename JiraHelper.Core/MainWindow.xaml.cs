@@ -3,6 +3,7 @@ using JiraHelper.Settings;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Linq;
 
 namespace JiraHelper.Core
 {
@@ -10,6 +11,7 @@ namespace JiraHelper.Core
     {
         private IJiraService _jiraService;
         private readonly UserSettingsService _settingsService = new UserSettingsService();
+        private readonly TimeTrackingService _timeTrackingService = new TimeTrackingService();
         public static RoutedCommand RefreshCommand = new RoutedCommand();
         public static RoutedCommand ShowSearchCommand = new RoutedCommand();
 
@@ -135,6 +137,27 @@ namespace JiraHelper.Core
                 MainContentView.Content = null;
                 MessageBox.Show($"Issue '{key}' not found.", "Not Found", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+        }
+
+        private async void SaveTimeTracking_Click(object sender, RoutedEventArgs e)
+        {
+            var records = _timeTrackingService.GetUnsentCompletedRecords();
+            int success = 0, fail = 0;
+            foreach (var record in records)
+            {
+                var duration = record.EndTime.Value - record.StartTime;
+                try
+                {
+                    _jiraService.UploadTimeTracking(record.IssueKey, duration, record.StartTime);
+                    _timeTrackingService.RemoveRecord(record.Id);
+                    success++;
+                }
+                catch
+                {
+                    fail++;
+                }
+            }
+            MessageBox.Show($"Uploaded {success} time tracking records. {fail} failed.", "Time Tracking Upload", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
