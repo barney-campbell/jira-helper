@@ -9,19 +9,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Jira Dashboard" FontWeight="Bold" FontSize="28" HorizontalAlignment="Center" Margin="0,20,0,20"/>
-        <UniformGrid Grid.Row="1" Columns="2" Rows="1" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Top">
-            <Border Margin="10" Padding="10" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
-                <StackPanel>
-                    <TextBlock Text="Assigned Issues" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
-                    <TextBlock Text="[Widget: Assigned Issues summary]" FontStyle="Italic" Foreground="Gray"/>
-                </StackPanel>
-            </Border>
-            <Border Margin="10" Padding="10" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
-                <StackPanel>
-                    <TextBlock Text="Time Tracking" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
-                    <TextBlock Text="[Widget: Time tracking summary]" FontStyle="Italic" Foreground="Gray"/>
-                </StackPanel>
-            </Border>
-        </UniformGrid>
+        <StackPanel Grid.Row="1" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <local:UnuploadedTimeTrackingWidget x:Name="UnuploadedTimeTrackingWidget" />
+        </StackPanel>
     </Grid>
 </UserControl>

@@ -1,0 +1,18 @@
+<UserControl x:Class="JiraHelper.Core.UnuploadedTimeTrackingWidget"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             MinHeight="180" MinWidth="350">
+    <Border Background="#222" CornerRadius="8" Padding="12" Margin="8">
+        <StackPanel>
+            <TextBlock Text="Unuploaded Time Tracking Logs" FontWeight="Bold" FontSize="16" Foreground="White" Margin="0,0,0,10"/>
+            <DataGrid x:Name="UnuploadedGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" MinHeight="80" Margin="0,0,0,10">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Issue Key" Binding="{Binding IssueKey}" Width="*"/>
+                    <DataGridTextColumn Header="Started" Binding="{Binding StartTime}" Width="*"/>
+                    <DataGridTextColumn Header="Elapsed" Binding="{Binding Elapsed}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Button Content="Upload All to Jira" Height="32" Width="160" HorizontalAlignment="Right" Click="UploadAll_Click"/>
+        </StackPanel>
+    </Border>
+</UserControl>

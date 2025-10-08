@@ -127,7 +127,9 @@ namespace JiraHelper.Core
 
         private void ShowDashboard()
         {
-            MainContentView.Content = new DashboardView();
+            var dashboard = new DashboardView();
+            dashboard.SetJiraService(_jiraService);
+            MainContentView.Content = dashboard;
         }
 
         private void ShowAssignedIssues_Click(object sender, RoutedEventArgs e)
