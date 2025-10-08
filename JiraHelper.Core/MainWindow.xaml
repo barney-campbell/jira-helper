@@ -23,22 +23,20 @@
             </MenuItem>
         </Menu>
         <TextBlock Text="Assigned Jira Issues" FontWeight="Bold" FontSize="18" Margin="10" Grid.Row="1" VerticalAlignment="Bottom"/>
-        <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" Margin="10,0,10,0">
+        <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Right" Margin="10,0,10,0">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Updated: " FontWeight="Normal" FontSize="12"/>
                 <TextBlock x:Name="UpdatedText" FontWeight="Bold" FontSize="12"/>
             </StackPanel>
             <ProgressBar x:Name="RefreshSpinner" Height="18" Width="120" IsIndeterminate="True" Visibility="Collapsed" Margin="0,4,0,0"/>
         </StackPanel>
-        <ListView x:Name="IssuesList" Grid.Row="3" Margin="10">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Key" DisplayMemberBinding="{Binding Key}" Width="100"/>
-                    <GridViewColumn Header="Summary" DisplayMemberBinding="{Binding Summary}" Width="600"/>
-                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="300"/>
-                    <GridViewColumn Header="Assignee" DisplayMemberBinding="{Binding Assignee}" Width="150"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <DataGrid x:Name="IssuesList" Grid.Row="3" Margin="10" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Key" Binding="{Binding Key}" Width="100"/>
+                <DataGridTextColumn Header="Summary" Binding="{Binding Summary}" Width="600"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="300"/>
+                <DataGridTextColumn Header="Assignee" Binding="{Binding Assignee}" Width="150"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>
