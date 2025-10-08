@@ -30,13 +30,20 @@
             </StackPanel>
             <ProgressBar x:Name="RefreshSpinner" Height="18" Width="120" IsIndeterminate="True" Visibility="Collapsed" Margin="0,4,0,0"/>
         </StackPanel>
-        <DataGrid x:Name="IssuesList" Grid.Row="3" Margin="10" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Key" Binding="{Binding Key}" Width="100"/>
-                <DataGridTextColumn Header="Summary" Binding="{Binding Summary}" Width="600"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="300"/>
-                <DataGridTextColumn Header="Assignee" Binding="{Binding Assignee}" Width="150"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <DataGrid x:Name="IssuesList" Margin="10" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Key" Binding="{Binding Key}" Width="100"/>
+                    <DataGridTextColumn Header="Summary" Binding="{Binding Summary}" Width="600"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="300"/>
+                    <DataGridTextColumn Header="Assignee" Binding="{Binding Assignee}" Width="150"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <ContentControl x:Name="MainContentView" Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+        </Grid>
     </Grid>
 </Window>

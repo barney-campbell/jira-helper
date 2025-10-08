@@ -1,13 +1,11 @@
 ﻿using JiraHelper.JiraApi;
 using JiraHelper.Settings;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace JiraHelper.Core
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private readonly IJiraService _jiraService;
@@ -48,21 +46,16 @@ namespace JiraHelper.Core
         {
             if (IssuesList.SelectedItem is JiraIssue selectedIssue)
             {
-                var detailsWindow = new IssueDetailsWindow();
-                await detailsWindow.LoadIssueAsync(_jiraService, selectedIssue.Key);
-                detailsWindow.Owner = this;
-                detailsWindow.ShowDialog();
+                var detailsView = new IssueDetailsView();
+                await detailsView.LoadIssueAsync(_jiraService, selectedIssue.Key);
+                MainContentView.Content = detailsView;
             }
         }
 
-        // Add a menu or button handler to open the settings window
         private void OpenSettings_Click(object sender, RoutedEventArgs e)
         {
-            var settingsWindow = new SettingsWindow();
-            settingsWindow.Owner = this;
-            settingsWindow.ShowDialog();
-            var settings = _settingsService.Load();
-            // Optionally, re-instantiate _jiraService with new settings
+            var settingsView = new SettingsView();
+            MainContentView.Content = settingsView;
         }
 
         private async void Refresh_Click(object sender, RoutedEventArgs e)

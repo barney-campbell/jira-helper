@@ -1,12 +1,13 @@
 using JiraHelper.Settings;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace JiraHelper.Core
 {
-    public partial class SettingsWindow : Window
+    public partial class SettingsView : UserControl
     {
         private readonly UserSettingsService _settingsService = new UserSettingsService();
-        public SettingsWindow()
+        public SettingsView()
         {
             InitializeComponent();
             LoadSettings();
@@ -30,7 +31,6 @@ namespace JiraHelper.Core
             };
             _settingsService.Save(settings);
             MessageBox.Show("Settings saved.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-            Close();
         }
     }
 }

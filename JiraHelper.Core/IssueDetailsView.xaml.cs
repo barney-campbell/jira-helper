@@ -1,11 +1,12 @@
 using JiraHelper.JiraApi;
-using System.Windows;
+using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace JiraHelper.Core
 {
-    public partial class IssueDetailsWindow : Window
+    public partial class IssueDetailsView : UserControl
     {
-        public IssueDetailsWindow()
+        public IssueDetailsView()
         {
             InitializeComponent();
         }
@@ -19,7 +20,7 @@ namespace JiraHelper.Core
                 SummaryText.Text = issue.Summary;
                 StatusText.Text = issue.Status;
                 AssigneeText.Text = issue.Assignee;
-                DescriptionText.Text = issue.Description; // Show parsed description
+                DescriptionText.Text = issue.Description;
             }
         }
     }
