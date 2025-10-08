@@ -1,4 +1,3 @@
-using Microsoft.Data.Sqlite;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -6,58 +5,44 @@ namespace JiraHelper.Settings
 {
     public class UserSettingsService
     {
-        private const string DbPath = "user_settings.db";
-
         public UserSettingsService()
         {
-            using var conn = new SqliteConnection($"Data Source={DbPath}");
-            conn.Open();
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = @"
-                CREATE TABLE IF NOT EXISTS Settings (
-                    Id INTEGER PRIMARY KEY,
-                    BaseUrl TEXT,
-                    Email TEXT,
-                    ApiToken BLOB
-                );";
-            cmd.ExecuteNonQuery();
+            using var db = new SettingsDbContext();
+            db.Database.EnsureCreated();
         }
 
         public UserSettings Load()
         {
-            using var conn = new SqliteConnection($"Data Source={DbPath}");
-            conn.Open();
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT BaseUrl, Email, ApiToken FROM Settings WHERE Id = 1";
-            using var reader = cmd.ExecuteReader();
-            if (reader.Read())
+            using var db = new SettingsDbContext();
+            db.Database.EnsureCreated();
+            var settings = db.Settings.FirstOrDefault(x => x.Id == 1);
+            if (settings != null && settings.ApiToken != null)
             {
-                var baseUrl = reader.GetString(0);
-                var email = reader.GetString(1);
-                var tokenBytes = (byte[])reader["ApiToken"];
-                var apiToken = Encoding.UTF8.GetString(ProtectedData.Unprotect(tokenBytes, null, DataProtectionScope.CurrentUser));
-                return new UserSettings { BaseUrl = baseUrl, Email = email, ApiToken = apiToken };
+                // Try to decode as Base64 (new format)
+                var tokenBytes = Convert.FromBase64String(settings.ApiToken);
+                settings.ApiToken = Encoding.UTF8.GetString(ProtectedData.Unprotect(tokenBytes, null, DataProtectionScope.CurrentUser));
             }
-            return new UserSettings();
+            return settings ?? new UserSettings();
         }
 
         public void Save(UserSettings settings)
         {
-            using var conn = new SqliteConnection($"Data Source={DbPath}");
-            conn.Open();
-            var cmd = conn.CreateCommand();
+            using var db = new SettingsDbContext();
+            db.Database.EnsureCreated();
             var tokenBytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(settings.ApiToken ?? ""), null, DataProtectionScope.CurrentUser);
-            cmd.CommandText = @"
-                INSERT INTO Settings (Id, BaseUrl, Email, ApiToken)
-                VALUES (1, $baseUrl, $email, $apiToken)
-                ON CONFLICT(Id) DO UPDATE SET
-                    BaseUrl = $baseUrl,
-                    Email = $email,
-                    ApiToken = $apiToken;";
-            cmd.Parameters.AddWithValue("$baseUrl", settings.BaseUrl ?? "");
-            cmd.Parameters.AddWithValue("$email", settings.Email ?? "");
-            cmd.Parameters.AddWithValue("$apiToken", tokenBytes);
-            cmd.ExecuteNonQuery();
+            settings.ApiToken = Convert.ToBase64String(tokenBytes);
+            var existing = db.Settings.FirstOrDefault(x => x.Id == 1);
+            if (existing == null)
+            {
+                db.Settings.Add(settings);
+            }
+            else
+            {
+                existing.BaseUrl = settings.BaseUrl;
+                existing.Email = settings.Email;
+                existing.ApiToken = settings.ApiToken;
+            }
+            db.SaveChanges();
         }
     }
 }
