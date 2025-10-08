@@ -1,7 +1,5 @@
-using JiraHelper.Settings;
-using System;
+using JiraHelper.TimeTracking;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace JiraHelper.Core
 {

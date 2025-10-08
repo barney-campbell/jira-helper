@@ -1,9 +1,8 @@
 ﻿using JiraHelper.JiraApi;
 using JiraHelper.Settings;
+using JiraHelper.TimeTracking;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Linq;
 
 namespace JiraHelper.Core
 {
@@ -14,6 +13,7 @@ namespace JiraHelper.Core
         private readonly TimeTrackingService _timeTrackingService = new TimeTrackingService();
         public static RoutedCommand RefreshCommand = new RoutedCommand();
         public static RoutedCommand ShowSearchCommand = new RoutedCommand();
+        private AssignedIssuesView _assignedIssuesView;
 
         public MainWindow()
         {
@@ -21,9 +21,9 @@ namespace JiraHelper.Core
             var settings = _settingsService.Load();
             _jiraService = new JiraService(settings);
             Loaded += MainWindow_Loaded;
-            IssuesList.MouseDoubleClick += IssuesList_MouseDoubleClick;
             CommandBindings.Add(new CommandBinding(RefreshCommand, Refresh_Executed));
             CommandBindings.Add(new CommandBinding(ShowSearchCommand, ToggleSearch_Executed));
+            ShowDashboard();
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -33,6 +33,11 @@ namespace JiraHelper.Core
 
         public async Task LoadAssignedIssuesAsync()
         {
+            // Remove references to RefreshSpinner, IssuesList, and UpdatedText in MainWindow
+            // These controls are now part of the dashboard or assigned issues view
+            // Optionally, you can show a loading indicator in the dashboard or assigned issues view if needed
+
+            /*
             RefreshSpinner.Visibility = Visibility.Visible;
             try
             {
@@ -44,16 +49,19 @@ namespace JiraHelper.Core
             {
                 RefreshSpinner.Visibility = Visibility.Collapsed;
             }
+            */
         }
 
         private async void IssuesList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            /*
             if (IssuesList.SelectedItem is JiraIssue selectedIssue)
             {
                 var detailsView = new IssueDetailsView();
                 await detailsView.LoadIssueAsync(_jiraService, selectedIssue.Key);
                 MainContentView.Content = detailsView;
             }
+            */
         }
 
         private void OpenSettings_Click(object sender, RoutedEventArgs e)
@@ -71,12 +79,26 @@ namespace JiraHelper.Core
 
         private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            await LoadAssignedIssuesAsync();
+            if (MainContentView.Content is AssignedIssuesView)
+            {
+                await _assignedIssuesView.LoadIssuesAsync(_jiraService);
+            }
+            else
+            {
+                // Optionally, handle refresh for other views
+            }
         }
 
         private async void Refresh_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            await LoadAssignedIssuesAsync();
+            if (MainContentView.Content is AssignedIssuesView)
+            {
+                await _assignedIssuesView.LoadIssuesAsync(_jiraService);
+            }
+            else
+            {
+                // Optionally, handle refresh for other views
+            }
         }
 
         private void ToggleSearch_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -149,7 +171,7 @@ namespace JiraHelper.Core
                 try
                 {
                     _jiraService.UploadTimeTracking(record.IssueKey, duration, record.StartTime);
-                    _timeTrackingService.RemoveRecord(record.Id);
+                    _timeTrackingService.MarkAsUploaded(record.Id);
                     success++;
                 }
                 catch
@@ -158,6 +180,39 @@ namespace JiraHelper.Core
                 }
             }
             MessageBox.Show($"Uploaded {success} time tracking records. {fail} failed.", "Time Tracking Upload", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void ShowDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            ShowDashboard();
+        }
+
+        private void ShowDashboard()
+        {
+            MainContentView.Content = new DashboardView();
+        }
+
+        private void ShowAssignedIssues_Click(object sender, RoutedEventArgs e)
+        {
+            ShowAssignedIssues();
+        }
+
+        private async void ShowAssignedIssues()
+        {
+            _assignedIssuesView = new AssignedIssuesView();
+            _assignedIssuesView.IssueDoubleClicked += AssignedIssuesView_IssueDoubleClicked;
+            MainContentView.Content = _assignedIssuesView;
+            await _assignedIssuesView.LoadIssuesAsync(_jiraService);
+        }
+
+        private async void AssignedIssuesView_IssueDoubleClicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is JiraIssue selectedIssue)
+            {
+                var detailsView = new IssueDetailsView();
+                await detailsView.LoadIssueAsync(_jiraService, selectedIssue.Key);
+                MainContentView.Content = detailsView;
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 
-namespace JiraHelper.Settings
+namespace JiraHelper.TimeTracking
 {
     public class TimeTrackingRecord
     {
@@ -9,6 +9,7 @@ namespace JiraHelper.Settings
         public string IssueKey { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+        public bool IsUploaded { get; set; }
     }
 
     public class TimeTrackingDbContext : DbContext

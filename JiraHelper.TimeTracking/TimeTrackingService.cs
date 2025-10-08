@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
-namespace JiraHelper.Settings
+namespace JiraHelper.TimeTracking
 {
     public class TimeTrackingService
     {
         public void StartTracking(string issueKey)
         {
             using var db = new TimeTrackingDbContext();
-            db.Database.EnsureCreated();
-            // Stop any active tracking for other issues
+            db.Database.Migrate();
             var active = db.TimeTrackingRecords.FirstOrDefault(r => r.EndTime == null);
             if (active != null)
             {
@@ -27,7 +27,7 @@ namespace JiraHelper.Settings
         public void StopTracking(string issueKey)
         {
             using var db = new TimeTrackingDbContext();
-            db.Database.EnsureCreated();
+            db.Database.Migrate();
             var active = db.TimeTrackingRecords.FirstOrDefault(r => r.IssueKey == issueKey && r.EndTime == null);
             if (active != null)
             {
@@ -39,21 +39,21 @@ namespace JiraHelper.Settings
         public List<TimeTrackingRecord> GetRecords(string issueKey)
         {
             using var db = new TimeTrackingDbContext();
-            db.Database.EnsureCreated();
+            db.Database.Migrate();
             return db.TimeTrackingRecords.Where(r => r.IssueKey == issueKey).OrderByDescending(r => r.StartTime).ToList();
         }
 
         public List<TimeTrackingRecord> GetUnsentCompletedRecords()
         {
             using var db = new TimeTrackingDbContext();
-            db.Database.EnsureCreated();
-            return db.TimeTrackingRecords.Where(r => r.EndTime != null).ToList();
+            db.Database.Migrate();
+            return db.TimeTrackingRecords.Where(r => r.EndTime != null && !r.IsUploaded).ToList();
         }
 
         public void RemoveRecord(int id)
         {
             using var db = new TimeTrackingDbContext();
-            db.Database.EnsureCreated();
+            db.Database.Migrate();
             var record = db.TimeTrackingRecords.FirstOrDefault(r => r.Id == id);
             if (record != null)
             {
@@ -65,7 +65,7 @@ namespace JiraHelper.Settings
         public void UpdateRecord(TimeTrackingRecord updated)
         {
             using var db = new TimeTrackingDbContext();
-            db.Database.EnsureCreated();
+            db.Database.Migrate();
             var record = db.TimeTrackingRecords.FirstOrDefault(r => r.Id == updated.Id);
             if (record != null)
             {
@@ -78,11 +78,23 @@ namespace JiraHelper.Settings
         public void DeleteRecord(int id)
         {
             using var db = new TimeTrackingDbContext();
-            db.Database.EnsureCreated();
+            db.Database.Migrate();
             var record = db.TimeTrackingRecords.FirstOrDefault(r => r.Id == id);
             if (record != null)
             {
                 db.TimeTrackingRecords.Remove(record);
+                db.SaveChanges();
+            }
+        }
+
+        public void MarkAsUploaded(int id)
+        {
+            using var db = new TimeTrackingDbContext();
+            db.Database.Migrate();
+            var record = db.TimeTrackingRecords.FirstOrDefault(r => r.Id == id);
+            if (record != null)
+            {
+                record.IsUploaded = true;
                 db.SaveChanges();
             }
         }

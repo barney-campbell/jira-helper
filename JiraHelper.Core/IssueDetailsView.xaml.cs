@@ -1,5 +1,5 @@
 using JiraHelper.JiraApi;
-using JiraHelper.Settings;
+using JiraHelper.TimeTracking;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;

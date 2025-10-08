@@ -5,51 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JiraHelper.Core"
         mc:Ignorable="d"
-        Title="Jira Helper" Height="700" Width="1300">
-    <Window.InputBindings>
-        <KeyBinding Key="R" Modifiers="Control" Command="{x:Static local:MainWindow.RefreshCommand}" />
-        <KeyBinding Key="S" Modifiers="Control" Command="{x:Static local:MainWindow.ShowSearchCommand}" />
-    </Window.InputBindings>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Menu Grid.Row="0">
+        Title="Jira Helper" Height="700" Width="1300" MinWidth="600" MinHeight="400">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
+                <MenuItem Header="Dashboard" Click="ShowDashboard_Click"/>
+                <MenuItem Header="Assigned Issues" Click="ShowAssignedIssues_Click"/>
                 <MenuItem Header="Settings" Click="OpenSettings_Click"/>
                 <MenuItem Header="Search" Click="ToggleSearch_Click" InputGestureText="Ctrl+S"/>
                 <MenuItem Header="Refresh" Click="Refresh_Click" InputGestureText="Ctrl+R"/>
                 <MenuItem Header="Save Time Tracking" Click="SaveTimeTracking_Click"/>
             </MenuItem>
         </Menu>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,0,10,0" x:Name="SearchBarPanel" Visibility="Collapsed" VerticalAlignment="Center" Height="40">
+        <StackPanel Orientation="Horizontal" Margin="10,0,10,0" x:Name="SearchBarPanel" Visibility="Collapsed" VerticalAlignment="Center" Height="40">
             <TextBox x:Name="SearchBox" Width="200" Height="30" Margin="0,5,5,5" VerticalAlignment="Center" KeyDown="SearchBox_KeyDown"/>
             <Button Content="Search" Height="30" MinWidth="70" Margin="0,5,0,5" VerticalAlignment="Center" Click="SearchButton_Click"/>
         </StackPanel>
-        <TextBlock Text="Assigned Jira Issues" FontWeight="Bold" FontSize="18" Margin="10" Grid.Row="2" VerticalAlignment="Bottom"/>
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,10,0">
-            <TextBlock Text="Updated: " FontWeight="Normal" FontSize="12"/>
-            <TextBlock x:Name="UpdatedText" FontWeight="Bold" FontSize="12"/>
-            <ProgressBar x:Name="RefreshSpinner" Height="18" Width="120" IsIndeterminate="True" Visibility="Collapsed" Margin="10,0,0,0"/>
-        </StackPanel>
-        <Grid Grid.Row="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <DataGrid x:Name="IssuesList" Margin="10" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Key" Binding="{Binding Key}" Width="100"/>
-                    <DataGridTextColumn Header="Summary" Binding="{Binding Summary}" Width="600"/>
-                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="300"/>
-                    <DataGridTextColumn Header="Assignee" Binding="{Binding Assignee}" Width="150"/>
-                </DataGrid.Columns>
-            </DataGrid>
-            <ContentControl x:Name="MainContentView" Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-        </Grid>
-    </Grid>
+        <ContentControl x:Name="MainContentView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+    </DockPanel>
 </Window>

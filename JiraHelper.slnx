@@ -2,4 +2,5 @@
   <Project Path="JiraHelper.Core/JiraHelper.Core.csproj" />
   <Project Path="JiraHelper.JiraApi/JiraHelper.JiraApi.csproj" />
   <Project Path="JiraHelper.Settings/JiraHelper.Settings.csproj" />
+  <Project Path="JiraHelper.TimeTracking/JiraHelper.TimeTracking.csproj" />
 </Solution>
