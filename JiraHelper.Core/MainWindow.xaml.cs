@@ -8,7 +8,7 @@ namespace JiraHelper.Core
 {
     public partial class MainWindow : Window
     {
-        private readonly IJiraService _jiraService;
+        private IJiraService _jiraService;
         private readonly UserSettingsService _settingsService = new UserSettingsService();
         public static RoutedCommand RefreshCommand = new RoutedCommand();
         public static RoutedCommand ShowSearchCommand = new RoutedCommand();
@@ -57,7 +57,14 @@ namespace JiraHelper.Core
         private void OpenSettings_Click(object sender, RoutedEventArgs e)
         {
             var settingsView = new SettingsView();
+            settingsView.SettingsSaved += SettingsView_SettingsSaved;
             MainContentView.Content = settingsView;
+        }
+
+        private void SettingsView_SettingsSaved(object sender, EventArgs e)
+        {
+            var settings = _settingsService.Load();
+            _jiraService = new JiraService(settings);
         }
 
         private async void Refresh_Click(object sender, RoutedEventArgs e)

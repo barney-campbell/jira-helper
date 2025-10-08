@@ -7,6 +7,7 @@ namespace JiraHelper.Core
     public partial class SettingsView : UserControl
     {
         private readonly UserSettingsService _settingsService = new UserSettingsService();
+        public event EventHandler SettingsSaved;
         public SettingsView()
         {
             InitializeComponent();
@@ -31,6 +32,7 @@ namespace JiraHelper.Core
             };
             _settingsService.Save(settings);
             MessageBox.Show("Settings saved.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            SettingsSaved?.Invoke(this, EventArgs.Empty);
         }
     }
 }
