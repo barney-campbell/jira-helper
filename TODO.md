@@ -1,4 +1,4 @@
-- [ ] Keyword based search with JQL
+- [x] Keyword based search with JQL
 - [ ] Dashboard widget for today's time tracking
 - [ ] Dashboard widget for yesterday's time tracking (yesterday of Monday is Friday)
 - [ ] Calendar view with time tracking for the week blocked out
