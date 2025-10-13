@@ -19,6 +19,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
@@ -30,11 +31,19 @@
             <TextBlock x:Name="StatusText" Margin="120,0,0,0" Grid.Row="2"/>
             <TextBlock Text="Assignee:" FontWeight="Bold" Margin="0,10,0,0" Grid.Row="3"/>
             <TextBlock x:Name="AssigneeText" Margin="120,0,0,0" Grid.Row="3"/>
-            <TextBlock Text="Description:" FontWeight="Bold" Margin="0,10,0,0" Grid.Row="4"/>
-            <ScrollViewer Grid.Row="5" VerticalScrollBarVisibility="Auto">
+            <TextBlock Text="Web Link:" FontWeight="Bold" Margin="0,10,0,0" Grid.Row="4"/>
+        <Button x:Name="IssueWebLinkButton"
+            Grid.Row="4"
+            Margin="120,10,0,0"
+            Content="View in Jira"
+            Click="IssueWebLink_Click"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"/>
+            <TextBlock Text="Description:" FontWeight="Bold" Margin="0,10,0,0" Grid.Row="5"/>
+            <ScrollViewer Grid.Row="6" VerticalScrollBarVisibility="Auto">
                 <TextBlock x:Name="DescriptionText" TextWrapping="Wrap"/>
             </ScrollViewer>
-            <GroupBox Header="Comments" Grid.Row="6" Margin="0,10,0,0" Padding="5">
+            <GroupBox Header="Comments" Grid.Row="7" Margin="0,10,0,0" Padding="5">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Height="180">
                     <ItemsControl x:Name="CommentsList">
                         <ItemsControl.ItemTemplate>

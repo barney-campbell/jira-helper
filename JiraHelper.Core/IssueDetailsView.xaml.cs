@@ -1,5 +1,6 @@
 using JiraHelper.JiraApi;
 using JiraHelper.TimeTracking;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -10,6 +11,7 @@ namespace JiraHelper.Core
     public partial class IssueDetailsView : UserControl
     {
         private string _issueKey;
+        private string _baseUrl;
         private TimeTrackingService _timeTrackingService = new TimeTrackingService();
         private DispatcherTimer _timer;
         private List<TimeTrackingRecord> _records;
@@ -28,6 +30,7 @@ namespace JiraHelper.Core
         {
             _issueKey = key;
             _jiraService = jiraService;
+            _baseUrl = jiraService.BaseUrl;
             var issue = await jiraService.GetIssueAsync(key);
             if (issue != null)
             {
@@ -192,6 +195,26 @@ namespace JiraHelper.Core
                         _timeTrackingService.UpdateRecord(dialog.UpdatedRecord);
                         _ = LoadTimeTracking();
                     }
+                }
+            }
+        }
+
+        private void IssueWebLink_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(_baseUrl) && !string.IsNullOrEmpty(_issueKey))
+            {
+                var url = $"{_baseUrl}/browse/{_issueKey}";
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = url,
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to open URL: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

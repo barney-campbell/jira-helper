@@ -3,5 +3,5 @@
 - [ ] Dashboard widget for yesterday's time tracking (yesterday of Monday is Friday)
 - [ ] Calendar view with time tracking for the week blocked out
 - [ ] Personal kanban board where issues can be added and moved along to determine what work to do
-- [ ] Provide web links to view the issue online
+- [x] Provide web links to view the issue online
 - [ ] Filtering for assigned issues and search results

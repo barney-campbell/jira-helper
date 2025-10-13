@@ -26,6 +26,7 @@ namespace JiraHelper.JiraApi
 
     public interface IJiraService
     {
+        string BaseUrl { get; }
         Task<List<JiraIssue>> GetAssignedIssuesAsync(string user);
         Task<JiraIssue> GetIssueAsync(string key);
         Task<List<JiraIssue>> SearchIssuesAsync(string jql);
@@ -43,6 +44,8 @@ namespace JiraHelper.JiraApi
         private readonly string jiraEmail;
         private readonly string jiraApiToken;
         private readonly HttpClient httpClient;
+
+        public string BaseUrl => jiraBaseUrl;
 
         public JiraService(UserSettings settings)
         {
