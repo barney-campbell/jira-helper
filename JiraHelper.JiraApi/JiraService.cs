@@ -5,6 +5,14 @@ using System.Text.Json;
 
 namespace JiraHelper.JiraApi
 {
+    public class JiraComment
+    {
+        public string Author { get; set; }
+        public string Body { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime? Updated { get; set; }
+    }
+
     public class JiraIssue
     {
         public string Id { get; set; }
@@ -13,6 +21,7 @@ namespace JiraHelper.JiraApi
         public string Status { get; set; }
         public string Assignee { get; set; }
         public string Description { get; set; }
+        public List<JiraComment> Comments { get; set; } = new();
     }
 
     public interface IJiraService
@@ -98,7 +107,7 @@ namespace JiraHelper.JiraApi
         {
             try
             {
-                var url = $"{jiraBaseUrl}/rest/api/3/issue/{key}?fields=key,summary,status,assignee,description";
+                var url = $"{jiraBaseUrl}/rest/api/3/issue/{key}?fields=key,summary,status,assignee,description,comment";
                 var resp = await httpClient.GetAsync(url);
                 var status = resp.StatusCode;
                 var json = await resp.Content.ReadAsStringAsync();
@@ -117,6 +126,20 @@ namespace JiraHelper.JiraApi
                 {
                     description = ParseDescription(descProp);
                 }
+                var comments = new List<JiraComment>();
+                if (fields.TryGetProperty("comment", out var commentProp) && commentProp.TryGetProperty("comments", out var commentsArray))
+                {
+                    foreach (var c in commentsArray.EnumerateArray())
+                    {
+                        var author = c.GetProperty("author").GetProperty("displayName").GetString();
+                        var body = ParseDescription(c.GetProperty("body"));
+                        var created = DateTime.Parse(c.GetProperty("created").GetString());
+                        DateTime? updated = null;
+                        if (c.TryGetProperty("updated", out var updatedProp) && updatedProp.ValueKind != JsonValueKind.Null)
+                            updated = DateTime.Parse(updatedProp.GetString());
+                        comments.Add(new JiraComment { Author = author, Body = body, Created = created, Updated = updated });
+                    }
+                }
                 return new JiraIssue
                 {
                     Id = doc.RootElement.GetProperty("id").GetString(),
@@ -124,7 +147,8 @@ namespace JiraHelper.JiraApi
                     Summary = fields.GetProperty("summary").GetString(),
                     Status = fields.GetProperty("status").GetProperty("name").GetString(),
                     Assignee = assignee,
-                    Description = description
+                    Description = description,
+                    Comments = comments
                 };
             }
             catch (Exception ex)

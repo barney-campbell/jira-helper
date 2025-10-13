@@ -3,6 +3,7 @@ using JiraHelper.TimeTracking;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using System.Collections.ObjectModel;
 
 namespace JiraHelper.Core
 {
@@ -14,6 +15,7 @@ namespace JiraHelper.Core
         private List<TimeTrackingRecord> _records;
         private List<JiraWorklog> _jiraWorklogs;
         private IJiraService _jiraService;
+        private ObservableCollection<JiraComment> _comments = new();
 
         public IssueDetailsView()
         {
@@ -34,6 +36,13 @@ namespace JiraHelper.Core
                 StatusText.Text = issue.Status;
                 AssigneeText.Text = issue.Assignee;
                 DescriptionText.Text = issue.Description;
+                _comments.Clear();
+                if (issue.Comments != null)
+                {
+                    foreach (var c in issue.Comments)
+                        _comments.Add(c);
+                }
+                CommentsList.ItemsSource = _comments;
             }
             await LoadTimeTracking();
         }
