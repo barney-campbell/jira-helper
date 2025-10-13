@@ -66,8 +66,8 @@ namespace JiraHelper.Core
                 }
                 else
                 {
-                    // Perform keyword search using JQL
-                    var jql = $"summary ~ \"{query}\" OR description ~ \"{query}\"";
+                    // Perform keyword search using JQL, order by updated date descending
+                    var jql = $"summary ~ \"{query}\" OR description ~ \"{query}\" ORDER BY updated DESC";
                     results = await _jiraService.SearchIssuesAsync(jql);
                 }
 
