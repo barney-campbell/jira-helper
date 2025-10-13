@@ -32,11 +32,13 @@
             <TextBlock Text="Assignee:" FontWeight="Bold" Margin="0,10,0,0" Grid.Row="3"/>
             <TextBlock x:Name="AssigneeText" Margin="120,0,0,0" Grid.Row="3"/>
             <TextBlock Text="Web Link:" FontWeight="Bold" Margin="0,10,0,0" Grid.Row="4"/>
-            <TextBlock Grid.Row="4" Margin="120,10,0,0">
-                <Hyperlink x:Name="IssueWebLink" Click="IssueWebLink_Click">
-                    <Run Text="View in Jira"/>
-                </Hyperlink>
-            </TextBlock>
+        <Button x:Name="IssueWebLinkButton"
+            Grid.Row="4"
+            Margin="120,10,0,0"
+            Content="View in Jira"
+            Click="IssueWebLink_Click"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"/>
             <TextBlock Text="Description:" FontWeight="Bold" Margin="0,10,0,0" Grid.Row="5"/>
             <ScrollViewer Grid.Row="6" VerticalScrollBarVisibility="Auto">
                 <TextBlock x:Name="DescriptionText" TextWrapping="Wrap"/>
