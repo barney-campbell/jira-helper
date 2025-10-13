@@ -1,4 +1,6 @@
 using JiraHelper.JiraApi;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,7 +11,7 @@ namespace JiraHelper.Core
     public partial class IssueSearchView : UserControl
     {
         private IJiraService _jiraService;
-        public event RoutedEventHandler IssueFound;
+        public event RoutedEventHandler IssueDoubleClicked;
 
         public IssueSearchView()
         {
@@ -23,30 +25,74 @@ namespace JiraHelper.Core
 
         private async void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            await SearchAndShowIssue();
+            await SearchAndShowResults();
         }
 
         private async void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                await SearchAndShowIssue();
+                await SearchAndShowResults();
             }
         }
 
-        private async Task SearchAndShowIssue()
+        private async Task SearchAndShowResults()
         {
-            var key = SearchBox.Text.Trim();
-            if (string.IsNullOrEmpty(key) || _jiraService == null) return;
-            var issue = await _jiraService.GetIssueAsync(key);
-            if (issue != null)
+            var query = SearchBox.Text.Trim();
+            if (string.IsNullOrEmpty(query) || _jiraService == null) return;
+
+            SearchSpinner.Visibility = Visibility.Visible;
+            ResultText.Text = "";
+            resultsGrid.ItemsSource = null;
+
+            try
             {
-                ResultText.Text = $"Found: {issue.Key} - {issue.Summary}";
-                IssueFound?.Invoke(issue, new RoutedEventArgs());
+                // Check if the query looks like a Jira key (e.g., PROJECT-123)
+                var isJiraKey = Regex.IsMatch(query, @"^[A-Z]+-\d+$", RegexOptions.IgnoreCase);
+                List<JiraIssue> results;
+
+                if (isJiraKey)
+                {
+                    // Try to get the specific issue by key
+                    var issue = await _jiraService.GetIssueAsync(query);
+                    if (issue != null)
+                    {
+                        results = new List<JiraIssue> { issue };
+                    }
+                    else
+                    {
+                        results = new List<JiraIssue>();
+                    }
+                }
+                else
+                {
+                    // Perform keyword search using JQL, order by updated date descending
+                    var jql = $"summary ~ \"{query}\" OR description ~ \"{query}\" ORDER BY updated DESC";
+                    results = await _jiraService.SearchIssuesAsync(jql);
+                }
+
+                resultsGrid.ItemsSource = results;
+
+                if (results.Count > 0)
+                {
+                    ResultText.Text = $"Found {results.Count} issue(s)";
+                }
+                else
+                {
+                    ResultText.Text = $"No issues found for '{query}'";
+                }
             }
-            else
+            finally
             {
-                ResultText.Text = $"Issue '{key}' not found.";
+                SearchSpinner.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ResultsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (resultsGrid.SelectedItem is JiraIssue selectedIssue)
+            {
+                IssueDoubleClicked?.Invoke(selectedIssue, e);
             }
         }
     }

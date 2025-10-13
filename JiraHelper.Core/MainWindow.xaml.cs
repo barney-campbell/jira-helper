@@ -164,7 +164,7 @@ namespace JiraHelper.Core
         {
             var searchView = new IssueSearchView();
             searchView.SetJiraService(_jiraService);
-            searchView.IssueFound += async (issueObj, args) =>
+            searchView.IssueDoubleClicked += async (issueObj, args) =>
             {
                 if (issueObj is JiraIssue foundIssue)
                 {
