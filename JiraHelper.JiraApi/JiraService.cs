@@ -28,6 +28,7 @@ namespace JiraHelper.JiraApi
     {
         Task<List<JiraIssue>> GetAssignedIssuesAsync(string user);
         Task<JiraIssue> GetIssueAsync(string key);
+        Task<List<JiraIssue>> SearchIssuesAsync(string jql);
         void StartWork(string issueId);
         void EndWork(string issueId);
         void UploadTimeTracking(string issueId, TimeSpan timeSpent, DateTime? started);
@@ -158,6 +159,45 @@ namespace JiraHelper.JiraApi
             }
         }
 
+        public async Task<List<JiraIssue>> SearchIssuesAsync(string jql)
+        {
+            try
+            {
+                var url = $"{jiraBaseUrl}/rest/api/3/search/jql?jql={Uri.EscapeDataString(jql)}&fields=key&fields=summary&fields=status&fields=assignee";
+                var resp = await httpClient.GetAsync(url);
+                var status = resp.StatusCode;
+                var json = await resp.Content.ReadAsStringAsync();
+                if (!resp.IsSuccessStatusCode)
+                    throw new Exception($"HTTP error: {status}\nResponse: {json}");
+                using var doc = JsonDocument.Parse(json);
+                var issues = new List<JiraIssue>();
+                foreach (var issue in doc.RootElement.GetProperty("issues").EnumerateArray())
+                {
+                    var fields = issue.GetProperty("fields");
+                    string assignee = "";
+                    if (fields.TryGetProperty("assignee", out var assigneeProp))
+                    {
+                        if (assigneeProp.ValueKind != JsonValueKind.Null)
+                            assignee = assigneeProp.GetProperty("displayName").GetString();
+                    }
+                    issues.Add(new JiraIssue
+                    {
+                        Id = issue.GetProperty("id").GetString(),
+                        Key = issue.GetProperty("key").GetString(),
+                        Summary = fields.GetProperty("summary").GetString(),
+                        Status = fields.GetProperty("status").GetProperty("name").GetString(),
+                        Assignee = assignee
+                    });
+                }
+                return issues;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception in SearchIssuesAsync: {ex}");
+                return new List<JiraIssue>();
+            }
+        }
+
         // Basic ADF to plain text parser
         private string ParseDescription(JsonElement description)
         {
@@ -195,7 +235,7 @@ namespace JiraHelper.JiraApi
                                     {
                                         if (para.TryGetProperty("content", out var paraContent))
                                         {
-                                            sb.Append("• ");
+                                            sb.Append("ï¿½ ");
                                             foreach (var item in paraContent.EnumerateArray())
                                             {
                                                 if (item.TryGetProperty("text", out var textProp))
@@ -206,7 +246,7 @@ namespace JiraHelper.JiraApi
                                         else
                                         {
                                             // Empty bullet
-                                            sb.AppendLine("•");
+                                            sb.AppendLine("ï¿½");
                                         }
                                     }
                                 }
