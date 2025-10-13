@@ -26,6 +26,7 @@ namespace JiraHelper.JiraApi
 
     public interface IJiraService
     {
+        string BaseUrl { get; }
         Task<List<JiraIssue>> GetAssignedIssuesAsync(string user);
         Task<JiraIssue> GetIssueAsync(string key);
         void StartWork(string issueId);
@@ -42,6 +43,8 @@ namespace JiraHelper.JiraApi
         private readonly string jiraEmail;
         private readonly string jiraApiToken;
         private readonly HttpClient httpClient;
+
+        public string BaseUrl => jiraBaseUrl;
 
         public JiraService(UserSettings settings)
         {
@@ -195,7 +198,7 @@ namespace JiraHelper.JiraApi
                                     {
                                         if (para.TryGetProperty("content", out var paraContent))
                                         {
-                                            sb.Append("• ");
+                                            sb.Append("ï¿½ ");
                                             foreach (var item in paraContent.EnumerateArray())
                                             {
                                                 if (item.TryGetProperty("text", out var textProp))
@@ -206,7 +209,7 @@ namespace JiraHelper.JiraApi
                                         else
                                         {
                                             // Empty bullet
-                                            sb.AppendLine("•");
+                                            sb.AppendLine("ï¿½");
                                         }
                                     }
                                 }
