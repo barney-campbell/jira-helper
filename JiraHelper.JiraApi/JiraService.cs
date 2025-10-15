@@ -5,10 +5,16 @@ using System.Text.Json;
 
 namespace JiraHelper.JiraApi
 {
+    public class JiraTextBlock
+    {
+        public string Text { get; set; }
+        public bool IsCode { get; set; }
+    }
+
     public class JiraComment
     {
         public string Author { get; set; }
-        public string Body { get; set; }
+        public List<JiraTextBlock> BodyBlocks { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
     }
@@ -20,7 +26,7 @@ namespace JiraHelper.JiraApi
         public string Summary { get; set; }
         public string Status { get; set; }
         public string Assignee { get; set; }
-        public string Description { get; set; }
+        public List<JiraTextBlock> DescriptionBlocks { get; set; }
         public List<JiraComment> Comments { get; set; } = new();
     }
 
@@ -101,7 +107,6 @@ namespace JiraHelper.JiraApi
             }
             catch (Exception ex)
             {
-                // Log or inspect the exception here
                 Console.WriteLine($"Exception in GetAssignedIssuesAsync: {ex}");
                 return new List<JiraIssue>();
             }
@@ -125,10 +130,10 @@ namespace JiraHelper.JiraApi
                     if (assigneeProp.ValueKind != JsonValueKind.Null)
                         assignee = assigneeProp.GetProperty("displayName").GetString();
                 }
-                string description = "";
+                List<JiraTextBlock> descriptionBlocks = new();
                 if (fields.TryGetProperty("description", out var descProp))
                 {
-                    description = ParseDescription(descProp);
+                    descriptionBlocks = ParseDescriptionBlocks(descProp);
                 }
                 var comments = new List<JiraComment>();
                 if (fields.TryGetProperty("comment", out var commentProp) && commentProp.TryGetProperty("comments", out var commentsArray))
@@ -136,12 +141,12 @@ namespace JiraHelper.JiraApi
                     foreach (var c in commentsArray.EnumerateArray())
                     {
                         var author = c.GetProperty("author").GetProperty("displayName").GetString();
-                        var body = ParseDescription(c.GetProperty("body"));
+                        var bodyBlocks = ParseDescriptionBlocks(c.GetProperty("body"));
                         var created = DateTime.Parse(c.GetProperty("created").GetString());
                         DateTime? updated = null;
                         if (c.TryGetProperty("updated", out var updatedProp) && updatedProp.ValueKind != JsonValueKind.Null)
                             updated = DateTime.Parse(updatedProp.GetString());
-                        comments.Add(new JiraComment { Author = author, Body = body, Created = created, Updated = updated });
+                        comments.Add(new JiraComment { Author = author, BodyBlocks = bodyBlocks, Created = created, Updated = updated });
                     }
                 }
                 return new JiraIssue
@@ -151,7 +156,7 @@ namespace JiraHelper.JiraApi
                     Summary = fields.GetProperty("summary").GetString(),
                     Status = fields.GetProperty("status").GetProperty("name").GetString(),
                     Assignee = assignee,
-                    Description = description,
+                    DescriptionBlocks = descriptionBlocks,
                     Comments = comments
                 };
             }
@@ -201,13 +206,12 @@ namespace JiraHelper.JiraApi
             }
         }
 
-        // Basic ADF to plain text parser
-        private string ParseDescription(JsonElement description)
+        private List<JiraTextBlock> ParseDescriptionBlocks(JsonElement description)
         {
+            var blocks = new List<JiraTextBlock>();
             if (description.ValueKind == JsonValueKind.Undefined || description.ValueKind == JsonValueKind.Null)
-                return string.Empty;
+                return blocks;
 
-            var sb = new StringBuilder();
             if (description.TryGetProperty("content", out var contentArray))
             {
                 foreach (var block in contentArray.EnumerateArray())
@@ -217,6 +221,7 @@ namespace JiraHelper.JiraApi
                         var type = typeProp.GetString();
                         if (type == "paragraph")
                         {
+                            var sb = new StringBuilder();
                             if (block.TryGetProperty("content", out var paraContent))
                             {
                                 foreach (var item in paraContent.EnumerateArray())
@@ -225,8 +230,7 @@ namespace JiraHelper.JiraApi
                                         sb.Append(textProp.GetString());
                                 }
                             }
-                            // Always append a newline for a paragraph, even if empty
-                            sb.AppendLine();
+                            blocks.Add(new JiraTextBlock { Text = sb.ToString(), IsCode = false });
                         }
                         else if (type == "bulletList" && block.TryGetProperty("content", out var listContent))
                         {
@@ -238,28 +242,38 @@ namespace JiraHelper.JiraApi
                                     {
                                         if (para.TryGetProperty("content", out var paraContent))
                                         {
-                                            sb.Append("� ");
+                                            var sb = new StringBuilder();
+                                            sb.Append("• ");
                                             foreach (var item in paraContent.EnumerateArray())
                                             {
                                                 if (item.TryGetProperty("text", out var textProp))
                                                     sb.Append(textProp.GetString());
                                             }
-                                            sb.AppendLine();
+                                            blocks.Add(new JiraTextBlock { Text = sb.ToString(), IsCode = false });
                                         }
                                         else
                                         {
                                             // Empty bullet
-                                            sb.AppendLine("�");
+                                            blocks.Add(new JiraTextBlock { Text = "•", IsCode = false });
                                         }
                                     }
                                 }
                             }
                         }
-                        // Add more handlers for other types as needed
+                        else if (type == "codeBlock" && block.TryGetProperty("content", out var codeContent))
+                        {
+                            var sb = new StringBuilder();
+                            foreach (var item in codeContent.EnumerateArray())
+                            {
+                                if (item.TryGetProperty("text", out var textProp))
+                                    sb.AppendLine(textProp.GetString());
+                            }
+                            blocks.Add(new JiraTextBlock { Text = sb.ToString().TrimEnd(), IsCode = true });
+                        }
                     }
                 }
             }
-            return sb.ToString().Trim();
+            return blocks;
         }
 
         public void StartWork(string issueId) { /* TODO: Implement */ }

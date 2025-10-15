@@ -38,7 +38,8 @@ namespace JiraHelper.Core
                 SummaryText.Text = issue.Summary;
                 StatusText.Text = issue.Status;
                 AssigneeText.Text = issue.Assignee;
-                DescriptionText.Text = issue.Description;
+                // Bind DescriptionBlocks to ItemsControl
+                DescriptionBlocksList.ItemsSource = issue.DescriptionBlocks;
                 _comments.Clear();
                 if (issue.Comments != null)
                 {
