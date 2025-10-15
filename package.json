@@ -1,0 +1,48 @@
+{
+  "name": "jira-helper",
+  "version": "1.0.0",
+  "description": "App for managing Jira related tasks such as time tracking.",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
+    "start": "npm run build:dev && electron .",
+    "dev": "webpack --mode development --watch",
+    "package": "npm run build && electron-builder"
+  },
+  "keywords": ["jira", "time-tracking", "electron"],
+  "author": "",
+  "license": "ISC",
+  "build": {
+    "appId": "com.jirahelper.app",
+    "productName": "Jira Helper",
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    }
+  },
+  "dependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "better-sqlite3": "^12.4.1",
+    "electron": "^38.2.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "css-loader": "^7.1.2",
+    "electron-builder": "^26.0.12",
+    "html-webpack-plugin": "^5.6.4",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  }
+}
