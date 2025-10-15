@@ -1,10 +1,10 @@
 using JiraHelper.JiraApi;
 using JiraHelper.TimeTracking;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using System.Collections.ObjectModel;
 
 namespace JiraHelper.Core
 {
@@ -59,7 +59,7 @@ namespace JiraHelper.Core
             TimeSpan total = TimeSpan.Zero;
             foreach (var record in _records)
             {
-                TimeSpan duration;
+                TimeSpan duration = TimeSpan.Zero;
                 bool canEdit = true;
                 int recordId = record.Id;
                 if (record.EndTime == null)
@@ -68,7 +68,7 @@ namespace JiraHelper.Core
                     duration = DateTime.UtcNow - record.StartTime;
                     items.Add(new { Started = record.StartTime.ToString("yyyy-MM-dd HH:mm:ss"), Duration = FormatCustomDuration(duration, true), Source = "Local", CanEdit = canEdit, RecordId = recordId });
                 }
-                else
+                else if (!record.IsUploaded)
                 {
                     duration = record.EndTime.Value - record.StartTime;
                     items.Add(new { Started = record.StartTime.ToString("yyyy-MM-dd HH:mm:ss"), Duration = FormatCustomDuration(duration, false), Source = "Local", CanEdit = canEdit, RecordId = recordId });
@@ -96,7 +96,7 @@ namespace JiraHelper.Core
             bool hasActive = false;
             foreach (var record in _records)
             {
-                TimeSpan duration;
+                TimeSpan duration = TimeSpan.Zero;
                 bool canEdit = true;
                 int recordId = record.Id;
                 if (record.EndTime == null)
@@ -105,7 +105,7 @@ namespace JiraHelper.Core
                     duration = DateTime.UtcNow - record.StartTime;
                     items.Add(new { Started = record.StartTime.ToString("yyyy-MM-dd HH:mm:ss"), Duration = FormatCustomDuration(duration, true), Source = "Local", CanEdit = canEdit, RecordId = recordId });
                 }
-                else
+                else if (!record.IsUploaded)
                 {
                     duration = record.EndTime.Value - record.StartTime;
                     items.Add(new { Started = record.StartTime.ToString("yyyy-MM-dd HH:mm:ss"), Duration = FormatCustomDuration(duration, false), Source = "Local", CanEdit = canEdit, RecordId = recordId });
