@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/components.css';
+import styled from 'styled-components';
 
 export interface Column<T> {
   header: string;
@@ -13,6 +13,46 @@ interface DataGridProps<T> {
   onRowDoubleClick?: (row: T) => void;
   className?: string;
 }
+
+const DataGridContainer = styled.div`
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+
+  th {
+    background-color: #f5f5f5;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #ddd;
+    position: sticky;
+    top: 0;
+  }
+
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+  }
+
+  tbody tr:hover {
+    background-color: #f9f9f9;
+  }
+
+  tbody tr.clickable {
+    cursor: pointer;
+  }
+
+  tbody tr.clickable:hover {
+    background-color: #e3f2fd;
+  }
+`;
 
 export function DataGrid<T extends { [key: string]: any }>({
   columns,
@@ -28,8 +68,8 @@ export function DataGrid<T extends { [key: string]: any }>({
   };
 
   return (
-    <div className={`data-grid-container ${className}`}>
-      <table className="data-grid">
+    <DataGridContainer className={className}>
+      <Table>
         <thead>
           <tr>
             {columns.map((column, index) => (
@@ -60,7 +100,7 @@ export function DataGrid<T extends { [key: string]: any }>({
             ))
           )}
         </tbody>
-      </table>
-    </div>
+      </Table>
+    </DataGridContainer>
   );
 }

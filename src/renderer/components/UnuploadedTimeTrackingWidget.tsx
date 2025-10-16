@@ -1,9 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import { Button } from './Button';
 import { DataGrid, Column } from './DataGrid';
 import { LoadingSpinner } from './LoadingSpinner';
 import type { TimeTrackingRecord } from '../../common/types';
-import '../styles/components.css';
+
+const WidgetContainer = styled.div`
+  max-width: 600px;
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+  }
+`;
+
+const WidgetFooter = styled.div`
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+`;
 
 export const UnuploadedTimeTrackingWidget: React.FC = () => {
   const [records, setRecords] = useState<TimeTrackingRecord[]>([]);
@@ -84,14 +103,14 @@ export const UnuploadedTimeTrackingWidget: React.FC = () => {
   }));
 
   return (
-    <div className="unuploaded-widget">
+    <WidgetContainer>
       <h3>Unuploaded Time Tracking Logs</h3>
       <DataGrid columns={columns} data={displayData} />
-      <div className="widget-footer">
+      <WidgetFooter>
         <Button onClick={handleUploadAll} disabled={loading || records.length === 0}>
           {loading ? <LoadingSpinner size="small" /> : 'Upload All to Jira'}
         </Button>
-      </div>
-    </div>
+      </WidgetFooter>
+    </WidgetContainer>
   );
 };
