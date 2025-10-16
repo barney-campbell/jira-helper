@@ -3,7 +3,7 @@ import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { DataGrid, Column } from '../components/DataGrid';
 import { LoadingSpinner } from '../components/LoadingSpinner';
-import type { JiraIssue } from '../types';
+import type { JiraIssue } from '../../common/types';
 import '../styles/views.css';
 
 interface IssueSearchViewProps {
@@ -22,7 +22,24 @@ export const IssueSearchView: React.FC<IssueSearchViewProps> = ({ onIssueDoubleC
     setLoading(true);
     setResultText('');
     try {
-      const data = await window.electronAPI.searchIssues(searchQuery);
+      const isJiraKey = /^[A-Z]+-\d+$/i.test(searchQuery);
+      let data: JiraIssue[] = [];
+
+      if (isJiraKey) {
+        // Try to get the specific issue by key
+        const issue = await window.electronAPI.getIssue(searchQuery);
+        if (issue) {
+          data = [issue];
+        } else {
+          data = [];
+        }
+      } else {
+        // Perform keyword search using JQL, order by updated date descending
+        const jql = `summary ~ "${searchQuery}" OR description ~ "${searchQuery}" ORDER BY updated DESC`;
+        data = await window.electronAPI.searchIssues(jql);
+      }
+
+      const jql = `summary ~ "${searchQuery}" OR description ~ "${searchQuery}" ORDER BY updated DESC`;
       setResults(data);
       setResultText(`Found ${data.length} issue(s)`);
     } catch (error) {
@@ -53,7 +70,7 @@ export const IssueSearchView: React.FC<IssueSearchViewProps> = ({ onIssueDoubleC
         <Input
           value={searchQuery}
           onChange={setSearchQuery}
-          placeholder="Enter JQL query (e.g., project = MYPROJECT AND status = Open)"
+          placeholder="Enter key (JRA-1234) or search term"
           onKeyDown={handleKeyDown}
           className="search-input"
         />

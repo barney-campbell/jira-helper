@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './Button';
 import { DataGrid, Column } from './DataGrid';
 import { LoadingSpinner } from './LoadingSpinner';
-import type { TimeTrackingRecord } from '../types';
+import type { TimeTrackingRecord } from '../../common/types';
 import '../styles/components.css';
 
 export const UnuploadedTimeTrackingWidget: React.FC = () => {

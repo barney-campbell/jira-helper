@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 import { JiraService } from './services/jira-service';
 import { TimeTrackingService } from './services/time-tracking-service';
 import { SettingsService } from './services/settings-service';
-import type { UserSettings } from '../renderer/types';
+import type { UserSettings } from '../common/types';
 
 let jiraService: JiraService | null = null;
 const timeTrackingService = new TimeTrackingService();

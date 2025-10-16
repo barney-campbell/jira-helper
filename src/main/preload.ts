@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { UserSettings, TimeTrackingRecord } from '../renderer/types';
+import type { UserSettings, TimeTrackingRecord } from '../common/types';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Settings

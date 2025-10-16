@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import { app } from 'electron';
 import * as path from 'path';
-import type { TimeTrackingRecord } from '../../renderer/types';
+import type { TimeTrackingRecord } from '../../common/types';
 
 export class TimeTrackingService {
   private db: Database.Database;

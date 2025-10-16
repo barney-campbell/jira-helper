@@ -1,4 +1,4 @@
-import type { UserSettings, JiraIssue, JiraWorklog, JiraTextBlock, JiraComment } from '../../renderer/types';
+import type { UserSettings, JiraIssue, JiraWorklog, JiraTextBlock, JiraComment } from '../../common/types';
 
 export class JiraService {
   private baseUrl: string;

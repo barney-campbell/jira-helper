@@ -3,7 +3,7 @@ import { Button } from '../components/Button';
 import { DataGrid, Column } from '../components/DataGrid';
 import { Modal } from '../components/Modal';
 import { Input } from '../components/Input';
-import type { JiraIssue, TimeTrackingRecord, JiraWorklog, TimeTrackingDisplay } from '../types';
+import type { JiraIssue, TimeTrackingRecord, JiraWorklog, TimeTrackingDisplay } from '../../common/types';
 import '../styles/views.css';
 
 interface IssueDetailsViewProps {
@@ -140,7 +140,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
     let totalSeconds = 0;
 
     // Local records
-    for (const record of timeRecords) {
+    for (const record of timeRecords.filter(r => !r.isUploaded)) {
       const startTime = new Date(record.startTime);
       const endTime = record.endTime ? new Date(record.endTime) : new Date();
       const duration = (endTime.getTime() - startTime.getTime()) / 1000;

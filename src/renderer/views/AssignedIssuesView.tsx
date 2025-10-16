@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../components/Button';
 import { DataGrid, Column } from '../components/DataGrid';
 import { LoadingSpinner } from '../components/LoadingSpinner';
-import type { JiraIssue } from '../types';
+import type { JiraIssue } from '../../common/types';
 import '../styles/views.css';
 
 interface AssignedIssuesViewProps {
