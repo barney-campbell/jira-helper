@@ -285,6 +285,14 @@ FakesAssemblies/
 .ntvs_analysis.dat
 node_modules/
 
+# Electron/Node.js build artifacts
+dist/
+release/
+*.db
+*.db-shm
+*.db-wal
+package-lock.json
+
 # Visual Studio 6 build log
 *.plg
 
