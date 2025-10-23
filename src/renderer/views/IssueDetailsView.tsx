@@ -342,6 +342,11 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
     return formatDuration(totalSeconds);
   };
 
+  const openInJira = (url: string, issueKey: string) => {
+    const fullUrl = `${url}/browse/${issueKey}`;
+    window.electronAPI.openExternal(fullUrl);
+  }
+
   const timeTrackingColumns: Column<TimeTrackingDisplay>[] = [
     { header: 'Started', accessor: 'started', width: '200px' },
     { header: 'Duration', accessor: 'duration', width: '200px' },
@@ -393,7 +398,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
             <strong>Web Link:</strong>{' '}
             <Button onClick={() => {
               if (baseUrl) {
-                window.open(`${baseUrl}/browse/${issue.key}`, '_blank');
+                openInJira(baseUrl, issue.key);
               }
             }}>
               View in Jira

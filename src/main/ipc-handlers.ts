@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { ipcMain, shell } from 'electron';
 import { JiraService } from './services/jira-service';
 import { TimeTrackingService } from './services/time-tracking-service';
 import { SettingsService } from './services/settings-service';
@@ -14,6 +14,11 @@ export function registerIpcHandlers() {
   if (settings && settings.baseUrl && settings.email && settings.apiToken) {
     jiraService = new JiraService(settings);
   }
+
+  // Native handlers
+  ipcMain.handle('native:openExternal', async (_, url: string) => {
+    await shell.openExternal(url);
+  });
 
   // Settings handlers
   ipcMain.handle('settings:load', async () => {
