@@ -63,6 +63,25 @@ export class TimeTrackingService {
     return rows.map(row => this.mapRowToRecord(row));
   }
 
+  getActiveRecords(): TimeTrackingRecord[] {
+    const rows = this.db.prepare(`
+      SELECT * FROM TimeTrackingRecords 
+      WHERE EndTime IS NULL 
+      ORDER BY StartTime DESC
+    `).all() as any[];
+
+    return rows.map(row => this.mapRowToRecord(row));
+  }
+
+  stopTrackingById(id: number): void {
+    const now = new Date().toISOString();
+    this.db.prepare(`
+      UPDATE TimeTrackingRecords 
+      SET EndTime = ? 
+      WHERE Id = ? AND EndTime IS NULL
+    `).run(now, id);
+  }
+
   updateRecord(record: TimeTrackingRecord): void {
     this.db.prepare(`
       UPDATE TimeTrackingRecords 

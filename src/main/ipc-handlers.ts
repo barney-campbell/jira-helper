@@ -1,4 +1,4 @@
-import { ipcMain, shell } from 'electron';
+import { ipcMain, shell, BrowserWindow } from 'electron';
 import { JiraService } from './services/jira-service';
 import { TimeTrackingService } from './services/time-tracking-service';
 import { SettingsService } from './services/settings-service';
@@ -9,6 +9,13 @@ let jiraService: JiraService | null = null;
 const timeTrackingService = new TimeTrackingService();
 const settingsService = new SettingsService();
 const kanbanService = new KanbanService();
+
+export function notifyTimeTrackingChanged() {
+  const windows = BrowserWindow.getAllWindows();
+  windows.forEach(window => {
+    window.webContents.send('timeTracking:changed');
+  });
+}
 
 export function registerIpcHandlers() {
   // Initialize Jira service with settings
@@ -67,11 +74,19 @@ export function registerIpcHandlers() {
   // Time Tracking handlers
   ipcMain.handle('timeTracking:start', async (_, issueKey: string) => {
     timeTrackingService.startTracking(issueKey);
+    notifyTimeTrackingChanged();
     return { success: true };
   });
 
   ipcMain.handle('timeTracking:stop', async (_, issueKey: string) => {
     timeTrackingService.stopTracking(issueKey);
+    notifyTimeTrackingChanged();
+    return { success: true };
+  });
+
+  ipcMain.handle('timeTracking:stopById', async (_, id: number) => {
+    timeTrackingService.stopTrackingById(id);
+    notifyTimeTrackingChanged();
     return { success: true };
   });
 
@@ -83,18 +98,25 @@ export function registerIpcHandlers() {
     return timeTrackingService.getUnsentCompletedRecords();
   });
 
+  ipcMain.handle('timeTracking:getActiveRecords', async () => {
+    return timeTrackingService.getActiveRecords();
+  });
+
   ipcMain.handle('timeTracking:updateRecord', async (_, record: any) => {
     timeTrackingService.updateRecord(record);
+    notifyTimeTrackingChanged();
     return { success: true };
   });
 
   ipcMain.handle('timeTracking:deleteRecord', async (_, id: number) => {
     timeTrackingService.deleteRecord(id);
+    notifyTimeTrackingChanged();
     return { success: true };
   });
 
   ipcMain.handle('timeTracking:markAsUploaded', async (_, id: number) => {
     timeTrackingService.markAsUploaded(id);
+    notifyTimeTrackingChanged();
     return { success: true };
   });
 
