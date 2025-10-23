@@ -5,7 +5,6 @@ import { DataGrid, Column } from './DataGrid';
 import type { TimeTrackingRecord } from '../../common/types';
 
 const WidgetContainer = styled.div`
-  max-width: 600px;
   background-color: white;
   padding: 30px;
   border-radius: 8px;
