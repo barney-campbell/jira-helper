@@ -101,6 +101,11 @@ export const App: React.FC = () => {
     setCurrentView('issueDetails');
   };
 
+  const handleIssueKeyDoubleClick = (issueKey: string) => {
+    setSelectedIssueKey(issueKey);
+    setCurrentView('issueDetails');
+  };
+
   const handleSettingsSaved = () => {
     // Refresh the current view after settings are saved
     setCurrentView('dashboard');
@@ -109,17 +114,17 @@ export const App: React.FC = () => {
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
-        return <DashboardView />;
+        return <DashboardView onIssueDoubleClick={handleIssueKeyDoubleClick} />;
       case 'assignedIssues':
         return <AssignedIssuesView onIssueDoubleClick={handleIssueDoubleClick} />;
       case 'search':
         return <IssueSearchView onIssueDoubleClick={handleIssueDoubleClick} />;
       case 'issueDetails':
-        return selectedIssueKey ? <IssueDetailsView issueKey={selectedIssueKey} /> : <DashboardView />;
+        return selectedIssueKey ? <IssueDetailsView issueKey={selectedIssueKey} /> : <DashboardView onIssueDoubleClick={handleIssueKeyDoubleClick} />;
       case 'settings':
         return <SettingsView onSave={handleSettingsSaved} />;
       default:
-        return <DashboardView />;
+        return <DashboardView onIssueDoubleClick={handleIssueKeyDoubleClick} />;
     }
   };
 

@@ -21,11 +21,21 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Time Tracking
   startTracking: (issueKey: string) => ipcRenderer.invoke('timeTracking:start', issueKey),
   stopTracking: (issueKey: string) => ipcRenderer.invoke('timeTracking:stop', issueKey),
+  stopTrackingById: (id: number) => ipcRenderer.invoke('timeTracking:stopById', id),
   getTimeTrackingRecords: (issueKey: string) => ipcRenderer.invoke('timeTracking:getRecords', issueKey),
   getUnsentTimeTrackingRecords: () => ipcRenderer.invoke('timeTracking:getUnsentRecords'),
+  getActiveTimeTrackingRecords: () => ipcRenderer.invoke('timeTracking:getActiveRecords'),
   updateTimeTrackingRecord: (record: TimeTrackingRecord) => ipcRenderer.invoke('timeTracking:updateRecord', record),
   deleteTimeTrackingRecord: (id: number) => ipcRenderer.invoke('timeTracking:deleteRecord', id),
   markAsUploaded: (id: number) => ipcRenderer.invoke('timeTracking:markAsUploaded', id),
+
+  // Event listeners
+  onTimeTrackingChanged: (callback: () => void) => {
+    ipcRenderer.on('timeTracking:changed', callback);
+    return () => {
+      ipcRenderer.removeListener('timeTracking:changed', callback);
+    };
+  },
 });
 
 declare global {
@@ -42,11 +52,14 @@ declare global {
       getBaseUrl: () => Promise<string>;
       startTracking: (issueKey: string) => Promise<{ success: boolean }>;
       stopTracking: (issueKey: string) => Promise<{ success: boolean }>;
+      stopTrackingById: (id: number) => Promise<{ success: boolean }>;
       getTimeTrackingRecords: (issueKey: string) => Promise<TimeTrackingRecord[]>;
       getUnsentTimeTrackingRecords: () => Promise<TimeTrackingRecord[]>;
+      getActiveTimeTrackingRecords: () => Promise<TimeTrackingRecord[]>;
       updateTimeTrackingRecord: (record: TimeTrackingRecord) => Promise<{ success: boolean }>;
       deleteTimeTrackingRecord: (id: number) => Promise<{ success: boolean }>;
       markAsUploaded: (id: number) => Promise<{ success: boolean }>;
+      onTimeTrackingChanged: (callback: () => void) => () => void;
     };
   }
 }

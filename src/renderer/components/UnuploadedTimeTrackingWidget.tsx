@@ -6,7 +6,6 @@ import { LoadingSpinner } from './LoadingSpinner';
 import type { TimeTrackingRecord } from '../../common/types';
 
 const WidgetContainer = styled.div`
-  max-width: 600px;
   background-color: white;
   padding: 30px;
   border-radius: 8px;
@@ -31,7 +30,16 @@ export const UnuploadedTimeTrackingWidget: React.FC = () => {
   useEffect(() => {
     loadRecords();
     const interval = setInterval(loadRecords, 1000);
-    return () => clearInterval(interval);
+    
+    // Set up listener for time tracking changes
+    const removeListener = window.electronAPI.onTimeTrackingChanged(() => {
+      loadRecords();
+    });
+
+    return () => {
+      clearInterval(interval);
+      removeListener();
+    };
   }, []);
 
   const loadRecords = async () => {
@@ -58,6 +66,16 @@ export const UnuploadedTimeTrackingWidget: React.FC = () => {
   const formatDateTime = (date: Date): string => {
     const d = new Date(date);
     return d.toISOString().replace('T', ' ').substring(0, 19);
+  };
+
+  const handleDelete = async (recordId: number) => {
+    try {
+      await window.electronAPI.deleteTimeTrackingRecord(recordId);
+      await loadRecords();
+    } catch (error) {
+      console.error('Error deleting record:', error);
+      alert('Failed to delete record');
+    }
   };
 
   const handleUploadAll = async () => {
@@ -91,12 +109,22 @@ export const UnuploadedTimeTrackingWidget: React.FC = () => {
   };
 
   const columns: Column<any>[] = [
-    { header: 'Issue Key', accessor: 'issueKey', width: '30%' },
-    { header: 'Started', accessor: 'startTime', width: '40%' },
-    { header: 'Elapsed', accessor: 'elapsed', width: '30%' }
+    { header: 'Issue Key', accessor: 'issueKey', width: '25%' },
+    { header: 'Started', accessor: 'startTime', width: '35%' },
+    { header: 'Elapsed', accessor: 'elapsed', width: '20%' },
+    {
+      header: 'Actions',
+      accessor: (row: any) => (
+        <Button variant="danger" onClick={() => handleDelete(row.id)}>
+          Delete
+        </Button>
+      ),
+      width: '20%'
+    }
   ];
 
   const displayData = records.map(record => ({
+    id: record.id,
     issueKey: record.issueKey,
     startTime: formatDateTime(record.startTime),
     elapsed: formatElapsed(record.startTime, record.endTime)
