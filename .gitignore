@@ -291,7 +291,6 @@ release/
 *.db
 *.db-shm
 *.db-wal
-package-lock.json
 
 # Visual Studio 6 build log
 *.plg

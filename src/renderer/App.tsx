@@ -5,6 +5,7 @@ import { AssignedIssuesView } from './views/AssignedIssuesView';
 import { IssueSearchView } from './views/IssueSearchView';
 import { IssueDetailsView } from './views/IssueDetailsView';
 import { SettingsView } from './views/SettingsView';
+import { KanbanView } from './views/KanbanView';
 import type { ViewType, JiraIssue } from './types';
 
 const GlobalStyle = createGlobalStyle`
@@ -121,6 +122,8 @@ export const App: React.FC = () => {
         return <IssueSearchView onIssueDoubleClick={handleIssueDoubleClick} />;
       case 'issueDetails':
         return selectedIssueKey ? <IssueDetailsView issueKey={selectedIssueKey} /> : <DashboardView onIssueDoubleClick={handleIssueKeyDoubleClick} />;
+      case 'kanban':
+        return <KanbanView />;
       case 'settings':
         return <SettingsView onSave={handleSettingsSaved} />;
       default:
@@ -153,6 +156,13 @@ export const App: React.FC = () => {
             title="Search"
           >
             <span className="icon">🔍</span>
+          </SidebarButton>
+          <SidebarButton
+            $active={currentView === 'kanban'}
+            onClick={() => setCurrentView('kanban')}
+            title="Kanban Board"
+          >
+            <span className="icon">📝</span>
           </SidebarButton>
           <SidebarSpacer />
           <SidebarButton
