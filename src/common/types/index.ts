@@ -49,4 +49,17 @@ export interface TimeTrackingDisplay {
   recordId: number;
 }
 
-export type ViewType = 'dashboard' | 'assignedIssues' | 'search' | 'issueDetails' | 'settings';
+export type ViewType = 'dashboard' | 'assignedIssues' | 'search' | 'issueDetails' | 'settings' | 'kanban';
+
+export type KanbanColumnType = 'todo' | 'inProgress' | 'done';
+
+export interface KanbanItem {
+  id: number;
+  title: string;
+  description: string;
+  column: KanbanColumnType;
+  position: number;
+  linkedIssueKey?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

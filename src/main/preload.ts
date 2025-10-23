@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { UserSettings, TimeTrackingRecord } from '../common/types';
+import type { UserSettings, TimeTrackingRecord, KanbanItem, KanbanColumnType } from '../common/types';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Native
@@ -26,6 +26,17 @@ contextBridge.exposeInMainWorld('electronAPI', {
   updateTimeTrackingRecord: (record: TimeTrackingRecord) => ipcRenderer.invoke('timeTracking:updateRecord', record),
   deleteTimeTrackingRecord: (id: number) => ipcRenderer.invoke('timeTracking:deleteRecord', id),
   markAsUploaded: (id: number) => ipcRenderer.invoke('timeTracking:markAsUploaded', id),
+
+  // Kanban
+  getAllKanbanItems: () => ipcRenderer.invoke('kanban:getAllItems'),
+  getKanbanItemsByColumn: (column: KanbanColumnType) => ipcRenderer.invoke('kanban:getItemsByColumn', column),
+  createKanbanItem: (title: string, description: string, column: KanbanColumnType, linkedIssueKey?: string) =>
+    ipcRenderer.invoke('kanban:createItem', title, description, column, linkedIssueKey),
+  updateKanbanItem: (id: number, title: string, description: string, linkedIssueKey?: string) =>
+    ipcRenderer.invoke('kanban:updateItem', id, title, description, linkedIssueKey),
+  moveKanbanItem: (id: number, newColumn: KanbanColumnType, newPosition: number) =>
+    ipcRenderer.invoke('kanban:moveItem', id, newColumn, newPosition),
+  deleteKanbanItem: (id: number) => ipcRenderer.invoke('kanban:deleteItem', id),
 });
 
 declare global {
@@ -47,6 +58,12 @@ declare global {
       updateTimeTrackingRecord: (record: TimeTrackingRecord) => Promise<{ success: boolean }>;
       deleteTimeTrackingRecord: (id: number) => Promise<{ success: boolean }>;
       markAsUploaded: (id: number) => Promise<{ success: boolean }>;
+      getAllKanbanItems: () => Promise<KanbanItem[]>;
+      getKanbanItemsByColumn: (column: KanbanColumnType) => Promise<KanbanItem[]>;
+      createKanbanItem: (title: string, description: string, column: KanbanColumnType, linkedIssueKey?: string) => Promise<KanbanItem>;
+      updateKanbanItem: (id: number, title: string, description: string, linkedIssueKey?: string) => Promise<{ success: boolean }>;
+      moveKanbanItem: (id: number, newColumn: KanbanColumnType, newPosition: number) => Promise<{ success: boolean }>;
+      deleteKanbanItem: (id: number) => Promise<{ success: boolean }>;
     };
   }
 }

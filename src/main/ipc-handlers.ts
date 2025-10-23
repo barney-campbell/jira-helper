@@ -2,11 +2,13 @@ import { ipcMain, shell } from 'electron';
 import { JiraService } from './services/jira-service';
 import { TimeTrackingService } from './services/time-tracking-service';
 import { SettingsService } from './services/settings-service';
-import type { UserSettings } from '../common/types';
+import { KanbanService } from './services/kanban-service';
+import type { UserSettings, KanbanColumnType } from '../common/types';
 
 let jiraService: JiraService | null = null;
 const timeTrackingService = new TimeTrackingService();
 const settingsService = new SettingsService();
+const kanbanService = new KanbanService();
 
 export function registerIpcHandlers() {
   // Initialize Jira service with settings
@@ -93,6 +95,34 @@ export function registerIpcHandlers() {
 
   ipcMain.handle('timeTracking:markAsUploaded', async (_, id: number) => {
     timeTrackingService.markAsUploaded(id);
+    return { success: true };
+  });
+
+  // Kanban handlers
+  ipcMain.handle('kanban:getAllItems', async () => {
+    return kanbanService.getAllItems();
+  });
+
+  ipcMain.handle('kanban:getItemsByColumn', async (_, column: KanbanColumnType) => {
+    return kanbanService.getItemsByColumn(column);
+  });
+
+  ipcMain.handle('kanban:createItem', async (_, title: string, description: string, column: KanbanColumnType, linkedIssueKey?: string) => {
+    return kanbanService.createItem(title, description, column, linkedIssueKey);
+  });
+
+  ipcMain.handle('kanban:updateItem', async (_, id: number, title: string, description: string, linkedIssueKey?: string) => {
+    kanbanService.updateItem(id, title, description, linkedIssueKey);
+    return { success: true };
+  });
+
+  ipcMain.handle('kanban:moveItem', async (_, id: number, newColumn: KanbanColumnType, newPosition: number) => {
+    kanbanService.moveItem(id, newColumn, newPosition);
+    return { success: true };
+  });
+
+  ipcMain.handle('kanban:deleteItem', async (_, id: number) => {
+    kanbanService.deleteItem(id);
     return { success: true };
   });
 }
