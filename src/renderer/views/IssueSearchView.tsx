@@ -1,10 +1,38 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { DataGrid, Column } from '../components/DataGrid';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import type { JiraIssue } from '../../common/types';
-import '../styles/views.css';
+
+const ViewContainer = styled.div`
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin-bottom: 20px;
+  }
+`;
+
+const SearchBar = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const SearchInput = styled(Input)`
+  flex: 1;
+`;
+
+const ResultText = styled.div`
+  margin-bottom: 15px;
+  color: #666;
+  font-size: 14px;
+`;
 
 interface IssueSearchViewProps {
   onIssueDoubleClick: (issue: JiraIssue) => void;
@@ -64,23 +92,22 @@ export const IssueSearchView: React.FC<IssueSearchViewProps> = ({ onIssueDoubleC
   ];
 
   return (
-    <div className="search-view">
+    <ViewContainer>
       <h2>Search Jira Issues</h2>
-      <div className="search-bar">
-        <Input
+      <SearchBar>
+        <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
           placeholder="Enter key (JRA-1234) or search term"
           onKeyDown={handleKeyDown}
-          className="search-input"
         />
         <Button onClick={handleSearch} disabled={loading}>
           Search
         </Button>
         {loading && <LoadingSpinner size="small" />}
-      </div>
-      {resultText && <div className="result-text">{resultText}</div>}
+      </SearchBar>
+      {resultText && <ResultText>{resultText}</ResultText>}
       <DataGrid columns={columns} data={results} onRowDoubleClick={onIssueDoubleClick} />
-    </div>
+    </ViewContainer>
   );
 };

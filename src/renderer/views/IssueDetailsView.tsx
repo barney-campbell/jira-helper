@@ -1,10 +1,164 @@
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { DataGrid, Column } from '../components/DataGrid';
 import { Modal } from '../components/Modal';
 import { Input } from '../components/Input';
 import type { JiraIssue, TimeTrackingRecord, JiraWorklog, TimeTrackingDisplay } from '../../common/types';
-import '../styles/views.css';
+
+const ViewContainer = styled.div`
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const IssueContent = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const IssueInfo = styled.div`
+  min-width: 0;
+`;
+
+const InfoRow = styled.div`
+  margin-bottom: 15px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+
+  strong {
+    display: inline-block;
+    width: 120px;
+    font-weight: 600;
+  }
+`;
+
+const DescriptionSection = styled.div`
+  margin-top: 30px;
+
+  > strong {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+`;
+
+const DescriptionContent = styled.div`
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+`;
+
+const TextBlock = styled.div`
+  margin: 5px 0;
+  line-height: 1.5;
+`;
+
+const CodeBlock = styled.div`
+  background-color: #2d3030;
+  color: #f8f8f2;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  margin: 10px 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+`;
+
+const CommentsSection = styled.div`
+  margin-top: 30px;
+
+  > strong {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+`;
+
+const CommentsList = styled.div`
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+`;
+
+const Comment = styled.div`
+  padding: 15px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 15px;
+`;
+
+const CommentHeader = styled.div`
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 14px;
+`;
+
+const CommentUpdated = styled.span`
+  color: #666;
+  font-size: 12px;
+`;
+
+const CommentBody = styled.div`
+  color: #555;
+  line-height: 1.5;
+`;
+
+const TimeTrackingPanel = styled.div`
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+`;
+
+const TrackingButtons = styled.div`
+  margin-bottom: 20px;
+`;
+
+const TotalTime = styled.div`
+  margin-bottom: 20px;
+  font-size: 16px;
+
+  strong {
+    display: block;
+    margin-bottom: 5px;
+  }
+`;
+
+const TrackingRecords = styled.div`
+  > strong {
+    display: block;
+    margin-bottom: 10px;
+  }
+`;
+
+const Loading = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 18px;
+  color: #666;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+`;
 
 interface IssueDetailsViewProps {
   issueKey: string;
@@ -188,6 +342,11 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
     return formatDuration(totalSeconds);
   };
 
+  const openInJira = (url: string, issueKey: string) => {
+    const fullUrl = `${url}/browse/${issueKey}`;
+    window.electronAPI.openExternal(fullUrl);
+  }
+
   const timeTrackingColumns: Column<TimeTrackingDisplay>[] = [
     { header: 'Started', accessor: 'started', width: '200px' },
     { header: 'Duration', accessor: 'duration', width: '200px' },
@@ -216,93 +375,97 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
   ];
 
   if (!issue) {
-    return <div className="loading">Loading issue...</div>;
+    return <Loading>Loading issue...</Loading>;
   }
 
   return (
-    <div className="issue-details-view">
-      <div className="issue-content">
-        <div className="issue-info">
-          <div className="info-row">
+    <ViewContainer>
+      <IssueContent>
+        <IssueInfo>
+          <InfoRow>
             <strong>Key:</strong> <span>{issue.key}</span>
-          </div>
-          <div className="info-row">
+          </InfoRow>
+          <InfoRow>
             <strong>Summary:</strong> <span>{issue.summary}</span>
-          </div>
-          <div className="info-row">
+          </InfoRow>
+          <InfoRow>
             <strong>Status:</strong> <span>{issue.status}</span>
-          </div>
-          <div className="info-row">
+          </InfoRow>
+          <InfoRow>
             <strong>Assignee:</strong> <span>{issue.assignee}</span>
-          </div>
-          <div className="info-row">
+          </InfoRow>
+          <InfoRow>
             <strong>Web Link:</strong>{' '}
             <Button onClick={() => {
               if (baseUrl) {
-                window.open(`${baseUrl}/browse/${issue.key}`, '_blank');
+                openInJira(baseUrl, issue.key);
               }
             }}>
               View in Jira
             </Button>
-          </div>
+          </InfoRow>
 
-          <div className="description-section">
+          <DescriptionSection>
             <strong>Description:</strong>
-            <div className="description-content">
+            <DescriptionContent>
               {issue.descriptionBlocks?.map((block, index) => (
-                <div key={index} className={block.isCode ? 'code-block' : 'text-block'}>
-                  {block.text}
-                </div>
+                block.isCode ? (
+                  <CodeBlock key={index}>{block.text}</CodeBlock>
+                ) : (
+                  <TextBlock key={index}>{block.text}</TextBlock>
+                )
               ))}
-            </div>
-          </div>
+            </DescriptionContent>
+          </DescriptionSection>
 
-          <div className="comments-section">
+          <CommentsSection>
             <strong>Comments:</strong>
-            <div className="comments-list">
+            <CommentsList>
               {issue.comments?.map((comment, index) => (
-                <div key={index} className="comment">
-                  <div className="comment-header">
+                <Comment key={index}>
+                  <CommentHeader>
                     <strong>{comment.author}</strong>
                     <span> - {new Date(comment.created).toLocaleString()}</span>
                     {comment.updated && (
-                      <span className="comment-updated">
+                      <CommentUpdated>
                         {' '}(Updated: {new Date(comment.updated).toLocaleString()})
-                      </span>
+                      </CommentUpdated>
                     )}
-                  </div>
-                  <div className="comment-body">
+                  </CommentHeader>
+                  <CommentBody>
                     {comment.bodyBlocks.map((block, blockIndex) => (
-                      <div key={blockIndex} className={block.isCode ? 'code-block' : 'text-block'}>
-                        {block.text}
-                      </div>
+                      block.isCode ? (
+                        <CodeBlock key={blockIndex}>{block.text}</CodeBlock>
+                      ) : (
+                        <TextBlock key={blockIndex}>{block.text}</TextBlock>
+                      )
                     ))}
-                  </div>
-                </div>
+                  </CommentBody>
+                </Comment>
               ))}
-            </div>
-          </div>
-        </div>
+            </CommentsList>
+          </CommentsSection>
+        </IssueInfo>
 
-        <div className="time-tracking-panel">
-          <div className="tracking-buttons">
+        <TimeTrackingPanel>
+          <TrackingButtons>
             {!isTracking ? (
               <Button onClick={handleStartTracking}>Start Time Tracking</Button>
             ) : (
               <Button onClick={handleStopTracking} variant="secondary">Stop Time Tracking</Button>
             )}
-          </div>
+          </TrackingButtons>
           
-          <div className="total-time">
+          <TotalTime>
             <strong>Total Time:</strong> {getTotalTime()}
-          </div>
+          </TotalTime>
 
-          <div className="tracking-records">
+          <TrackingRecords>
             <strong>Time Tracking Records:</strong>
             <DataGrid columns={timeTrackingColumns} data={getDisplayRecords()} />
-          </div>
-        </div>
-      </div>
+          </TrackingRecords>
+        </TimeTrackingPanel>
+      </IssueContent>
 
       <Modal
         isOpen={editModalOpen}
@@ -315,7 +478,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
           </>
         }
       >
-        <div className="form-group">
+        <FormGroup>
           <label>Start Time:</label>
           <Input
             type="text"
@@ -323,8 +486,8 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
             onChange={setEditStartTime}
             placeholder="YYYY-MM-DDTHH:mm:ss"
           />
-        </div>
-        <div className="form-group">
+        </FormGroup>
+        <FormGroup>
           <label>End Time:</label>
           <Input
             type="text"
@@ -332,8 +495,8 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
             onChange={setEditEndTime}
             placeholder="YYYY-MM-DDTHH:mm:ss"
           />
-        </div>
+        </FormGroup>
       </Modal>
-    </div>
+    </ViewContainer>
   );
 };

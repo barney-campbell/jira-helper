@@ -2,6 +2,9 @@ import { contextBridge, ipcRenderer } from 'electron';
 import type { UserSettings, TimeTrackingRecord } from '../common/types';
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  // Native
+  openExternal: (url: string) => ipcRenderer.invoke('native:openExternal', url),
+
   // Settings
   loadSettings: () => ipcRenderer.invoke('settings:load'),
   saveSettings: (settings: UserSettings) => ipcRenderer.invoke('settings:save', settings),
@@ -28,6 +31,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 declare global {
   interface Window {
     electronAPI: {
+      openExternal: (url: string) => Promise<void>;
       loadSettings: () => Promise<UserSettings | null>;
       saveSettings: (settings: UserSettings) => Promise<{ success: boolean }>;
       getAssignedIssues: (user: string) => Promise<any[]>;

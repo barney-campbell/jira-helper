@@ -1,9 +1,34 @@
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { DataGrid, Column } from '../components/DataGrid';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import type { JiraIssue } from '../../common/types';
-import '../styles/views.css';
+
+const ViewContainer = styled.div`
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin-bottom: 20px;
+  }
+`;
+
+const ViewHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const UpdatedInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+`;
 
 interface AssignedIssuesViewProps {
   onIssueDoubleClick: (issue: JiraIssue) => void;
@@ -39,10 +64,10 @@ export const AssignedIssuesView: React.FC<AssignedIssuesViewProps> = ({ onIssueD
   ];
 
   return (
-    <div className="assigned-issues-view">
+    <ViewContainer>
       <h2>Assigned Jira Issues</h2>
-      <div className="view-header">
-        <div className="updated-info">
+      <ViewHeader>
+        <UpdatedInfo>
           {lastUpdated && (
             <>
               <span>Updated: </span>
@@ -50,12 +75,12 @@ export const AssignedIssuesView: React.FC<AssignedIssuesViewProps> = ({ onIssueD
             </>
           )}
           {loading && <LoadingSpinner size="small" />}
-        </div>
+        </UpdatedInfo>
         <Button onClick={loadIssues} disabled={loading}>
           Refresh
         </Button>
-      </div>
+      </ViewHeader>
       <DataGrid columns={columns} data={issues} onRowDoubleClick={onIssueDoubleClick} />
-    </div>
+    </ViewContainer>
   );
 };

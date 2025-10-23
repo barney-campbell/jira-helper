@@ -1,8 +1,45 @@
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import type { UserSettings } from '../../common/types';
-import '../styles/views.css';
+
+const SettingsContainer = styled.div`
+  max-width: 600px;
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin-bottom: 25px;
+  }
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+`;
+
+const Message = styled.div`
+  padding: 10px;
+  margin: 15px 0;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  color: #155724;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+`;
 
 interface SettingsViewProps {
   onSave: () => void;
@@ -40,17 +77,17 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSave }) => {
   };
 
   return (
-    <div className="settings-view">
+    <SettingsContainer>
       <h2>Settings</h2>
-      <div className="form-group">
+      <FormGroup>
         <label>Base URL:</label>
         <Input
           value={settings.baseUrl}
           onChange={(value) => setSettings({ ...settings, baseUrl: value })}
           placeholder="https://your-domain.atlassian.net"
         />
-      </div>
-      <div className="form-group">
+      </FormGroup>
+      <FormGroup>
         <label>Email:</label>
         <Input
           type="email"
@@ -58,8 +95,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSave }) => {
           onChange={(value) => setSettings({ ...settings, email: value })}
           placeholder="your-email@example.com"
         />
-      </div>
-      <div className="form-group">
+      </FormGroup>
+      <FormGroup>
         <label>API Token:</label>
         <Input
           type="password"
@@ -67,11 +104,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSave }) => {
           onChange={(value) => setSettings({ ...settings, apiToken: value })}
           placeholder="Your Jira API token"
         />
-      </div>
-      {message && <div className="message">{message}</div>}
-      <div className="button-group">
+      </FormGroup>
+      {message && <Message>{message}</Message>}
+      <ButtonGroup>
         <Button onClick={handleSave}>Save</Button>
-      </div>
-    </div>
+      </ButtonGroup>
+    </SettingsContainer>
   );
 };
