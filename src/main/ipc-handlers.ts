@@ -107,6 +107,10 @@ export function registerIpcHandlers() {
     return kanbanService.getItemsByColumn(column);
   });
 
+  ipcMain.handle('kanban:getItemsByIssue', async (_, issueKey: string) => {
+    return kanbanService.getItemsByLinkedIssue(issueKey);
+  });
+
   ipcMain.handle('kanban:createItem', async (_, title: string, description: string, column: KanbanColumnType, linkedIssueKey?: string) => {
     return kanbanService.createItem(title, description, column, linkedIssueKey);
   });

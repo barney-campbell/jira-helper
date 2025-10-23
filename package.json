@@ -33,7 +33,6 @@
   "dependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "better-sqlite3": "^12.4.1",
-    "electron": "^38.3.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "styled-components": "^6.1.19"
@@ -45,6 +44,7 @@
     "@vitejs/plugin-react": "^5.0.4",
     "cross-env": "^10.1.0",
     "css-loader": "^7.1.2",
+    "electron": "^38.3.0",
     "electron-builder": "^26.0.12",
     "electron-rebuild": "^3.2.9",
     "style-loader": "^4.0.0",

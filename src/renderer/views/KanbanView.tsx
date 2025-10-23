@@ -349,6 +349,7 @@ export const KanbanView: React.FC = () => {
                             {item.linkedIssueKey}
                           </div>
                         )}
+                        {!item.linkedIssueKey && <div></div>}
                         <div className="actions">
                           <button
                             className="action-btn"

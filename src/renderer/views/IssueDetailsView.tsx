@@ -4,7 +4,7 @@ import { Button } from '../components/Button';
 import { DataGrid, Column } from '../components/DataGrid';
 import { Modal } from '../components/Modal';
 import { Input } from '../components/Input';
-import type { JiraIssue, TimeTrackingRecord, JiraWorklog, TimeTrackingDisplay } from '../../common/types';
+import type { JiraIssue, TimeTrackingRecord, JiraWorklog, TimeTrackingDisplay, KanbanItem } from '../../common/types';
 
 const ViewContainer = styled.div`
   background-color: white;
@@ -160,6 +160,79 @@ const FormGroup = styled.div`
   }
 `;
 
+const LinkedKanbanSection = styled.div`
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f0f7ff;
+  border-radius: 8px;
+  border: 1px solid #d0e7ff;
+
+  > strong {
+    display: block;
+    margin-bottom: 15px;
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+  }
+`;
+
+const KanbanItemsList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const KanbanItemCard = styled.div`
+  background-color: white;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const KanbanItemHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const KanbanItemTitle = styled.h4`
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+`;
+
+const KanbanItemColumn = styled.span<{ column: string }>`
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: ${props => 
+    props.column === 'todo' ? '#fef3c7' :
+    props.column === 'inProgress' ? '#dbeafe' :
+    '#d1fae5'};
+  color: ${props => 
+    props.column === 'todo' ? '#92400e' :
+    props.column === 'inProgress' ? '#1e40af' :
+    '#065f46'};
+`;
+
+const KanbanItemDescription = styled.p`
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+`;
+
+const NoKanbanItems = styled.p`
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+`;
+
 interface IssueDetailsViewProps {
   issueKey: string;
 }
@@ -174,11 +247,13 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
   const [editingRecord, setEditingRecord] = useState<TimeTrackingRecord | null>(null);
   const [editStartTime, setEditStartTime] = useState('');
   const [editEndTime, setEditEndTime] = useState('');
+  const [kanbanItems, setKanbanItems] = useState<KanbanItem[]>([]);
 
   useEffect(() => {
     loadIssue();
     loadTimeTracking();
     loadBaseUrl();
+    loadKanbanItems();
 
     const interval = setInterval(loadTimeTracking, 1000);
     return () => clearInterval(interval);
@@ -190,6 +265,15 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
       setIssue(data);
     } catch (error) {
       console.error('Error loading issue:', error);
+    }
+  };
+
+  const loadKanbanItems = async () => {
+    try {
+      const items = await window.electronAPI.getKanbanItemsByIssue(issueKey);
+      setKanbanItems(items);
+    } catch (error) {
+      console.error('Error loading kanban items:', error);
     }
   };
 
@@ -287,6 +371,19 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
   const formatDateTime = (date: Date): string => {
     const d = new Date(date);
     return d.toISOString().replace('T', ' ').substring(0, 19);
+  };
+
+  const getColumnDisplayName = (column: string): string => {
+    switch (column) {
+      case 'todo':
+        return 'To Do';
+      case 'inProgress':
+        return 'In Progress';
+      case 'done':
+        return 'Done';
+      default:
+        return column;
+    }
   };
 
   const getDisplayRecords = (): TimeTrackingDisplay[] => {
@@ -447,24 +544,49 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
           </CommentsSection>
         </IssueInfo>
 
-        <TimeTrackingPanel>
-          <TrackingButtons>
-            {!isTracking ? (
-              <Button onClick={handleStartTracking}>Start Time Tracking</Button>
-            ) : (
-              <Button onClick={handleStopTracking} variant="secondary">Stop Time Tracking</Button>
-            )}
-          </TrackingButtons>
-          
-          <TotalTime>
-            <strong>Total Time:</strong> {getTotalTime()}
-          </TotalTime>
+        <div>
+          <TimeTrackingPanel>
+            <TrackingButtons>
+              {!isTracking ? (
+                <Button onClick={handleStartTracking}>Start Time Tracking</Button>
+              ) : (
+                <Button onClick={handleStopTracking} variant="secondary">Stop Time Tracking</Button>
+              )}
+            </TrackingButtons>
+            
+            <TotalTime>
+              <strong>Total Time:</strong> {getTotalTime()}
+            </TotalTime>
 
-          <TrackingRecords>
-            <strong>Time Tracking Records:</strong>
-            <DataGrid columns={timeTrackingColumns} data={getDisplayRecords()} />
-          </TrackingRecords>
-        </TimeTrackingPanel>
+            <TrackingRecords>
+              <strong>Time Tracking Records:</strong>
+              <DataGrid columns={timeTrackingColumns} data={getDisplayRecords()} />
+            </TrackingRecords>
+          </TimeTrackingPanel>
+
+          <LinkedKanbanSection>
+            <strong>🗂️ Linked Kanban Items ({kanbanItems.length})</strong>
+            {kanbanItems.length > 0 ? (
+              <KanbanItemsList>
+                {kanbanItems.map((item) => (
+                  <KanbanItemCard key={item.id}>
+                    <KanbanItemHeader>
+                      <KanbanItemTitle>{item.title}</KanbanItemTitle>
+                      <KanbanItemColumn column={item.column}>
+                        {getColumnDisplayName(item.column)}
+                      </KanbanItemColumn>
+                    </KanbanItemHeader>
+                    {item.description && (
+                      <KanbanItemDescription>{item.description}</KanbanItemDescription>
+                    )}
+                  </KanbanItemCard>
+                ))}
+              </KanbanItemsList>
+            ) : (
+              <NoKanbanItems>No Kanban items linked to this issue</NoKanbanItems>
+            )}
+          </LinkedKanbanSection>
+        </div>
       </IssueContent>
 
       <Modal

@@ -47,6 +47,16 @@ export class KanbanService {
     return rows.map(row => this.mapRowToItem(row));
   }
 
+  getItemsByLinkedIssue(issueKey: string): KanbanItem[] {
+    const rows = this.db.prepare(`
+      SELECT * FROM KanbanItems 
+      WHERE LinkedIssueKey = ?
+      ORDER BY Column, Position
+    `).all(issueKey) as any[];
+
+    return rows.map(row => this.mapRowToItem(row));
+  }
+
   createItem(title: string, description: string, column: KanbanColumnType, linkedIssueKey?: string): KanbanItem {
     const now = new Date().toISOString();
     

@@ -30,6 +30,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Kanban
   getAllKanbanItems: () => ipcRenderer.invoke('kanban:getAllItems'),
   getKanbanItemsByColumn: (column: KanbanColumnType) => ipcRenderer.invoke('kanban:getItemsByColumn', column),
+  getKanbanItemsByIssue: (issueKey: string) => ipcRenderer.invoke('kanban:getItemsByIssue', issueKey),
   createKanbanItem: (title: string, description: string, column: KanbanColumnType, linkedIssueKey?: string) =>
     ipcRenderer.invoke('kanban:createItem', title, description, column, linkedIssueKey),
   updateKanbanItem: (id: number, title: string, description: string, linkedIssueKey?: string) =>
@@ -60,6 +61,7 @@ declare global {
       markAsUploaded: (id: number) => Promise<{ success: boolean }>;
       getAllKanbanItems: () => Promise<KanbanItem[]>;
       getKanbanItemsByColumn: (column: KanbanColumnType) => Promise<KanbanItem[]>;
+      getKanbanItemsByIssue: (issueKey: string) => Promise<KanbanItem[]>;
       createKanbanItem: (title: string, description: string, column: KanbanColumnType, linkedIssueKey?: string) => Promise<KanbanItem>;
       updateKanbanItem: (id: number, title: string, description: string, linkedIssueKey?: string) => Promise<{ success: boolean }>;
       moveKanbanItem: (id: number, newColumn: KanbanColumnType, newPosition: number) => Promise<{ success: boolean }>;
