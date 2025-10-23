@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - master-electron
-  pull_request:
-    branches:
-      - master-electron
 
 jobs:
   build:
