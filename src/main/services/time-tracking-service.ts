@@ -26,13 +26,6 @@ export class TimeTrackingService {
   }
 
   startTracking(issueKey: string): void {
-    // Stop any active tracking
-    const active = this.db.prepare('SELECT * FROM TimeTrackingRecords WHERE EndTime IS NULL').get() as any;
-    if (active) {
-      const now = new Date().toISOString();
-      this.db.prepare('UPDATE TimeTrackingRecords SET EndTime = ? WHERE Id = ?').run(now, active.Id);
-    }
-
     // Start new tracking
     const now = new Date().toISOString();
     this.db.prepare(`
