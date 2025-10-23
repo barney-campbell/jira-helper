@@ -31,7 +31,16 @@ export const UnuploadedTimeTrackingWidget: React.FC = () => {
   useEffect(() => {
     loadRecords();
     const interval = setInterval(loadRecords, 1000);
-    return () => clearInterval(interval);
+    
+    // Set up listener for time tracking changes
+    const removeListener = window.electronAPI.onTimeTrackingChanged(() => {
+      loadRecords();
+    });
+
+    return () => {
+      clearInterval(interval);
+      removeListener();
+    };
   }, []);
 
   const loadRecords = async () => {

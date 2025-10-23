@@ -6,3 +6,4 @@ export type { Column } from './DataGrid';
 export { LoadingSpinner } from './LoadingSpinner';
 export { Modal } from './Modal';
 export { UnuploadedTimeTrackingWidget } from './UnuploadedTimeTrackingWidget';
+export { ActiveTimeTrackingWidget } from './ActiveTimeTrackingWidget';
