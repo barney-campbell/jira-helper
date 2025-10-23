@@ -230,9 +230,8 @@ export const KanbanItemModal: React.FC<KanbanItemModalProps> = ({ isOpen, item, 
         <Input
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={setTitle}
           placeholder="Enter item title"
-          autoFocus
         />
       </FormGroup>
 
@@ -268,9 +267,9 @@ export const KanbanItemModal: React.FC<KanbanItemModalProps> = ({ isOpen, item, 
             <SearchInput
               type="text"
               value={issueSearchKey}
-              onChange={(e) => setIssueSearchKey(e.target.value)}
+              onChange={setIssueSearchKey}
               placeholder="Enter Jira issue key (e.g., PROJ-123)"
-              onKeyPress={(e) => {
+              onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleSearchIssue();
                 }
