@@ -5,6 +5,7 @@ export { DataGrid } from './DataGrid';
 export type { Column } from './DataGrid';
 export { LoadingSpinner } from './LoadingSpinner';
 export { Modal } from './Modal';
+export { WidgetContainer, WidgetFooter } from './Widget';
 export { UnuploadedTimeTrackingWidget } from './UnuploadedTimeTrackingWidget';
 export { ActiveTimeTrackingWidget } from './ActiveTimeTrackingWidget';
 export { YesterdayTimeTrackingWidget } from './YesterdayTimeTrackingWidget';
