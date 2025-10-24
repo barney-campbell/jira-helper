@@ -73,6 +73,41 @@ export class TimeTrackingService {
     return rows.map(row => this.mapRowToRecord(row));
   }
 
+  getYesterdayRecords(): TimeTrackingRecord[] {
+    // Calculate yesterday's date (previous weekday)
+    const today = new Date();
+    const yesterday = new Date(today);
+    
+    // If it's Monday (1), go back to Friday (3 days back)
+    if (today.getDay() === 1) {
+      yesterday.setDate(today.getDate() - 3);
+    }
+    // If it's Sunday (0), go back to Friday (2 days back)
+    else if (today.getDay() === 0) {
+      yesterday.setDate(today.getDate() - 2);
+    }
+    // Otherwise, just go back one day
+    else {
+      yesterday.setDate(today.getDate() - 1);
+    }
+    
+    // Set time to start of day (00:00:00)
+    yesterday.setHours(0, 0, 0, 0);
+    const startOfYesterday = yesterday.toISOString();
+    
+    // Set time to end of day (23:59:59)
+    yesterday.setHours(23, 59, 59, 999);
+    const endOfYesterday = yesterday.toISOString();
+
+    const rows = this.db.prepare(`
+      SELECT * FROM TimeTrackingRecords 
+      WHERE StartTime >= ? AND StartTime <= ?
+      ORDER BY StartTime DESC
+    `).all(startOfYesterday, endOfYesterday) as any[];
+
+    return rows.map(row => this.mapRowToRecord(row));
+  }
+
   stopTrackingById(id: number): void {
     const now = new Date().toISOString();
     this.db.prepare(`

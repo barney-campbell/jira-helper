@@ -1,27 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { Button } from './Button';
 import { DataGrid, Column } from './DataGrid';
 import { LoadingSpinner } from './LoadingSpinner';
+import { WidgetContainer, WidgetFooter } from './Widget';
 import type { TimeTrackingRecord } from '../../common/types';
-
-const WidgetContainer = styled.div`
-  background-color: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  h3 {
-    margin-bottom: 15px;
-    font-size: 18px;
-  }
-`;
-
-const WidgetFooter = styled.div`
-  margin-top: 15px;
-  display: flex;
-  justify-content: flex-end;
-`;
 
 export const UnuploadedTimeTrackingWidget: React.FC = () => {
   const [records, setRecords] = useState<TimeTrackingRecord[]>([]);
