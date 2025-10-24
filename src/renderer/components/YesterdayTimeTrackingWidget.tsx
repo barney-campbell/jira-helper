@@ -82,13 +82,20 @@ export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetPr
     }
   };
 
-  const columns: Column<any>[] = [
+  type DisplayRecord = {
+    id: number;
+    issueKey: string;
+    startTime: string;
+    elapsed: string;
+  };
+
+  const columns: Column<DisplayRecord>[] = [
     { header: 'Issue Key', accessor: 'issueKey', width: '30%' },
     { header: 'Started', accessor: 'startTime', width: '40%' },
     { header: 'Duration', accessor: 'elapsed', width: '30%' }
   ];
 
-  const displayData = records.map(record => ({
+  const displayData: DisplayRecord[] = records.map(record => ({
     id: record.id,
     issueKey: record.issueKey,
     startTime: formatDateTime(record.startTime),

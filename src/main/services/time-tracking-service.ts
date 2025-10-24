@@ -78,16 +78,17 @@ export class TimeTrackingService {
     const today = new Date();
     const yesterday = new Date(today);
     
-    // Go back one day
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    // If it's Monday (1), go back to Friday (3 days back total)
+    // If it's Monday (1), go back to Friday (3 days back)
     if (today.getDay() === 1) {
       yesterday.setDate(today.getDate() - 3);
     }
-    // If it's Sunday (0), go back to Friday (2 days back from Saturday)
+    // If it's Sunday (0), go back to Friday (2 days back)
     else if (today.getDay() === 0) {
       yesterday.setDate(today.getDate() - 2);
+    }
+    // Otherwise, just go back one day
+    else {
+      yesterday.setDate(today.getDate() - 1);
     }
     
     // Set time to start of day (00:00:00)
