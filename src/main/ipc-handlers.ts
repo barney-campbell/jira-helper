@@ -102,6 +102,10 @@ export function registerIpcHandlers() {
     return timeTrackingService.getActiveRecords();
   });
 
+  ipcMain.handle('timeTracking:getYesterdayRecords', async () => {
+    return timeTrackingService.getYesterdayRecords();
+  });
+
   ipcMain.handle('timeTracking:updateRecord', async (_, record: any) => {
     timeTrackingService.updateRecord(record);
     notifyTimeTrackingChanged();

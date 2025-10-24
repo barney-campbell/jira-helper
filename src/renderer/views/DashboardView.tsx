@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { UnuploadedTimeTrackingWidget } from '../components/UnuploadedTimeTrackingWidget';
 import { ActiveTimeTrackingWidget } from '../components/ActiveTimeTrackingWidget';
+import { YesterdayTimeTrackingWidget } from '../components/YesterdayTimeTrackingWidget';
 
 const DashboardContainer = styled.div`
   max-width: 1200px;
@@ -35,6 +36,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onIssueDoubleClick
       <DashboardWidgets>
         <ActiveTimeTrackingWidget onIssueDoubleClick={onIssueDoubleClick} />
         <UnuploadedTimeTrackingWidget />
+        <YesterdayTimeTrackingWidget onIssueDoubleClick={onIssueDoubleClick} />
       </DashboardWidgets>
     </DashboardContainer>
   );
