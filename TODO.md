@@ -1,8 +1,8 @@
 - [x] Keyword based search with JQL
-- [ ] Dashboard widget for today's time tracking
-- [ ] Dashboard widget for yesterday's time tracking (yesterday of Monday is Friday)
+- [x] Dashboard widget for today's time tracking
+- [x] Dashboard widget for yesterday's time tracking (yesterday of Monday is Friday)
 - [ ] Calendar view with time tracking for the week blocked out
-- [ ] Personal kanban board where issues can be added and moved along to determine what work to do
+- [x] Personal kanban board where issues can be added and moved along to determine what work to do
 - [x] Provide web links to view the issue online
 - [ ] Filtering for assigned issues and search results
 - [ ] Checking API connection
