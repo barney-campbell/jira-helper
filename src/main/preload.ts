@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { UserSettings, TimeTrackingRecord, KanbanItem, KanbanColumnType } from '../common/types';
+import type { UserSettings, TimeTrackingRecord, KanbanItem, KanbanColumnType, VersionInfo } from '../common/types';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Native
@@ -42,6 +42,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.invoke('kanban:moveItem', id, newColumn, newPosition),
   deleteKanbanItem: (id: number) => ipcRenderer.invoke('kanban:deleteItem', id),
 
+  // Version
+  getVersionInfo: () => ipcRenderer.invoke('version:getInfo'),
+  checkForUpdates: () => ipcRenderer.invoke('version:checkForUpdates'),
     
   // Event listeners
   onTimeTrackingChanged: (callback: () => void) => {
@@ -81,6 +84,8 @@ declare global {
       updateKanbanItem: (id: number, title: string, description: string, linkedIssueKey?: string) => Promise<{ success: boolean }>;
       moveKanbanItem: (id: number, newColumn: KanbanColumnType, newPosition: number) => Promise<{ success: boolean }>;
       deleteKanbanItem: (id: number) => Promise<{ success: boolean }>;
+      getVersionInfo: () => Promise<VersionInfo>;
+      checkForUpdates: () => Promise<VersionInfo>;
       onTimeTrackingChanged: (callback: () => void) => () => void;
     };
   }

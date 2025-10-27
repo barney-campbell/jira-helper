@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
-import type { UserSettings } from '../../common/types';
+import type { UserSettings, VersionInfo } from '../../common/types';
 
 const SettingsContainer = styled.div`
   max-width: 600px;
@@ -35,6 +35,36 @@ const Message = styled.div`
   color: #155724;
 `;
 
+const UpdateMessage = styled.div`
+  padding: 10px;
+  margin: 15px 0;
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+  border-radius: 4px;
+  color: #0c5460;
+`;
+
+const VersionContainer = styled.div`
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+
+  h3 {
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+`;
+
+const VersionText = styled.div`
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+
+  strong {
+    color: #333;
+  }
+`;
+
 const ButtonGroup = styled.div`
   display: flex;
   gap: 10px;
@@ -53,15 +83,33 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSave }) => {
     apiToken: ''
   });
   const [message, setMessage] = useState('');
+  const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
+  const [checkingUpdates, setCheckingUpdates] = useState(false);
 
   useEffect(() => {
     loadSettings();
+    loadVersionInfo();
   }, []);
 
   const loadSettings = async () => {
     const loaded = await window.electronAPI.loadSettings();
     if (loaded) {
       setSettings(loaded);
+    }
+  };
+
+  const loadVersionInfo = async () => {
+    const info = await window.electronAPI.getVersionInfo();
+    setVersionInfo(info);
+  };
+
+  const handleCheckForUpdates = async () => {
+    setCheckingUpdates(true);
+    try {
+      const info = await window.electronAPI.checkForUpdates();
+      setVersionInfo(info);
+    } finally {
+      setCheckingUpdates(false);
     }
   };
 
@@ -109,6 +157,33 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSave }) => {
       <ButtonGroup>
         <Button onClick={handleSave}>Save</Button>
       </ButtonGroup>
+
+      <VersionContainer>
+        <h3>Version Information</h3>
+        {versionInfo && (
+          <>
+            <VersionText>
+              <strong>Version:</strong> {versionInfo.version}
+              {versionInfo.isDev && ' (Development Build)'}
+            </VersionText>
+            {versionInfo.latestVersion && (
+              <VersionText>
+                <strong>Latest Version:</strong> {versionInfo.latestVersion}
+              </VersionText>
+            )}
+            {versionInfo.updateAvailable && (
+              <UpdateMessage>
+                A new version ({versionInfo.latestVersion}) is available!
+              </UpdateMessage>
+            )}
+            <ButtonGroup>
+              <Button onClick={handleCheckForUpdates} disabled={checkingUpdates}>
+                {checkingUpdates ? 'Checking...' : 'Check for Updates'}
+              </Button>
+            </ButtonGroup>
+          </>
+        )}
+      </VersionContainer>
     </SettingsContainer>
   );
 };
