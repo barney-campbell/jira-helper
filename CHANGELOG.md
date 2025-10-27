@@ -1,8 +1,14 @@
 # Next: 1.2.0
 
+### Planned
+
 - Better "empty" states
 - Filtering issues table
 - Logging and a log viewer in settings
+
+### Completed
+
+- Display version in settings, check git tags for updates
 
 # 1.1.0
 

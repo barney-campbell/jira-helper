@@ -63,3 +63,10 @@ export interface KanbanItem {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface VersionInfo {
+  version: string;
+  isDev: boolean;
+  updateAvailable?: boolean;
+  latestVersion?: string;
+}

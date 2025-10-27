@@ -8,3 +8,4 @@
 - [ ] Checking API connection
 - [ ] Proper messages when nothing can be loaded
 - [ ] Logging
+- [ ] When repo is public, test checking for an update
