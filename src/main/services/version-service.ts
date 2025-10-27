@@ -1,13 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { app } from 'electron';
-
-export interface VersionInfo {
-  version: string;
-  isDev: boolean;
-  updateAvailable?: boolean;
-  latestVersion?: string;
-}
+import type { VersionInfo } from '../../common/types';
 
 export class VersionService {
   private packageJson: any;
@@ -43,8 +37,23 @@ export class VersionService {
     const versionInfo = this.getVersionInfo();
     
     try {
+      // Get repository info from package.json or use default
+      const repository = this.packageJson.repository?.url || 
+                        this.packageJson.repository || 
+                        'https://github.com/barney-campbell/jira-helper';
+      
+      // Extract owner/repo from repository URL
+      const repoMatch = repository.match(/github\.com[\/:](.+?)(?:\.git)?$/);
+      if (!repoMatch) {
+        console.error('Could not parse repository URL:', repository);
+        return versionInfo;
+      }
+      
+      const repoPath = repoMatch[1];
+      const apiUrl = `https://api.github.com/repos/${repoPath}/releases/latest`;
+      
       // Fetch latest release from GitHub
-      const response = await fetch('https://api.github.com/repos/barney-campbell/jira-helper/releases/latest');
+      const response = await fetch(apiUrl);
       
       if (response.ok) {
         const data = await response.json();
@@ -61,9 +70,11 @@ export class VersionService {
   }
 
   private compareVersions(current: string, latest: string): number {
-    // Simple version comparison (assumes semantic versioning)
-    const currentParts = current.split('.').map(Number);
-    const latestParts = latest.split('.').map(Number);
+    // Extract version numbers before any pre-release identifiers
+    const cleanVersion = (v: string) => v.split('-')[0];
+    
+    const currentParts = cleanVersion(current).split('.').map(n => parseInt(n, 10) || 0);
+    const latestParts = cleanVersion(latest).split('.').map(n => parseInt(n, 10) || 0);
 
     for (let i = 0; i < Math.max(currentParts.length, latestParts.length); i++) {
       const currentPart = currentParts[i] || 0;
