@@ -12,16 +12,13 @@ export class VersionService {
 
   private loadPackageJson() {
     try {
-      // In production, package.json is in the app.asar or resources
-      // In development, it's in the project root
-      const packagePath = app.isPackaged
-        ? path.join(process.resourcesPath, 'package.json')
-        : path.join(__dirname, '../../../package.json');
+      const packagePath = path.join(app.getAppPath(), 'package.json');
       
       const packageContent = fs.readFileSync(packagePath, 'utf-8');
       this.packageJson = JSON.parse(packageContent);
     } catch (error) {
       console.error('Failed to load package.json:', error);
+      console.error('Attempted path:', path.join(app.getAppPath(), 'package.json'));
       this.packageJson = { version: 'unknown' };
     }
   }
@@ -39,8 +36,8 @@ export class VersionService {
     try {
       // Get repository info from package.json or use default
       const repository = this.packageJson.repository?.url || 
-                        this.packageJson.repository || 
-                        'https://github.com/barney-campbell/jira-helper';
+                          this.packageJson.repository || 
+                          'https://github.com/barney-campbell/jira-helper';
       
       // Extract owner/repo from repository URL
       const repoMatch = repository.match(/github\.com[\/:](.+?)(?:\.git)?$/);
