@@ -1,10 +1,10 @@
-# Next: 1.2.0
-
-### Planned
+# Planned
 
 - Better "empty" states
 - Filtering issues table
 - Logging and a log viewer in settings
+
+# Next: 1.2.0
 
 ### Added
 
