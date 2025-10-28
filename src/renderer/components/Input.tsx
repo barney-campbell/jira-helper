@@ -13,20 +13,22 @@ interface InputProps {
 
 const StyledInput = styled.input`
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid ${props => props.theme.colors.border};
   border-radius: 4px;
   font-size: 14px;
   width: 100%;
   box-sizing: border-box;
+  background-color: ${props => props.theme.colors.surface};
+  color: ${props => props.theme.colors.text};
 
   &:focus {
     outline: none;
-    border-color: #0052cc;
-    box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.1);
+    border-color: ${props => props.theme.colors.primary};
+    box-shadow: 0 0 0 2px ${props => props.theme.colors.primary}33;
   }
 
   &:disabled {
-    background-color: #f5f5f5;
+    background-color: ${props => props.theme.colors.surfaceHover};
     cursor: not-allowed;
   }
 `;

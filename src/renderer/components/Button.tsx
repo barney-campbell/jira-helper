@@ -26,29 +26,29 @@ const StyledButton = styled.button<{ $variant: 'primary' | 'secondary' | 'danger
   }
 
   ${props => props.$variant === 'primary' && `
-    background-color: #0052cc;
+    background-color: ${props.theme.colors.primary};
     color: white;
 
     &:hover:not(:disabled) {
-      background-color: #0747a6;
+      background-color: ${props.theme.colors.primaryHover};
     }
   `}
 
   ${props => props.$variant === 'secondary' && `
-    background-color: #6c757d;
+    background-color: ${props.theme.colors.secondary};
     color: white;
 
     &:hover:not(:disabled) {
-      background-color: #5a6268;
+      background-color: ${props.theme.colors.secondaryHover};
     }
   `}
 
   ${props => props.$variant === 'danger' && `
-    background-color: #dc3545;
+    background-color: ${props.theme.colors.danger};
     color: white;
 
     &:hover:not(:disabled) {
-      background-color: #c82333;
+      background-color: ${props.theme.colors.dangerHover};
     }
   `}
 `;

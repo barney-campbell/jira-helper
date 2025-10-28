@@ -1,8 +1,57 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 import * as path from 'path';
 import { registerIpcHandlers } from './ipc-handlers';
 
 let mainWindow: BrowserWindow | null = null;
+
+function createMenu() {
+  const template: any[] = [
+    {
+      label: 'View',
+      submenu: [
+        {
+          label: 'Toggle Light/Dark Theme',
+          click: () => {
+            if (mainWindow) {
+              mainWindow.webContents.send('menu:toggleTheme');
+            }
+          }
+        },
+        { type: 'separator' },
+        { role: 'reload' },
+        { role: 'forceReload' },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    }
+  ];
+
+  // Add standard menus on macOS
+  if (process.platform === 'darwin') {
+    template.unshift({
+      label: app.name,
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        { role: 'services' },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideOthers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    });
+  }
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -32,6 +81,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   registerIpcHandlers();
+  createMenu();
   createWindow();
 
   app.on('activate', () => {

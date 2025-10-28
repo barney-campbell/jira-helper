@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import React, { useState, useEffect } from 'react';
+import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { DashboardView } from './views/DashboardView';
 import { AssignedIssuesView } from './views/AssignedIssuesView';
 import { IssueSearchView } from './views/IssueSearchView';
 import { IssueDetailsView } from './views/IssueDetailsView';
 import { SettingsView } from './views/SettingsView';
 import { KanbanView } from './views/KanbanView';
-import type { ViewType, JiraIssue } from './types';
+import type { ViewType, JiraIssue, ThemeMode } from './types';
+import { lightTheme, darkTheme } from './theme';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -19,6 +20,8 @@ const GlobalStyle = createGlobalStyle`
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: ${props => props.theme.colors.background};
+    color: ${props => props.theme.colors.text};
   }
 
   /* Scrollbar Styling */
@@ -28,16 +31,16 @@ const GlobalStyle = createGlobalStyle`
   }
 
   ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: ${props => props.theme.colors.scrollbarTrack};
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: ${props => props.theme.colors.scrollbarThumb};
     border-radius: 5px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: ${props => props.theme.colors.scrollbarThumbHover};
   }
 `;
 
@@ -49,7 +52,7 @@ const AppContainer = styled.div`
 
 const Sidebar = styled.div`
   width: 70px;
-  background-color: #222;
+  background-color: ${props => props.theme.colors.sidebar};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -70,11 +73,11 @@ const SidebarButton = styled.button<{ $active: boolean }>`
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: ${props => props.theme.colors.sidebarButtonHover};
   }
 
   ${props => props.$active && `
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: ${props.theme.colors.sidebarButtonActive};
   `}
 
   .icon {
@@ -89,13 +92,43 @@ const SidebarSpacer = styled.div`
 const MainContent = styled.div`
   flex: 1;
   overflow: auto;
-  background-color: #f5f5f5;
+  background-color: ${props => props.theme.colors.background};
   padding: 20px;
 `;
 
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewType>('dashboard');
   const [selectedIssueKey, setSelectedIssueKey] = useState<string | null>(null);
+  const [themeMode, setThemeMode] = useState<ThemeMode>('light');
+
+  useEffect(() => {
+    loadTheme();
+    
+    // Listen for theme toggle from menu
+    const unsubscribe = window.electronAPI.onToggleTheme(() => {
+      const newTheme = themeMode === 'light' ? 'dark' : 'light';
+      handleThemeChange(newTheme);
+    });
+    
+    return () => {
+      unsubscribe();
+    };
+  }, [themeMode]);
+
+  const loadTheme = async () => {
+    const settings = await window.electronAPI.loadSettings();
+    if (settings?.theme) {
+      setThemeMode(settings.theme);
+    }
+  };
+
+  const handleThemeChange = async (newTheme: ThemeMode) => {
+    setThemeMode(newTheme);
+    const settings = await window.electronAPI.loadSettings();
+    if (settings) {
+      await window.electronAPI.saveSettings({ ...settings, theme: newTheme });
+    }
+  };
 
   const handleIssueDoubleClick = (issue: JiraIssue) => {
     setSelectedIssueKey(issue.key);
@@ -109,6 +142,7 @@ export const App: React.FC = () => {
 
   const handleSettingsSaved = () => {
     // Refresh the current view after settings are saved
+    loadTheme(); // Reload theme in case it was changed
     setCurrentView('dashboard');
   };
 
@@ -125,14 +159,16 @@ export const App: React.FC = () => {
       case 'kanban':
         return <KanbanView />;
       case 'settings':
-        return <SettingsView onSave={handleSettingsSaved} />;
+        return <SettingsView onSave={handleSettingsSaved} currentTheme={themeMode} onThemeChange={handleThemeChange} />;
       default:
         return <DashboardView onIssueDoubleClick={handleIssueKeyDoubleClick} />;
     }
   };
 
+  const theme = themeMode === 'dark' ? darkTheme : lightTheme;
+
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <GlobalStyle />
       <AppContainer>
         <Sidebar>
@@ -177,6 +213,6 @@ export const App: React.FC = () => {
           {renderView()}
         </MainContent>
       </AppContainer>
-    </>
+    </ThemeProvider>
   );
 };
