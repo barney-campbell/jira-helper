@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master-electron
+  workflow_dispatch:
 
 jobs:
   build:
@@ -50,28 +51,29 @@ jobs:
 
       - name: Get latest release tag
         id: get_release
+        shell: pwsh
         run: |
-          TAG=$(gh release list --limit 1 --repo "${{ github.repository }}" --json tagName --jq '.[0].tagName')
-          echo "LATEST_TAG=$TAG" >> $GITHUB_ENV
+          $TAG = gh release list --limit 1 --repo "${{ github.repository }}" --json tagName --jq '.[0].tagName'
+          echo "LATEST_TAG=$TAG" >> $env:GITHUB_ENV
 
       - name: Upload .exe and .msi to latest release
         if: env.LATEST_TAG != ''
+        shell: pwsh
         run: |
-          for file in release/*.exe release/*.msi; do
-            if [ -f "$file" ]; then
-              gh release upload "$LATEST_TAG" "$file" --repo "${{ github.repository }}" --clobber
-            fi
-          done
+          Get-ChildItem release/*.exe, release/*.msi | ForEach-Object {
+            gh release upload "$env:LATEST_TAG" $_.FullName --repo "${{ github.repository }}" --clobber
+          }
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload unpacked artifacts to latest release (optional)
         if: env.LATEST_TAG != ''
+        shell: pwsh
         run: |
-          for file in release/win-unpacked/*; do
-            if [ -f "$file" ]; then
-              gh release upload "$LATEST_TAG" "$file" --repo "${{ github.repository }}" --clobber
-            fi
-          done
+          Get-ChildItem release/win-unpacked/* | ForEach-Object {
+            if (Test-Path $_.FullName -PathType Leaf) {
+              gh release upload "$env:LATEST_TAG" $_.FullName --repo "${{ github.repository }}" --clobber
+            }
+          }
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
