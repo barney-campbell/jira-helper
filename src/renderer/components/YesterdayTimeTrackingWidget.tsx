@@ -9,6 +9,7 @@ interface YesterdayTimeTrackingWidgetProps {
 
 export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetProps> = ({ onIssueDoubleClick }) => {
   const [records, setRecords] = useState<TimeTrackingRecord[]>([]);
+  const [summaries, setSummaries] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadRecords();
@@ -27,6 +28,15 @@ export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetPr
     try {
       const data = await window.electronAPI.getYesterdayTimeTrackingRecords();
       setRecords(data);
+      
+      // Extract unique issue keys
+      const uniqueIssueKeys = Array.from(new Set(data.map(record => record.issueKey)));
+      
+      // Fetch summaries for unique issues
+      if (uniqueIssueKeys.length > 0) {
+        const fetchedSummaries = await window.electronAPI.getIssueSummaries(uniqueIssueKeys);
+        setSummaries(fetchedSummaries);
+      }
     } catch (error) {
       console.error('Error loading yesterday records:', error);
     }
@@ -73,19 +83,22 @@ export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetPr
   type DisplayRecord = {
     id: number;
     issueKey: string;
+    summary: string;
     startTime: string;
     elapsed: string;
   };
 
   const columns: Column<DisplayRecord>[] = [
-    { header: 'Issue Key', accessor: 'issueKey', width: '30%' },
-    { header: 'Started', accessor: 'startTime', width: '40%' },
-    { header: 'Duration', accessor: 'elapsed', width: '30%' }
+    { header: 'Issue Key', accessor: 'issueKey', width: '20%' },
+    { header: 'Summary', accessor: 'summary', width: '35%' },
+    { header: 'Started', accessor: 'startTime', width: '25%' },
+    { header: 'Duration', accessor: 'elapsed', width: '20%' }
   ];
 
   const displayData: DisplayRecord[] = records.map(record => ({
     id: record.id,
     issueKey: record.issueKey,
+    summary: summaries[record.issueKey] || 'Loading...',
     startTime: formatDateTime(record.startTime),
     elapsed: formatElapsed(record.startTime, record.endTime)
   }));

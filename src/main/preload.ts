@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Jira API
   getAssignedIssues: (user: string) => ipcRenderer.invoke('jira:getAssignedIssues', user),
   getIssue: (key: string) => ipcRenderer.invoke('jira:getIssue', key),
+  getIssueSummaries: (issueKeys: string[]) => ipcRenderer.invoke('jira:getIssueSummaries', issueKeys),
   searchIssues: (jql: string) => ipcRenderer.invoke('jira:searchIssues', jql),
   getWorklogs: (issueKey: string) => ipcRenderer.invoke('jira:getWorklogs', issueKey),
   uploadTimeTracking: (issueKey: string, timeSpentSeconds: number, started?: Date) =>
@@ -63,6 +64,7 @@ declare global {
       saveSettings: (settings: UserSettings) => Promise<{ success: boolean }>;
       getAssignedIssues: (user: string) => Promise<any[]>;
       getIssue: (key: string) => Promise<any>;
+      getIssueSummaries: (issueKeys: string[]) => Promise<Record<string, string>>;
       searchIssues: (jql: string) => Promise<any[]>;
       getWorklogs: (issueKey: string) => Promise<any[]>;
       uploadTimeTracking: (issueKey: string, timeSpentSeconds: number, started?: Date) => Promise<void>;

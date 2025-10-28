@@ -97,6 +97,42 @@ export class JiraService {
     };
   }
 
+  async getIssueSummaries(issueKeys: string[]): Promise<Record<string, string>> {
+    if (issueKeys.length === 0) {
+      return {};
+    }
+
+    try {
+      // Create a JQL query to fetch all issues at once
+      const jql = `key in (${issueKeys.join(',')})`;
+      const url = `${this.baseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=key,summary`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': this.authHeader,
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`HTTP error: ${response.status}\nResponse: ${text}`);
+      }
+
+      const data = await response.json();
+      const summaries: Record<string, string> = {};
+
+      for (const issue of data.issues) {
+        summaries[issue.key] = issue.fields.summary || '';
+      }
+
+      return summaries;
+    } catch (error) {
+      console.error('Error in getIssueSummaries:', error);
+      return {};
+    }
+  }
+
   async searchIssues(jql: string): Promise<JiraIssue[]> {
     try {
       const url = `${this.baseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=key,summary,status,assignee`;
