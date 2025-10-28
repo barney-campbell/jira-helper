@@ -73,19 +73,16 @@ jobs:
           # Commit the change
           git add package.json package-lock.json
           git commit -m "Bump version to $NEW_VERSION"
-          git push
       
       - name: Create and push tag
         run: |
           NEW_VERSION="${{ steps.version-check.outputs.new-version }}"
           
-          # If we just bumped the patch version, we need to pull the commit we just pushed
-          if [ "${{ steps.version-check.outputs.action }}" == "bump-patch" ]; then
-            git pull --rebase
-          fi
-          
           # Create tag
           git tag "v$NEW_VERSION"
+          
+          # Push both commit (if created) and tag
+          git push origin HEAD:master
           git push origin "v$NEW_VERSION"
           
           echo "Created and pushed tag v$NEW_VERSION"
