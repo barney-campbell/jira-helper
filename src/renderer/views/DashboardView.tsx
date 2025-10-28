@@ -25,6 +25,14 @@ const DashboardWidgets = styled.div`
   }
 `;
 
+const YesterdayWidgetContainer = styled.div`
+  grid-column: span 2;
+
+  @media (max-width: 1024px) {
+    grid-column: span 1;
+  }
+`;
+
 interface DashboardViewProps {
   onIssueDoubleClick?: (issueKey: string) => void;
 }
@@ -36,7 +44,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onIssueDoubleClick
       <DashboardWidgets>
         <ActiveTimeTrackingWidget onIssueDoubleClick={onIssueDoubleClick} />
         <UnuploadedTimeTrackingWidget />
-        <YesterdayTimeTrackingWidget onIssueDoubleClick={onIssueDoubleClick} />
+        <YesterdayWidgetContainer>
+          <YesterdayTimeTrackingWidget onIssueDoubleClick={onIssueDoubleClick} />
+        </YesterdayWidgetContainer>
       </DashboardWidgets>
     </DashboardContainer>
   );

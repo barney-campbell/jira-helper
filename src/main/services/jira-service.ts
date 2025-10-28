@@ -97,6 +97,54 @@ export class JiraService {
     };
   }
 
+  async getIssueSummaries(issueKeys: string[]): Promise<Record<string, string>> {
+    if (issueKeys.length === 0) {
+      return {};
+    }
+
+    try {
+      // Validate issue keys to prevent injection attacks
+      // Jira issue keys follow the pattern: PROJECT-123
+      // Project keys can contain uppercase letters, numbers, and underscores
+      const issueKeyPattern = /^[A-Z0-9_]+-[0-9]+$/i;
+      const validIssueKeys = issueKeys.filter(key => issueKeyPattern.test(key));
+      
+      if (validIssueKeys.length === 0) {
+        return {};
+      }
+
+      // Create a JQL query to fetch all issues at once
+      // Wrap each key in quotes for safety
+      const quotedKeys = validIssueKeys.map(key => `"${key}"`).join(',');
+      const jql = `key in (${quotedKeys})`;
+      const url = `${this.baseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=key,summary`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': this.authHeader,
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`HTTP error: ${response.status}\nResponse: ${text}`);
+      }
+
+      const data = await response.json();
+      const summaries: Record<string, string> = {};
+
+      for (const issue of data.issues) {
+        summaries[issue.key] = issue.fields.summary || '';
+      }
+
+      return summaries;
+    } catch (error) {
+      console.error('Error in getIssueSummaries:', error);
+      return {};
+    }
+  }
+
   async searchIssues(jql: string): Promise<JiraIssue[]> {
     try {
       const url = `${this.baseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=key,summary,status,assignee`;
