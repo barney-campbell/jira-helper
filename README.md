@@ -132,8 +132,6 @@ When pushing to the `master` branch, the workflow automatically:
    - Commits the version bump
    - Tags the new commit with the bumped version
 
-All tags are prefixed with `v` (e.g., `v1.2.0`).
-
 ### Version Check for Pull Requests to master-electron
 
 When opening a pull request targeting `master-electron`, the workflow:
