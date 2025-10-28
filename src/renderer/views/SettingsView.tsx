@@ -109,7 +109,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
     apiToken: '',
     theme: 'light'
   });
-  const [message, setMessage] = useState('');
   const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [checkingUpdates, setCheckingUpdates] = useState(false);
 
@@ -137,16 +136,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
       setVersionInfo(info);
     } finally {
       setCheckingUpdates(false);
-    }
-  };
-
-  const handleSave = async () => {
-    try {
-      await window.electronAPI.saveSettings(settings);
-      setMessage('Settings saved successfully!');
-      setTimeout(() => setMessage(''), 3000);
-    } catch (error) {
-      setMessage('Error saving settings');
     }
   };
 
@@ -200,10 +189,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
           </ThemeButton>
         </ThemeToggle>
       </FormGroup>
-      {message && <Message>{message}</Message>}
-      <ButtonGroup>
-        <Button onClick={handleSave}>Save</Button>
-      </ButtonGroup>
 
       <VersionContainer>
         <h3>Version Information</h3>
