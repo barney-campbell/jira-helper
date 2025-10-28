@@ -82,7 +82,7 @@ jobs:
           git tag "v$NEW_VERSION"
           
           # Push both commit (if created) and tag
-          git push origin HEAD:master
+          git push origin master
           git push origin "v$NEW_VERSION"
           
           echo "Created and pushed tag v$NEW_VERSION"
