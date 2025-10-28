@@ -55,6 +55,8 @@ jobs:
         run: |
           $TAG = gh release list --limit 1 --repo "${{ github.repository }}" --json tagName --jq '.[0].tagName'
           echo "LATEST_TAG=$TAG" >> $env:GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload .exe and .msi to latest release
         if: env.LATEST_TAG != ''
