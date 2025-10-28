@@ -10,12 +10,33 @@ function createMenu() {
       label: 'View',
       submenu: [
         {
-          label: 'Toggle Light/Dark Theme',
-          click: () => {
-            if (mainWindow) {
-              mainWindow.webContents.send('menu:toggleTheme');
+          label: 'Theme',
+          submenu: [
+            {
+              label: 'Light',
+              click: () => {
+                if (mainWindow) {
+                  mainWindow.webContents.send('menu:setTheme', 'light');
+                }
+              }
+            },
+            {
+              label: 'Dark',
+              click: () => {
+                if (mainWindow) {
+                  mainWindow.webContents.send('menu:setTheme', 'dark');
+                }
+              }
+            },
+            {
+              label: 'System',
+              click: () => {
+                if (mainWindow) {
+                  mainWindow.webContents.send('menu:setTheme', 'system');
+                }
+              }
             }
-          }
+          ]
         },
         { type: 'separator' },
         { role: 'reload' },

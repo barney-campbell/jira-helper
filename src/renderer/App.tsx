@@ -128,14 +128,13 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Listen for theme toggle from menu
-    const unsubscribe = window.electronAPI.onToggleTheme(() => {
-      const newTheme = themeMode === 'light' ? 'dark' : themeMode === 'dark' ? 'system' : 'light';
-      handleThemeChange(newTheme);
+    // Listen for direct theme set from menu
+    const unsubscribeSet = window.electronAPI.onSetTheme((theme: string) => {
+      handleThemeChange(theme as ThemeMode);
     });
     
     return () => {
-      unsubscribe();
+      unsubscribeSet();
     };
   }, [themeMode]);
 

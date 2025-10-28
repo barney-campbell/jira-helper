@@ -54,11 +54,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.removeListener('timeTracking:changed', callback);
     };
   },
-  
-  onToggleTheme: (callback: () => void) => {
-    ipcRenderer.on('menu:toggleTheme', callback);
+    
+  onSetTheme: (callback: (theme: string) => void) => {
+    ipcRenderer.on('menu:setTheme', (_event, theme) => callback(theme));
     return () => {
-      ipcRenderer.removeListener('menu:toggleTheme', callback);
+      ipcRenderer.removeListener('menu:setTheme', callback as any);
     };
   },
 });
@@ -96,7 +96,7 @@ declare global {
       getVersionInfo: () => Promise<VersionInfo>;
       checkForUpdates: () => Promise<VersionInfo>;
       onTimeTrackingChanged: (callback: () => void) => () => void;
-      onToggleTheme: (callback: () => void) => () => void;
+      onSetTheme: (callback: (theme: string) => void) => () => void;
     };
   }
 }
