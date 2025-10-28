@@ -97,12 +97,11 @@ const ThemeButton = styled.button<{ $active: boolean }>`
 `;
 
 interface SettingsViewProps {
-  onSave: () => void;
   currentTheme: ThemeMode;
   onThemeChange: (theme: ThemeMode) => void;
 }
 
-export const SettingsView: React.FC<SettingsViewProps> = ({ onSave, currentTheme, onThemeChange }) => {
+export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThemeChange }) => {
   const [settings, setSettings] = useState<UserSettings>({
     id: 1,
     baseUrl: '',
@@ -143,18 +142,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSave, currentTheme
 
   const handleSave = async () => {
     try {
-      const updatedSettings = { ...settings, theme: currentTheme };
-      await window.electronAPI.saveSettings(updatedSettings);
+      await window.electronAPI.saveSettings(settings);
       setMessage('Settings saved successfully!');
       setTimeout(() => setMessage(''), 3000);
-      onSave();
     } catch (error) {
       setMessage('Error saving settings');
     }
   };
 
   const handleThemeToggle = (theme: ThemeMode) => {
-    setSettings({ ...settings, theme });
     onThemeChange(theme);
   };
 
