@@ -8,8 +8,9 @@
 
 ### Added
 
-- Display version in settings, check git tags for updates
+- Dark, Light, System theme preference persists in database and can be toggled from Settings or View menu ([#10](https://github.com/barney-campbell/jira-helper/pull/10))
 - Summary column in yesterday time tracking widget, widget now spans full dashboard width ([#12](https://github.com/barney-campbell/jira-helper/pull/12))
+- Display version in settings, check git tags for updates
 
 # 1.1.0
 

@@ -1,8 +1,11 @@
+export type ThemeMode = 'light' | 'dark' | 'system';
+
 export interface UserSettings {
   id: number;
   baseUrl: string;
   email: string;
   apiToken: string;
+  theme?: ThemeMode;
 }
 
 export interface TimeTrackingRecord {

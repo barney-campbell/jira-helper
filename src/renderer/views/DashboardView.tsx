@@ -11,7 +11,7 @@ const DashboardContainer = styled.div`
   h1 {
     text-align: center;
     margin-bottom: 30px;
-    color: #333;
+    color: ${props => props.theme.colors.text};
   }
 `;
 

@@ -17,32 +17,34 @@ interface DataGridProps<T> {
 const DataGridContainer = styled.div`
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #ddd;
+  border: 1px solid ${props => props.theme.colors.border};
   border-radius: 4px;
 `;
 
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
+  background-color: ${props => props.theme.colors.surface};
+  color: ${props => props.theme.colors.text};
 
   th {
-    background-color: #f5f5f5;
+    background-color: ${props => props.theme.colors.surfaceHover};
     padding: 12px;
     text-align: left;
     font-weight: 600;
-    border-bottom: 2px solid #ddd;
+    border-bottom: 2px solid ${props => props.theme.colors.border};
     position: sticky;
     top: 0;
+    color: ${props => props.theme.colors.text};
   }
 
   td {
     padding: 10px 12px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid ${props => props.theme.colors.border};
   }
 
   tbody tr:hover {
-    background-color: #f9f9f9;
+    background-color: ${props => props.theme.colors.surfaceHover};
   }
 
   tbody tr.clickable {
@@ -50,7 +52,7 @@ const Table = styled.table`
   }
 
   tbody tr.clickable:hover {
-    background-color: #e3f2fd;
+    background-color: ${props => props.theme.colors.primary}22;
   }
 `;
 

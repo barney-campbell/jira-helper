@@ -23,6 +23,13 @@ export class SettingsService {
         ApiToken TEXT NOT NULL
       )
     `);
+    
+    // Safe migration: Add Theme column if it doesn't exist
+    const columns = this.db.pragma("table_info(Settings)") as Array<{ name: string }>;
+    const hasThemeColumn = columns.some((col) => col.name === 'Theme');
+    if (!hasThemeColumn) {
+      this.db.exec(`ALTER TABLE Settings ADD COLUMN Theme TEXT DEFAULT 'light'`);
+    }
   }
 
   loadSettings(): UserSettings | null {
@@ -32,7 +39,8 @@ export class SettingsService {
         id: 1,
         baseUrl: '',
         email: '',
-        apiToken: ''
+        apiToken: '',
+        theme: 'light'
       };
     }
     let apiToken = row.ApiToken;
@@ -45,24 +53,26 @@ export class SettingsService {
       id: row.Id,
       baseUrl: row.BaseUrl,
       email: row.Email,
-      apiToken
+      apiToken,
+      theme: row.Theme || 'light'
     };
   }
 
   saveSettings(settings: UserSettings): void {
     const encryptedToken = encrypt(settings.apiToken);
+    const theme = settings.theme || 'light';
     const existing = this.db.prepare('SELECT * FROM Settings WHERE Id = 1').get();
     if (existing) {
       this.db.prepare(`
         UPDATE Settings 
-        SET BaseUrl = ?, Email = ?, ApiToken = ? 
+        SET BaseUrl = ?, Email = ?, ApiToken = ?, Theme = ? 
         WHERE Id = 1
-      `).run(settings.baseUrl, settings.email, encryptedToken);
+      `).run(settings.baseUrl, settings.email, encryptedToken, theme);
     } else {
       this.db.prepare(`
-        INSERT INTO Settings (Id, BaseUrl, Email, ApiToken) 
-        VALUES (1, ?, ?, ?)
-      `).run(settings.baseUrl, settings.email, encryptedToken);
+        INSERT INTO Settings (Id, BaseUrl, Email, ApiToken, Theme) 
+        VALUES (1, ?, ?, ?, ?)
+      `).run(settings.baseUrl, settings.email, encryptedToken, theme);
     }
   }
 

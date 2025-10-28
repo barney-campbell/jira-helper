@@ -7,7 +7,7 @@ import { Input } from '../components/Input';
 import type { JiraIssue, TimeTrackingRecord, JiraWorklog, TimeTrackingDisplay, KanbanItem } from '../../common/types';
 
 const ViewContainer = styled.div`
-  background-color: white;
+  background-color: ${props => props.theme.colors.surface};
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -30,7 +30,7 @@ const IssueInfo = styled.div`
 const InfoRow = styled.div`
   margin-bottom: 15px;
   padding: 10px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid ${props => props.theme.colors.border};
 
   strong {
     display: inline-block;
@@ -52,7 +52,7 @@ const DescriptionSection = styled.div`
 const DescriptionContent = styled.div`
   overflow-y: auto;
   padding: 10px;
-  background-color: #f9f9f9;
+  background-color: ${props => props.theme.colors.surfaceHover};
   border-radius: 4px;
 `;
 
@@ -62,8 +62,8 @@ const TextBlock = styled.div`
 `;
 
 const CodeBlock = styled.div`
-  background-color: #2d3030;
-  color: #f8f8f2;
+  background-color: ${props => props.theme.colors.text};
+  color: ${props => props.theme.colors.surface};
   padding: 10px;
   border-radius: 4px;
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
@@ -86,36 +86,36 @@ const CommentsSection = styled.div`
 const CommentsList = styled.div`
   overflow-y: auto;
   padding: 10px;
-  background-color: #f9f9f9;
+  background-color: ${props => props.theme.colors.surfaceHover};
   border-radius: 4px;
 `;
 
 const Comment = styled.div`
   padding: 15px;
-  background-color: white;
-  border: 1px solid #ddd;
+  background-color: ${props => props.theme.colors.surface};
+  border: 1px solid ${props => props.theme.colors.border};
   border-radius: 4px;
   margin-bottom: 15px;
 `;
 
 const CommentHeader = styled.div`
   margin-bottom: 10px;
-  color: #333;
+  color: ${props => props.theme.colors.text};
   font-size: 14px;
 `;
 
 const CommentUpdated = styled.span`
-  color: #666;
+  color: ${props => props.theme.colors.textSecondary};
   font-size: 12px;
 `;
 
 const CommentBody = styled.div`
-  color: #555;
+  color: ${props => props.theme.colors.text};
   line-height: 1.5;
 `;
 
 const TimeTrackingPanel = styled.div`
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: ${props => props.theme.colors.surfaceHover};
   border-radius: 8px;
   padding: 20px;
 `;
@@ -147,7 +147,7 @@ const Loading = styled.div`
   justify-content: center;
   height: 100%;
   font-size: 18px;
-  color: #666;
+  color: ${props => props.theme.colors.textSecondary};
 `;
 
 const FormGroup = styled.div`
@@ -163,16 +163,16 @@ const FormGroup = styled.div`
 const LinkedKanbanSection = styled.div`
   margin-top: 30px;
   padding: 20px;
-  background-color: #f0f7ff;
+  background-color: ${props => props.theme.colors.primary}22;
   border-radius: 8px;
-  border: 1px solid #d0e7ff;
+  border: 1px solid ${props => props.theme.colors.primary}44;
 
   > strong {
     display: block;
     margin-bottom: 15px;
     font-weight: 600;
     font-size: 16px;
-    color: #333;
+    color: ${props => props.theme.colors.text};
   }
 `;
 
@@ -183,10 +183,10 @@ const KanbanItemsList = styled.div`
 `;
 
 const KanbanItemCard = styled.div`
-  background-color: white;
+  background-color: ${props => props.theme.colors.surface};
   padding: 15px;
   border-radius: 6px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid ${props => props.theme.colors.border};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
@@ -201,7 +201,7 @@ const KanbanItemTitle = styled.h4`
   margin: 0;
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: ${props => props.theme.colors.text};
 `;
 
 const KanbanItemColumn = styled.span<{ column: string }>`
@@ -222,14 +222,14 @@ const KanbanItemColumn = styled.span<{ column: string }>`
 const KanbanItemDescription = styled.p`
   margin: 0;
   font-size: 13px;
-  color: #666;
+  color: ${props => props.theme.colors.textSecondary};
   line-height: 1.5;
 `;
 
 const NoKanbanItems = styled.p`
   margin: 0;
   font-size: 14px;
-  color: #666;
+  color: ${props => props.theme.colors.textSecondary};
   font-style: italic;
 `;
 

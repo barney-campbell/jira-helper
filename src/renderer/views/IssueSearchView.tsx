@@ -7,13 +7,14 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import type { JiraIssue } from '../../common/types';
 
 const ViewContainer = styled.div`
-  background-color: white;
+  background-color: ${props => props.theme.colors.surface};
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   h2 {
     margin-bottom: 20px;
+    color: ${props => props.theme.colors.text};
   }
 `;
 
@@ -30,7 +31,7 @@ const SearchInput = styled(Input)`
 
 const ResultText = styled.div`
   margin-bottom: 15px;
-  color: #666;
+  color: ${props => props.theme.colors.textSecondary};
   font-size: 14px;
 `;
 
