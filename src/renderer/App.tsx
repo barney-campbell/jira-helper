@@ -102,8 +102,17 @@ export const App: React.FC = () => {
   const [themeMode, setThemeMode] = useState<ThemeMode>('light');
 
   useEffect(() => {
+    // Load theme once on mount
+    const loadTheme = async () => {
+      const settings = await window.electronAPI.loadSettings();
+      if (settings?.theme) {
+        setThemeMode(settings.theme);
+      }
+    };
     loadTheme();
-    
+  }, []);
+
+  useEffect(() => {
     // Listen for theme toggle from menu
     const unsubscribe = window.electronAPI.onToggleTheme(() => {
       const newTheme = themeMode === 'light' ? 'dark' : 'light';
@@ -114,13 +123,6 @@ export const App: React.FC = () => {
       unsubscribe();
     };
   }, [themeMode]);
-
-  const loadTheme = async () => {
-    const settings = await window.electronAPI.loadSettings();
-    if (settings?.theme) {
-      setThemeMode(settings.theme);
-    }
-  };
 
   const handleThemeChange = async (newTheme: ThemeMode) => {
     setThemeMode(newTheme);
@@ -140,12 +142,6 @@ export const App: React.FC = () => {
     setCurrentView('issueDetails');
   };
 
-  const handleSettingsSaved = () => {
-    // Refresh the current view after settings are saved
-    loadTheme(); // Reload theme in case it was changed
-    setCurrentView('dashboard');
-  };
-
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
@@ -159,7 +155,7 @@ export const App: React.FC = () => {
       case 'kanban':
         return <KanbanView />;
       case 'settings':
-        return <SettingsView onSave={handleSettingsSaved} currentTheme={themeMode} onThemeChange={handleThemeChange} />;
+        return <SettingsView currentTheme={themeMode} onThemeChange={handleThemeChange} />;
       default:
         return <DashboardView onIssueDoubleClick={handleIssueKeyDoubleClick} />;
     }
