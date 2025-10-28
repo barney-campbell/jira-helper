@@ -136,7 +136,7 @@ export const App: React.FC = () => {
     return () => {
       unsubscribeSet();
     };
-  }, [themeMode]);
+  }, []);
 
   const handleThemeChange = async (newTheme: ThemeMode) => {
     setThemeMode(newTheme);
