@@ -1,8 +1,11 @@
+export type ThemeMode = 'light' | 'dark' | 'system';
+
 export interface UserSettings {
   id: number;
   baseUrl: string;
   email: string;
   apiToken: string;
+  theme?: ThemeMode;
 }
 
 export interface TimeTrackingRecord {
@@ -62,4 +65,11 @@ export interface KanbanItem {
   linkedIssueKey?: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface VersionInfo {
+  version: string;
+  isDev: boolean;
+  updateAvailable?: boolean;
+  latestVersion?: string;
 }

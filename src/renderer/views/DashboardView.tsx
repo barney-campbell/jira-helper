@@ -11,7 +11,7 @@ const DashboardContainer = styled.div`
   h1 {
     text-align: center;
     margin-bottom: 30px;
-    color: #333;
+    color: ${props => props.theme.colors.text};
   }
 `;
 
@@ -22,6 +22,14 @@ const DashboardWidgets = styled.div`
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+  }
+`;
+
+const YesterdayWidgetContainer = styled.div`
+  grid-column: span 2;
+
+  @media (max-width: 1024px) {
+    grid-column: span 1;
   }
 `;
 
@@ -36,7 +44,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onIssueDoubleClick
       <DashboardWidgets>
         <ActiveTimeTrackingWidget onIssueDoubleClick={onIssueDoubleClick} />
         <UnuploadedTimeTrackingWidget />
-        <YesterdayTimeTrackingWidget onIssueDoubleClick={onIssueDoubleClick} />
+        <YesterdayWidgetContainer>
+          <YesterdayTimeTrackingWidget onIssueDoubleClick={onIssueDoubleClick} />
+        </YesterdayWidgetContainer>
       </DashboardWidgets>
     </DashboardContainer>
   );

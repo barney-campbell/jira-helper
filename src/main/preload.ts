@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { UserSettings, TimeTrackingRecord, KanbanItem, KanbanColumnType } from '../common/types';
+import type { UserSettings, TimeTrackingRecord, KanbanItem, KanbanColumnType, VersionInfo } from '../common/types';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Native
@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Jira API
   getAssignedIssues: (user: string) => ipcRenderer.invoke('jira:getAssignedIssues', user),
   getIssue: (key: string) => ipcRenderer.invoke('jira:getIssue', key),
+  getIssueSummaries: (issueKeys: string[]) => ipcRenderer.invoke('jira:getIssueSummaries', issueKeys),
   searchIssues: (jql: string) => ipcRenderer.invoke('jira:searchIssues', jql),
   getWorklogs: (issueKey: string) => ipcRenderer.invoke('jira:getWorklogs', issueKey),
   uploadTimeTracking: (issueKey: string, timeSpentSeconds: number, started?: Date) =>
@@ -42,12 +43,22 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.invoke('kanban:moveItem', id, newColumn, newPosition),
   deleteKanbanItem: (id: number) => ipcRenderer.invoke('kanban:deleteItem', id),
 
+  // Version
+  getVersionInfo: () => ipcRenderer.invoke('version:getInfo'),
+  checkForUpdates: () => ipcRenderer.invoke('version:checkForUpdates'),
     
   // Event listeners
   onTimeTrackingChanged: (callback: () => void) => {
     ipcRenderer.on('timeTracking:changed', callback);
     return () => {
       ipcRenderer.removeListener('timeTracking:changed', callback);
+    };
+  },
+    
+  onSetTheme: (callback: (theme: string) => void) => {
+    ipcRenderer.on('menu:setTheme', (_event, theme) => callback(theme));
+    return () => {
+      ipcRenderer.removeListener('menu:setTheme', callback as any);
     };
   },
 });
@@ -60,6 +71,7 @@ declare global {
       saveSettings: (settings: UserSettings) => Promise<{ success: boolean }>;
       getAssignedIssues: (user: string) => Promise<any[]>;
       getIssue: (key: string) => Promise<any>;
+      getIssueSummaries: (issueKeys: string[]) => Promise<Record<string, string>>;
       searchIssues: (jql: string) => Promise<any[]>;
       getWorklogs: (issueKey: string) => Promise<any[]>;
       uploadTimeTracking: (issueKey: string, timeSpentSeconds: number, started?: Date) => Promise<void>;
@@ -81,7 +93,10 @@ declare global {
       updateKanbanItem: (id: number, title: string, description: string, linkedIssueKey?: string) => Promise<{ success: boolean }>;
       moveKanbanItem: (id: number, newColumn: KanbanColumnType, newPosition: number) => Promise<{ success: boolean }>;
       deleteKanbanItem: (id: number) => Promise<{ success: boolean }>;
+      getVersionInfo: () => Promise<VersionInfo>;
+      checkForUpdates: () => Promise<VersionInfo>;
       onTimeTrackingChanged: (callback: () => void) => () => void;
+      onSetTheme: (callback: (theme: string) => void) => () => void;
     };
   }
 }

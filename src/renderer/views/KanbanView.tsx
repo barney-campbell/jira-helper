@@ -6,7 +6,7 @@ import { KanbanItemModal } from '../components/KanbanItemModal';
 import type { KanbanItem, KanbanColumnType, JiraIssue } from '../../common/types';
 
 const ViewContainer = styled.div`
-  background-color: white;
+  background-color: ${props => props.theme.colors.surface};
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -21,12 +21,12 @@ const Header = styled.div`
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 2px solid #eee;
+  border-bottom: 2px solid ${props => props.theme.colors.border};
 
   h1 {
     margin: 0;
     font-size: 28px;
-    color: #333;
+    color: ${props => props.theme.colors.text};
   }
 `;
 
@@ -39,7 +39,7 @@ const BoardContainer = styled.div`
 `;
 
 const Column = styled.div`
-  background-color: #f5f5f5;
+  background-color: ${props => props.theme.colors.surfaceHover};
   border-radius: 8px;
   padding: 15px;
   display: flex;
@@ -53,17 +53,17 @@ const ColumnHeader = styled.div`
   align-items: center;
   margin-bottom: 15px;
   padding-bottom: 10px;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid ${props => props.theme.colors.border};
 
   h2 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: ${props => props.theme.colors.text};
   }
 
   .count {
-    background-color: #666;
+    background-color: ${props => props.theme.colors.textSecondary};
     color: white;
     border-radius: 12px;
     padding: 2px 8px;
@@ -84,8 +84,8 @@ const ItemsList = styled.div<{ $isDragOver: boolean }>`
 `;
 
 const ItemCard = styled.div<{ $isDragging: boolean }>`
-  background-color: white;
-  border: 1px solid #ddd;
+  background-color: ${props => props.theme.colors.surface};
+  border: 1px solid ${props => props.theme.colors.border};
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 10px;
@@ -101,7 +101,7 @@ const ItemCard = styled.div<{ $isDragging: boolean }>`
   .title {
     font-weight: 600;
     margin-bottom: 8px;
-    color: #333;
+    color: ${props => props.theme.colors.text};
     word-wrap: break-word;
   }
 

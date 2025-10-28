@@ -3,12 +3,14 @@ import { JiraService } from './services/jira-service';
 import { TimeTrackingService } from './services/time-tracking-service';
 import { SettingsService } from './services/settings-service';
 import { KanbanService } from './services/kanban-service';
+import { VersionService } from './services/version-service';
 import type { UserSettings, KanbanColumnType } from '../common/types';
 
 let jiraService: JiraService | null = null;
 const timeTrackingService = new TimeTrackingService();
 const settingsService = new SettingsService();
 const kanbanService = new KanbanService();
+const versionService = new VersionService();
 
 export function notifyTimeTrackingChanged() {
   const windows = BrowserWindow.getAllWindows();
@@ -49,6 +51,11 @@ export function registerIpcHandlers() {
   ipcMain.handle('jira:getIssue', async (_, key: string) => {
     if (!jiraService) throw new Error('Jira service not initialized');
     return await jiraService.getIssue(key);
+  });
+
+  ipcMain.handle('jira:getIssueSummaries', async (_, issueKeys: string[]) => {
+    if (!jiraService) throw new Error('Jira service not initialized');
+    return await jiraService.getIssueSummaries(issueKeys);
   });
 
   ipcMain.handle('jira:searchIssues', async (_, jql: string) => {
@@ -154,5 +161,14 @@ export function registerIpcHandlers() {
   ipcMain.handle('kanban:deleteItem', async (_, id: number) => {
     kanbanService.deleteItem(id);
     return { success: true };
+  });
+
+  // Version handlers
+  ipcMain.handle('version:getInfo', async () => {
+    return versionService.getVersionInfo();
+  });
+
+  ipcMain.handle('version:checkForUpdates', async () => {
+    return await versionService.checkForUpdates();
   });
 }
