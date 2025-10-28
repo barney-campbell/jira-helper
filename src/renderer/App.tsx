@@ -100,6 +100,7 @@ export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewType>('dashboard');
   const [selectedIssueKey, setSelectedIssueKey] = useState<string | null>(null);
   const [themeMode, setThemeMode] = useState<ThemeMode>('light');
+  const [systemPrefersDark, setSystemPrefersDark] = useState(false);
 
   useEffect(() => {
     // Load theme once on mount
@@ -110,12 +111,26 @@ export const App: React.FC = () => {
       }
     };
     loadTheme();
+
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setSystemPrefersDark(mediaQuery.matches);
+    
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      setSystemPrefersDark(e.matches);
+    };
+    
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleSystemThemeChange);
+    };
   }, []);
 
   useEffect(() => {
     // Listen for theme toggle from menu
     const unsubscribe = window.electronAPI.onToggleTheme(() => {
-      const newTheme = themeMode === 'light' ? 'dark' : 'light';
+      const newTheme = themeMode === 'light' ? 'dark' : themeMode === 'dark' ? 'system' : 'light';
       handleThemeChange(newTheme);
     });
     
@@ -161,7 +176,15 @@ export const App: React.FC = () => {
     }
   };
 
-  const theme = themeMode === 'dark' ? darkTheme : lightTheme;
+  // Determine actual theme to use based on themeMode and system preference
+  const getEffectiveTheme = () => {
+    if (themeMode === 'system') {
+      return systemPrefersDark ? darkTheme : lightTheme;
+    }
+    return themeMode === 'dark' ? darkTheme : lightTheme;
+  };
+
+  const theme = getEffectiveTheme();
 
   return (
     <ThemeProvider theme={theme}>

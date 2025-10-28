@@ -187,6 +187,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
           >
             🌙 Dark
           </ThemeButton>
+          <ThemeButton 
+            $active={currentTheme === 'system'} 
+            onClick={() => handleThemeToggle('system')}
+          >
+            💻 System
+          </ThemeButton>
         </ThemeToggle>
       </FormGroup>
 
