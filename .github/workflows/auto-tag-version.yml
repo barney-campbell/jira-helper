@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master-electron
+  workflow_dispatch:
 
 jobs:
   tag-version:
