@@ -23,7 +23,7 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background-color: white;
+  background-color: ${props => props.theme.colors.surface};
   border-radius: 8px;
   min-width: 400px;
   max-width: 90%;
@@ -35,7 +35,7 @@ const ModalContent = styled.div`
 
 const ModalHeader = styled.div`
   padding: 20px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid ${props => props.theme.colors.border};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -43,6 +43,7 @@ const ModalHeader = styled.div`
   h2 {
     margin: 0;
     font-size: 20px;
+    color: ${props => props.theme.colors.text};
   }
 `;
 
@@ -51,7 +52,7 @@ const ModalClose = styled.button`
   border: none;
   font-size: 28px;
   cursor: pointer;
-  color: #666;
+  color: ${props => props.theme.colors.textSecondary};
   padding: 0;
   width: 32px;
   height: 32px;
@@ -61,19 +62,20 @@ const ModalClose = styled.button`
   border-radius: 4px;
 
   &:hover {
-    background-color: #f5f5f5;
-    color: #333;
+    background-color: ${props => props.theme.colors.surfaceHover};
+    color: ${props => props.theme.colors.text};
   }
 `;
 
 const ModalBody = styled.div`
   padding: 20px;
   overflow-y: auto;
+  color: ${props => props.theme.colors.text};
 `;
 
 const ModalFooter = styled.div`
   padding: 20px;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid ${props => props.theme.colors.border};
   display: flex;
   justify-content: flex-end;
   gap: 10px;
