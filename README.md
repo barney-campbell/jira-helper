@@ -116,6 +116,46 @@ The application includes the following reusable React components:
 - **Modal** - Dialog component for forms and confirmations
 - **UnuploadedTimeTrackingWidget** - Widget for managing unuploaded time logs
 
+## Versioning Workflow
+
+This project uses automated versioning through GitHub Actions:
+
+### Auto-Tagging on Master Branch
+
+When pushing to the `master` branch, the workflow automatically:
+
+1. Compares the version in `package.json` with the latest git tag
+2. **If versions differ**: Tags the commit with the version from `package.json`
+3. **If versions match**: 
+   - Increments the patch version (e.g., 1.2.0 → 1.2.1)
+   - Updates `package.json` and `package-lock.json` with the new version
+   - Commits the version bump
+   - Tags the new commit with the bumped version
+
+All tags are prefixed with `v` (e.g., `v1.2.0`).
+
+### Version Check for Pull Requests to master-electron
+
+When opening a pull request targeting `master-electron`, the workflow:
+
+1. Checks if the version in `package.json` has been updated compared to the base branch
+2. **Fails** if the version hasn't been updated
+3. **Succeeds** if the version has been updated
+
+This check is required to pass before merging to `master-electron`.
+
+### Manual Versioning
+
+To manually update the version before pushing to master:
+
+```bash
+npm version patch   # 1.2.0 → 1.2.1
+npm version minor   # 1.2.0 → 1.3.0
+npm version major   # 1.2.0 → 2.0.0
+```
+
+Note: Don't commit these changes manually - just update `package.json` directly and let the automation handle tagging.
+
 ## License
 
 ISC
