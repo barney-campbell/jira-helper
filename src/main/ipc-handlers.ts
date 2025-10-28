@@ -53,6 +53,11 @@ export function registerIpcHandlers() {
     return await jiraService.getIssue(key);
   });
 
+  ipcMain.handle('jira:getIssueSummaries', async (_, issueKeys: string[]) => {
+    if (!jiraService) throw new Error('Jira service not initialized');
+    return await jiraService.getIssueSummaries(issueKeys);
+  });
+
   ipcMain.handle('jira:searchIssues', async (_, jql: string) => {
     if (!jiraService) throw new Error('Jira service not initialized');
     return await jiraService.searchIssues(jql);

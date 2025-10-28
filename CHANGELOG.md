@@ -9,6 +9,7 @@
 ### Added
 
 - Display version in settings, check git tags for updates
+- Summary column in yesterday time tracking widget, widget now spans full dashboard width ([#12](https://github.com/barney-campbell/jira-helper/pull/12))
 
 # 1.1.0
 
