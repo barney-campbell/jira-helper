@@ -151,9 +151,6 @@ npm version patch   # 1.2.0 → 1.2.1
 npm version minor   # 1.2.0 → 1.3.0
 npm version major   # 1.2.0 → 2.0.0
 ```
-
-Note: Don't commit these changes manually - just update `package.json` directly and let the automation handle tagging.
-
 ## License
 
 ISC
