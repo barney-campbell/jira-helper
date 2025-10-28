@@ -103,8 +103,17 @@ export class JiraService {
     }
 
     try {
+      // Validate issue keys to prevent injection attacks
+      // Jira issue keys follow the pattern: PROJECT-123 (uppercase letters, dash, numbers)
+      const issueKeyPattern = /^[A-Z][A-Z0-9]*-[0-9]+$/;
+      const validIssueKeys = issueKeys.filter(key => issueKeyPattern.test(key));
+      
+      if (validIssueKeys.length === 0) {
+        return {};
+      }
+
       // Create a JQL query to fetch all issues at once
-      const jql = `key in (${issueKeys.join(',')})`;
+      const jql = `key in (${validIssueKeys.join(',')})`;
       const url = `${this.baseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=key,summary`;
       
       const response = await fetch(url, {
