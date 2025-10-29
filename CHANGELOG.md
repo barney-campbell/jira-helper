@@ -1,7 +1,7 @@
+
 # Planned
 
 - Better "empty" states
-- Logging and a log viewer in settings
 
 # Next: 1.3.0
 
@@ -10,6 +10,8 @@
 - Issue table filtering by status, assignee, and project
 - Project column displayed in issue tables
 - Calendar view displaying worklogs for the current week (Mon-Fri) in a visual time-block format
+- Error logging service that captures errors throughout the application with timestamps, error messages, stack traces, and code locations
+- Log viewer in settings page showing logs in a side-by-side layout with credentials/theme settings
 
 # 1.2.4
 

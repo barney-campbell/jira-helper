@@ -74,3 +74,12 @@ export interface VersionInfo {
   updateAvailable?: boolean;
   latestVersion?: string;
 }
+
+export interface LogEntry {
+  timestamp: string;
+  level: 'error' | 'warning' | 'info';
+  message: string;
+  error?: string;
+  stack?: string;
+  location?: string;
+}
