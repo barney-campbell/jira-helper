@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import type { TimeTrackingRecord } from '../../common/types';
 
 const CalendarContainer = styled.div`
-  max-width: 1400px;
   margin: 0 auto;
 
   h1 {
@@ -86,6 +85,10 @@ const WorklogBlock = styled.div<{ $top: number; $height: number }>`
   cursor: pointer;
   transition: opacity 0.2s;
   z-index: 1;
+  display: flex;
+  flex-direction: ${props => props.$height < 40 ? 'row' : 'column'};
+  align-items: ${props => props.$height < 40 ? 'center' : 'flex-start'};
+  gap: ${props => props.$height < 40 ? '6px' : '0'};
 
   &:hover {
     opacity: 0.8;
@@ -97,12 +100,17 @@ const WorklogTitle = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex-shrink: 0;
 `;
 
 const WorklogTime = styled.div`
   font-size: 10px;
   margin-top: 2px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
 `;
 
 interface CalendarViewProps {}
@@ -266,6 +274,7 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
               {getRecordsForDay(dayIndex).map((record) => {
                 const { top, height } = calculateBlockPosition(record);
                 const summary = summaries[record.issueKey] || record.issueKey;
+                const isCompact = height < 40;
                 return (
                   <WorklogBlock
                     key={record.id}
@@ -274,8 +283,14 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
                     title={`${record.issueKey}: ${summary}\n${formatTime(record.startTime)} - ${record.endTime ? formatTime(record.endTime) : 'In Progress'}\nDuration: ${formatDuration(record.startTime, record.endTime)}`}
                   >
                     <WorklogTitle>{record.issueKey}</WorklogTitle>
-                    <WorklogTime>{formatTime(record.startTime)}</WorklogTime>
-                    {height > 40 && <WorklogTime>{formatDuration(record.startTime, record.endTime)}</WorklogTime>}
+                    {isCompact ? (
+                      <WorklogTime>{formatTime(record.startTime)} • {formatDuration(record.startTime, record.endTime)}</WorklogTime>
+                    ) : (
+                      <>
+                        <WorklogTime>{formatTime(record.startTime)}</WorklogTime>
+                        <WorklogTime>{formatDuration(record.startTime, record.endTime)}</WorklogTime>
+                      </>
+                    )}
                   </WorklogBlock>
                 );
               })}
