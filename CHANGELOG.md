@@ -9,8 +9,8 @@
 ### Fixed
 
 - Code blocks now have correct contrast in dark and light modes (darker in light mode, lighter in dark mode)
-- Theming issues for areas within TODO
-- Disable auto version tagging. NPM method works, and given the action for checking the version, it is more flexible to just tag the commit manually
+- Theming issues for areas within TODO ([385ee02](https://github.com/barney-campbell/jira-helper/pull/16/commits/385ee02acbcab8226d5c22470e46fb91e51d2be6))
+- Disable auto version tagging. NPM method works, and given the action for checking the version, it is more flexible to just tag the commit manually ([35395ff](https://github.com/barney-campbell/jira-helper/pull/16/commits/35395ffed9ebc8ccb84221c43667a271cd89aefb))
 
 # 1.2.1 - 1.2.3
 
