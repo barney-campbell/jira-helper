@@ -4,7 +4,20 @@
 - Filtering issues table
 - Logging and a log viewer in settings
 
-# Next: 1.2.0
+# 1.2.4
+
+### Fixed
+
+- Theming issues for areas within TODO
+- Disable auto version tagging. NPM method works, and given the action for checking the version, it is more flexible to just tag the commit manually
+
+# 1.2.1 - 1.2.3
+
+### Fixed
+
+- Build action issues
+
+# 1.2.0
 
 ### Added
 
