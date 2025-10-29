@@ -1,8 +1,14 @@
 # Planned
 
 - Better "empty" states
-- Filtering issues table
 - Logging and a log viewer in settings
+
+# Next
+
+### Added
+
+- Issue table filtering by status, assignee, and project
+- Project column displayed in issue tables
 
 # 1.2.4
 
