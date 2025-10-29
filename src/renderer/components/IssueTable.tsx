@@ -105,7 +105,7 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
     return issues.filter(issue => {
       if (statusFilter && issue.status !== statusFilter) return false;
       if (assigneeFilter && issue.assignee !== assigneeFilter) return false;
-      if (projectFilter && issue.project !== projectFilter) return false;
+      if (projectFilter && (issue.project || '') !== projectFilter) return false;
       return true;
     });
   }, [issues, statusFilter, assigneeFilter, projectFilter]);
@@ -123,7 +123,7 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
     { header: 'Summary', accessor: 'summary', width: '500px' },
     { header: 'Status', accessor: 'status', width: '150px' },
     { header: 'Assignee', accessor: 'assignee', width: '150px' },
-    { header: 'Project', accessor: 'project', width: '150px' }
+    { header: 'Project', accessor: (row) => row.project || '', width: '150px' }
   ];
 
   return (
