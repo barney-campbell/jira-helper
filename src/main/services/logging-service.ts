@@ -1,15 +1,7 @@
 import { app } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
-
-export interface LogEntry {
-  timestamp: string;
-  level: 'error' | 'warning' | 'info';
-  message: string;
-  error?: string;
-  stack?: string;
-  location?: string;
-}
+import type { LogEntry } from '../../common/types';
 
 export class LoggingService {
   private logsDir: string;
