@@ -8,6 +8,7 @@
 
 ### Fixed
 
+- Code blocks now have correct contrast in dark and light modes (darker in light mode, lighter in dark mode)
 - Theming issues for areas within TODO
 - Disable auto version tagging. NPM method works, and given the action for checking the version, it is more flexible to just tag the commit manually
 
