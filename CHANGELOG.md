@@ -3,7 +3,7 @@
 
 - Better "empty" states
 
-# Next: 1.3.0
+# 1.3.0
 
 ### Added
 
