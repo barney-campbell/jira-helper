@@ -3,6 +3,7 @@
 - Better "empty" states
 - Filtering issues table
 - Logging and a log viewer in settings
+- Calendar view
 
 # 1.2.4
 
