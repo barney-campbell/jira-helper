@@ -52,7 +52,7 @@ const AppContainer = styled.div`
 
 const Sidebar = styled.div`
   width: 70px;
-  background-color: ${props => props.theme.colors.sidebar};
+  background-color: ${props => props.theme.colors.surface};
   display: flex;
   flex-direction: column;
   align-items: center;

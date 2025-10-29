@@ -4,6 +4,12 @@
 - Filtering issues table
 - Logging and a log viewer in settings
 
+# Next
+
+### Fixed
+
+- Navigation menu now has background matching widgets to differentiate it from page contents
+
 # 1.2.4
 
 ### Fixed
