@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
-import { DataGrid, Column } from '../components/DataGrid';
+import { IssueTable } from '../components/IssueTable';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import type { JiraIssue } from '../../common/types';
 
@@ -85,13 +85,6 @@ export const IssueSearchView: React.FC<IssueSearchViewProps> = ({ onIssueDoubleC
     }
   };
 
-  const columns: Column<JiraIssue>[] = [
-    { header: 'Key', accessor: 'key', width: '100px' },
-    { header: 'Summary', accessor: 'summary', width: '700px' },
-    { header: 'Status', accessor: 'status', width: '200px' },
-    { header: 'Assignee', accessor: 'assignee', width: '120px' }
-  ];
-
   return (
     <ViewContainer>
       <h2>Search Jira Issues</h2>
@@ -108,7 +101,7 @@ export const IssueSearchView: React.FC<IssueSearchViewProps> = ({ onIssueDoubleC
         {loading && <LoadingSpinner size="small" />}
       </SearchBar>
       {resultText && <ResultText>{resultText}</ResultText>}
-      <DataGrid columns={columns} data={results} onRowDoubleClick={onIssueDoubleClick} />
+      <IssueTable issues={results} onIssueDoubleClick={onIssueDoubleClick} />
     </ViewContainer>
   );
 };

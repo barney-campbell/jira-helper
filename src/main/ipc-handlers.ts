@@ -4,6 +4,7 @@ import { TimeTrackingService } from './services/time-tracking-service';
 import { SettingsService } from './services/settings-service';
 import { KanbanService } from './services/kanban-service';
 import { VersionService } from './services/version-service';
+import { LoggingService } from './services/logging-service';
 import type { UserSettings, KanbanColumnType } from '../common/types';
 
 let jiraService: JiraService | null = null;
@@ -11,6 +12,7 @@ const timeTrackingService = new TimeTrackingService();
 const settingsService = new SettingsService();
 const kanbanService = new KanbanService();
 const versionService = new VersionService();
+const loggingService = new LoggingService();
 
 export function notifyTimeTrackingChanged() {
   const windows = BrowserWindow.getAllWindows();
@@ -37,45 +39,86 @@ export function registerIpcHandlers() {
   });
 
   ipcMain.handle('settings:save', async (_, settings: UserSettings) => {
-    settingsService.saveSettings(settings);
-    jiraService = new JiraService(settings);
-    return { success: true };
+    loggingService.logInfo('Saving user settings', 'ipc/settings:save');
+    try {
+      settingsService.saveSettings(settings);
+      jiraService = new JiraService(settings);
+      return { success: true };
+    } catch (error) {
+      loggingService.logError('Failed to save settings', error, 'settings:save');
+      throw error;
+    }
   });
 
   // Jira API handlers
   ipcMain.handle('jira:getAssignedIssues', async (_, user: string) => {
-    if (!jiraService) throw new Error('Jira service not initialized');
-    return await jiraService.getAssignedIssues(user);
+    try {
+      if (!jiraService) throw new Error('Jira service not initialized');
+      return await jiraService.getAssignedIssues(user);
+    } catch (error) {
+      loggingService.logError('Failed to get assigned issues', error, 'jira:getAssignedIssues');
+      throw error;
+    }
   });
 
   ipcMain.handle('jira:getIssue', async (_, key: string) => {
-    if (!jiraService) throw new Error('Jira service not initialized');
-    return await jiraService.getIssue(key);
+    try {
+      if (!jiraService) throw new Error('Jira service not initialized');
+      return await jiraService.getIssue(key);
+    } catch (error) {
+      loggingService.logError('Failed to get issue', error, 'jira:getIssue');
+      throw error;
+    }
   });
 
   ipcMain.handle('jira:getIssueSummaries', async (_, issueKeys: string[]) => {
-    if (!jiraService) throw new Error('Jira service not initialized');
-    return await jiraService.getIssueSummaries(issueKeys);
+    try {
+      if (!jiraService) throw new Error('Jira service not initialized');
+      return await jiraService.getIssueSummaries(issueKeys);
+    } catch (error) {
+      loggingService.logError('Failed to get issue summaries', error, 'jira:getIssueSummaries');
+      throw error;
+    }
   });
 
   ipcMain.handle('jira:searchIssues', async (_, jql: string) => {
-    if (!jiraService) throw new Error('Jira service not initialized');
-    return await jiraService.searchIssues(jql);
+    try {
+      if (!jiraService) throw new Error('Jira service not initialized');
+      return await jiraService.searchIssues(jql);
+    } catch (error) {
+      loggingService.logError('Failed to search issues', error, 'jira:searchIssues');
+      throw error;
+    }
   });
 
   ipcMain.handle('jira:getWorklogs', async (_, issueKey: string) => {
-    if (!jiraService) throw new Error('Jira service not initialized');
-    return await jiraService.getWorklogs(issueKey);
+    try {
+      if (!jiraService) throw new Error('Jira service not initialized');
+      return await jiraService.getWorklogs(issueKey);
+    } catch (error) {
+      loggingService.logError('Failed to get worklogs', error, 'jira:getWorklogs');
+      throw error;
+    }
   });
 
   ipcMain.handle('jira:uploadTimeTracking', async (_, issueKey: string, timeSpentSeconds: number, started?: Date) => {
-    if (!jiraService) throw new Error('Jira service not initialized');
-    return await jiraService.uploadTimeTracking(issueKey, timeSpentSeconds, started);
+    try {
+      if (!jiraService) throw new Error('Jira service not initialized');
+      return await jiraService.uploadTimeTracking(issueKey, timeSpentSeconds, started);
+    } catch (error) {
+      loggingService.logError('Failed to upload time tracking', error, 'jira:uploadTimeTracking');
+      throw error;
+    }
   });
 
   ipcMain.handle('jira:getBaseUrl', async () => {
-    if (!jiraService) throw new Error('Jira service not initialized');
-    return jiraService.getBaseUrl();
+    try {
+      if (!jiraService) throw new Error('Jira service not initialized');
+      return jiraService.getBaseUrl();
+    } catch (error) {
+      loggingService.logError('Failed to get base URL', error, 'jira:getBaseUrl');
+      throw error;
+    }
   });
 
   // Time Tracking handlers
@@ -111,6 +154,10 @@ export function registerIpcHandlers() {
 
   ipcMain.handle('timeTracking:getYesterdayRecords', async () => {
     return timeTrackingService.getYesterdayRecords();
+  });
+
+  ipcMain.handle('timeTracking:getCurrentWeekRecords', async () => {
+    return timeTrackingService.getCurrentWeekRecords();
   });
 
   ipcMain.handle('timeTracking:updateRecord', async (_, record: any) => {
@@ -170,5 +217,19 @@ export function registerIpcHandlers() {
 
   ipcMain.handle('version:checkForUpdates', async () => {
     return await versionService.checkForUpdates();
+  });
+
+  // Logging handlers
+  ipcMain.handle('logging:getLogs', async (_, date?: string) => {
+    const logDate = date ? new Date(date) : undefined;
+    return loggingService.getLogs(logDate);
+  });
+
+  ipcMain.handle('logging:getAllLogFiles', async () => {
+    return loggingService.getAllLogFiles();
+  });
+
+  ipcMain.handle('logging:getLogsPath', async () => {
+    return loggingService.getLogsPath();
   });
 }
