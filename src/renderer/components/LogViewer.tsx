@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import type { LogEntry } from '../../common/types';
+import { Button } from './Button';
 
 const ViewerContainer = styled.div`
   display: flex;
@@ -13,6 +14,14 @@ const Header = styled.div`
   gap: 10px;
   margin-bottom: 15px;
   align-items: center;
+  flex-wrap: wrap;
+`;
+
+const DateSelector = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex: 1;
 `;
 
 const Select = styled.select`
@@ -124,6 +133,7 @@ export const LogViewer: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [logsPath, setLogsPath] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     loadLogFiles();
@@ -138,6 +148,7 @@ export const LogViewer: React.FC = () => {
 
   const loadLogFiles = async () => {
     try {
+      setLoading(true);
       const files = await window.electronAPI.getAllLogFiles();
       setLogFiles(files);
       if (files.length > 0 && !selectedDate) {
@@ -145,15 +156,20 @@ export const LogViewer: React.FC = () => {
       }
     } catch (error) {
       console.error('Failed to load log files:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const loadLogs = async (date: string) => {
     try {
+      setLoading(true);
       const logEntries = await window.electronAPI.getLogs(date);
       setLogs(logEntries);
     } catch (error) {
       console.error('Failed to load logs:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -166,35 +182,72 @@ export const LogViewer: React.FC = () => {
     }
   };
 
+  const handleRefresh = async () => {
+    await loadLogFiles();
+    if (selectedDate) {
+      await loadLogs(selectedDate);
+    }
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedDate(e.target.value);
+  };
+
   const formatTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
     return date.toLocaleString();
   };
 
+  const formatDateLabel = (dateStr: string) => {
+    // dateStr is in format YYYY-MM-DD
+    const date = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const dateToCompare = new Date(date);
+    dateToCompare.setHours(0, 0, 0, 0);
+
+    if (dateToCompare.getTime() === today.getTime()) {
+      return `${dateStr} (Today)`;
+    } else if (dateToCompare.getTime() === yesterday.getTime()) {
+      return `${dateStr} (Yesterday)`;
+    }
+    return dateStr;
+  };
+
   return (
     <ViewerContainer>
       <Header>
-        <label>Log Date:</label>
-        <Select
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-        >
-          {logFiles.length === 0 && (
-            <option value="">No logs available</option>
-          )}
-          {logFiles.map(file => (
-            <option key={file} value={file}>
-              {file}
-            </option>
-          ))}
-        </Select>
+        <DateSelector>
+          <label>Log Date:</label>
+          <Select
+            value={selectedDate}
+            onChange={handleDateChange}
+            disabled={loading}
+          >
+            {logFiles.length === 0 && (
+              <option value="">No logs available</option>
+            )}
+            {logFiles.map(file => (
+              <option key={file} value={file}>
+                {formatDateLabel(file)}
+              </option>
+            ))}
+          </Select>
+        </DateSelector>
+        <Button onClick={handleRefresh} disabled={loading}>
+          {loading ? 'Loading...' : 'Refresh'}
+        </Button>
       </Header>
       {logsPath && (
         <PathInfo>Logs directory: {logsPath}</PathInfo>
       )}
       <LogsContainer>
         {logs.length === 0 ? (
-          <EmptyState>No logs for selected date</EmptyState>
+          <EmptyState>
+            {loading ? 'Loading logs...' : 'No logs for selected date'}
+          </EmptyState>
         ) : (
           logs.map((entry, index) => (
             <LogEntryDiv key={index} $level={entry.level}>

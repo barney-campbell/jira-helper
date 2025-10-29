@@ -39,6 +39,7 @@ export function registerIpcHandlers() {
   });
 
   ipcMain.handle('settings:save', async (_, settings: UserSettings) => {
+    loggingService.logInfo('Saving user settings', 'ipc/settings:save');
     try {
       settingsService.saveSettings(settings);
       jiraService = new JiraService(settings);
