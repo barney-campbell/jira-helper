@@ -78,7 +78,7 @@ const ItemsList = styled.div<{ $isDragOver: boolean }>`
   min-height: 100px;
   transition: background-color 0.2s;
   ${props => props.$isDragOver && `
-    background-color: #e8f4f8;
+    background-color: ${props.theme.colors.surfaceHover};
     border-radius: 4px;
   `}
 `;
@@ -107,7 +107,7 @@ const ItemCard = styled.div<{ $isDragging: boolean }>`
 
   .description {
     font-size: 13px;
-    color: #666;
+    color: ${props => props.theme.colors.text};
     margin-bottom: 8px;
     line-height: 1.4;
     word-wrap: break-word;
@@ -123,7 +123,7 @@ const ItemCard = styled.div<{ $isDragging: boolean }>`
     align-items: center;
     margin-top: 8px;
     padding-top: 8px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid ${props => props.theme.colors.border};
   }
 
   .jira-badge {
