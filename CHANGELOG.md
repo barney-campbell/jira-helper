@@ -4,6 +4,12 @@
 - Filtering issues table
 - Logging and a log viewer in settings
 
+# Next
+
+### Fixed
+
+- Settings area now fills available space by removing max-width constraint
+
 # 1.2.4
 
 ### Fixed
