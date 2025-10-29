@@ -24,7 +24,7 @@ const CalendarGrid = styled.div`
   display: grid;
   grid-template-columns: 80px repeat(5, 1fr);
   gap: 10px;
-  background-color: ${props => props.theme.colors.widgetBackground};
+  background-color: ${props => props.theme.colors.surface};
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
