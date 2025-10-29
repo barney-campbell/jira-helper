@@ -58,16 +58,22 @@ export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetPr
     }
   };
 
-  const formatElapsed = (start: Date, end?: Date): string => {
+  const calculateDuration = (start: Date, end?: Date): number => {
     const startTime = new Date(start);
     const endTime = end ? new Date(end) : new Date();
-    const diff = endTime.getTime() - startTime.getTime();
-    
-    const hours = Math.floor(diff / 3600000);
-    const minutes = Math.floor((diff % 3600000) / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
+    return endTime.getTime() - startTime.getTime();
+  };
+
+  const formatDuration = (durationMs: number): string => {
+    const hours = Math.floor(durationMs / 3600000);
+    const minutes = Math.floor((durationMs % 3600000) / 60000);
+    const seconds = Math.floor((durationMs % 60000) / 1000);
     
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  };
+
+  const formatElapsed = (start: Date, end?: Date): string => {
+    return formatDuration(calculateDuration(start, end));
   };
 
   const formatDateTime = (date: Date): string => {
@@ -116,9 +122,7 @@ export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetPr
     const aggregated = new Map<string, { totalMs: number; count: number }>();
 
     records.forEach(record => {
-      const startTime = new Date(record.startTime);
-      const endTime = record.endTime ? new Date(record.endTime) : new Date();
-      const durationMs = endTime.getTime() - startTime.getTime();
+      const durationMs = calculateDuration(record.startTime, record.endTime);
 
       if (aggregated.has(record.issueKey)) {
         const existing = aggregated.get(record.issueKey)!;
@@ -129,18 +133,12 @@ export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetPr
       }
     });
 
-    return Array.from(aggregated.entries()).map(([issueKey, data]) => {
-      const hours = Math.floor(data.totalMs / 3600000);
-      const minutes = Math.floor((data.totalMs % 3600000) / 60000);
-      const seconds = Math.floor((data.totalMs % 60000) / 1000);
-      
-      return {
-        issueKey,
-        summary: summaries[issueKey] || 'Loading...',
-        totalDuration: `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`,
-        logCount: data.count
-      };
-    });
+    return Array.from(aggregated.entries()).map(([issueKey, data]) => ({
+      issueKey,
+      summary: summaries[issueKey] || 'Loading...',
+      totalDuration: formatDuration(data.totalMs),
+      logCount: data.count
+    }));
   };
 
   const detailedColumns: Column<DisplayRecord>[] = [
@@ -150,11 +148,13 @@ export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetPr
     { header: 'Duration', accessor: 'elapsed', width: '20%' }
   ];
 
+  const formatLogCount = (row: CompactDisplayRecord) => row.logCount.toString();
+
   const compactColumns: Column<CompactDisplayRecord>[] = [
     { header: 'Issue Key', accessor: 'issueKey', width: '20%' },
     { header: 'Summary', accessor: 'summary', width: '50%' },
     { header: 'Total Duration', accessor: 'totalDuration', width: '20%' },
-    { header: 'Logs', accessor: (row) => row.logCount.toString(), width: '10%' }
+    { header: 'Logs', accessor: formatLogCount, width: '10%' }
   ];
 
   const detailedDisplayData: DisplayRecord[] = records.map(record => ({
