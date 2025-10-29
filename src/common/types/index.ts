@@ -34,6 +34,7 @@ export interface JiraIssue {
   summary: string;
   status: string;
   assignee: string;
+  project?: string;
   descriptionBlocks?: JiraTextBlock[];
   comments?: JiraComment[];
 }
