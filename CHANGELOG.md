@@ -1,8 +1,15 @@
+# Next
+
+### Added
+
+- Error logging service that captures errors throughout the application with timestamps, error messages, stack traces, and code locations
+- Log viewer in settings page showing logs in a side-by-side layout with credentials/theme settings
+- Logs are stored as sequential JSON objects in daily log files in the app data logs directory
+
 # Planned
 
 - Better "empty" states
 - Filtering issues table
-- Logging and a log viewer in settings
 
 # 1.2.4
 
