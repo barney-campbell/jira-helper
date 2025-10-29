@@ -62,8 +62,8 @@ const TextBlock = styled.div`
 `;
 
 const CodeBlock = styled.div`
-  background-color: ${props => props.theme.colors.text};
-  color: ${props => props.theme.colors.surface};
+  background-color: ${props => props.theme.colors.surfaceHover};
+  color: ${props => props.theme.colors.text};
   padding: 10px;
   border-radius: 4px;
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
@@ -71,6 +71,7 @@ const CodeBlock = styled.div`
   margin: 10px 0;
   overflow-x: auto;
   white-space: pre-wrap;
+  border: 1px solid ${props => props.theme.colors.border};
 `;
 
 const CommentsSection = styled.div`

@@ -19,7 +19,7 @@ const FormGroup = styled.div`
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #333;
+    color: ${props => props.theme.colors.text};
   }
 `;
 
@@ -27,16 +27,18 @@ const TextArea = styled.textarea`
   width: 100%;
   min-height: 120px;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid ${props => props.theme.colors.border};
   border-radius: 4px;
   font-family: inherit;
   font-size: 14px;
   resize: vertical;
+  background-color: ${props => props.theme.colors.surface};
+  color: ${props => props.theme.colors.text};
 
   &:focus {
     outline: none;
-    border-color: #0052cc;
-    box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.1);
+    border-color: ${props => props.theme.colors.primary};
+    box-shadow: 0 0 0 2px ${props => props.theme.colors.primary}33;
   }
 `;
 
@@ -51,9 +53,9 @@ const IssueSearchButton = styled(Button)`
 const LinkedIssueDisplay = styled.div`
   margin-top: 10px;
   padding: 15px;
-  background-color: #f5f5f5;
+  background-color: ${props => props.theme.colors.surfaceHover};
   border-radius: 4px;
-  border: 1px solid #ddd;
+  border: 1px solid ${props => props.theme.colors.border};
 
   .issue-header {
     display: flex;
@@ -64,7 +66,7 @@ const LinkedIssueDisplay = styled.div`
 
   .issue-key {
     font-weight: 600;
-    color: #0052cc;
+    color: ${props => props.theme.colors.primary};
     cursor: pointer;
 
     &:hover {
@@ -75,25 +77,25 @@ const LinkedIssueDisplay = styled.div`
   .unlink-btn {
     background: none;
     border: none;
-    color: #666;
+    color: ${props => props.theme.colors.textSecondary};
     cursor: pointer;
     font-size: 12px;
 
     &:hover {
-      color: #d32f2f;
+      color: ${props => props.theme.colors.danger};
     }
   }
 
   .issue-summary {
     font-size: 14px;
-    color: #333;
+    color: ${props => props.theme.colors.text};
     margin-bottom: 5px;
   }
 
   .issue-status {
     display: inline-block;
     padding: 2px 8px;
-    background-color: #42a5f5;
+    background-color: ${props => props.theme.colors.primary};
     color: white;
     border-radius: 3px;
     font-size: 12px;
@@ -106,7 +108,7 @@ const SearchInput = styled(Input)`
 `;
 
 const ErrorMessage = styled.div`
-  color: #d32f2f;
+  color: ${props => props.theme.colors.danger};
   font-size: 13px;
   margin-top: 5px;
 `;
