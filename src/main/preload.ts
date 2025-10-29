@@ -27,6 +27,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getUnsentTimeTrackingRecords: () => ipcRenderer.invoke('timeTracking:getUnsentRecords'),
   getActiveTimeTrackingRecords: () => ipcRenderer.invoke('timeTracking:getActiveRecords'),
   getYesterdayTimeTrackingRecords: () => ipcRenderer.invoke('timeTracking:getYesterdayRecords'),
+  getCurrentWeekTimeTrackingRecords: () => ipcRenderer.invoke('timeTracking:getCurrentWeekRecords'),
   updateTimeTrackingRecord: (record: TimeTrackingRecord) => ipcRenderer.invoke('timeTracking:updateRecord', record),
   deleteTimeTrackingRecord: (id: number) => ipcRenderer.invoke('timeTracking:deleteRecord', id),
   markAsUploaded: (id: number) => ipcRenderer.invoke('timeTracking:markAsUploaded', id),
@@ -83,6 +84,7 @@ declare global {
       getUnsentTimeTrackingRecords: () => Promise<TimeTrackingRecord[]>;
       getActiveTimeTrackingRecords: () => Promise<TimeTrackingRecord[]>;
       getYesterdayTimeTrackingRecords: () => Promise<TimeTrackingRecord[]>;
+      getCurrentWeekTimeTrackingRecords: () => Promise<TimeTrackingRecord[]>;
       updateTimeTrackingRecord: (record: TimeTrackingRecord) => Promise<{ success: boolean }>;
       deleteTimeTrackingRecord: (id: number) => Promise<{ success: boolean }>;
       markAsUploaded: (id: number) => Promise<{ success: boolean }>;

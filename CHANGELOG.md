@@ -3,10 +3,11 @@
 - Better "empty" states
 - Logging and a log viewer in settings
 
-# Next
+# Next: 1.3.0
 
 ### Added
 
+- Calendar view displaying worklogs for the current week (Mon-Fri) in a visual time-block format
 - Issue table filtering by status, assignee, and project
 - Project column displayed in issue tables
 
