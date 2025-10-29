@@ -9,8 +9,13 @@ export class TimeTrackingService {
   constructor() {
     const userDataPath = app.getPath('userData');
     const dbPath = path.join(userDataPath, 'time_tracking.db');
-    this.db = new Database(dbPath);
-    this.initializeDatabase();
+    try {
+      this.db = new Database(dbPath);
+      this.initializeDatabase();
+    } catch (error) {
+      console.error('Failed to initialize time tracking database:', error);
+      throw error;
+    }
   }
 
   private initializeDatabase(): void {
