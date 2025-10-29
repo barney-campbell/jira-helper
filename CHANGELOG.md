@@ -4,6 +4,12 @@
 - Filtering issues table
 - Logging and a log viewer in settings
 
+# Next
+
+### Added
+
+- Calendar view displaying worklogs for the current week (Mon-Fri) in a visual time-block format
+
 # 1.2.4
 
 ### Fixed
