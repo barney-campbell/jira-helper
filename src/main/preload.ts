@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { UserSettings, TimeTrackingRecord, KanbanItem, KanbanColumnType, VersionInfo } from '../common/types';
+import type { UserSettings, TimeTrackingRecord, KanbanItem, KanbanColumnType, VersionInfo, LogEntry } from '../common/types';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Native
@@ -27,6 +27,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getUnsentTimeTrackingRecords: () => ipcRenderer.invoke('timeTracking:getUnsentRecords'),
   getActiveTimeTrackingRecords: () => ipcRenderer.invoke('timeTracking:getActiveRecords'),
   getYesterdayTimeTrackingRecords: () => ipcRenderer.invoke('timeTracking:getYesterdayRecords'),
+  getCurrentWeekTimeTrackingRecords: () => ipcRenderer.invoke('timeTracking:getCurrentWeekRecords'),
   updateTimeTrackingRecord: (record: TimeTrackingRecord) => ipcRenderer.invoke('timeTracking:updateRecord', record),
   deleteTimeTrackingRecord: (id: number) => ipcRenderer.invoke('timeTracking:deleteRecord', id),
   markAsUploaded: (id: number) => ipcRenderer.invoke('timeTracking:markAsUploaded', id),
@@ -46,6 +47,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Version
   getVersionInfo: () => ipcRenderer.invoke('version:getInfo'),
   checkForUpdates: () => ipcRenderer.invoke('version:checkForUpdates'),
+
+  // Logging
+  getLogs: (date?: string) => ipcRenderer.invoke('logging:getLogs', date),
+  getAllLogFiles: () => ipcRenderer.invoke('logging:getAllLogFiles'),
+  getLogsPath: () => ipcRenderer.invoke('logging:getLogsPath'),
     
   // Event listeners
   onTimeTrackingChanged: (callback: () => void) => {
@@ -83,6 +89,7 @@ declare global {
       getUnsentTimeTrackingRecords: () => Promise<TimeTrackingRecord[]>;
       getActiveTimeTrackingRecords: () => Promise<TimeTrackingRecord[]>;
       getYesterdayTimeTrackingRecords: () => Promise<TimeTrackingRecord[]>;
+      getCurrentWeekTimeTrackingRecords: () => Promise<TimeTrackingRecord[]>;
       updateTimeTrackingRecord: (record: TimeTrackingRecord) => Promise<{ success: boolean }>;
       deleteTimeTrackingRecord: (id: number) => Promise<{ success: boolean }>;
       markAsUploaded: (id: number) => Promise<{ success: boolean }>;
@@ -95,6 +102,9 @@ declare global {
       deleteKanbanItem: (id: number) => Promise<{ success: boolean }>;
       getVersionInfo: () => Promise<VersionInfo>;
       checkForUpdates: () => Promise<VersionInfo>;
+      getLogs: (date?: string) => Promise<LogEntry[]>;
+      getAllLogFiles: () => Promise<string[]>;
+      getLogsPath: () => Promise<string>;
       onTimeTrackingChanged: (callback: () => void) => () => void;
       onSetTheme: (callback: (theme: string) => void) => () => void;
     };
