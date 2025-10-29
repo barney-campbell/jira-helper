@@ -4,7 +4,7 @@
 - Filtering issues table
 - Logging and a log viewer in settings
 
-# Next
+# Next: 1.3.0
 
 ### Added
 
