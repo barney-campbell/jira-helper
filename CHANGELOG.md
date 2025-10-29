@@ -7,9 +7,9 @@
 
 ### Added
 
-- Calendar view displaying worklogs for the current week (Mon-Fri) in a visual time-block format
 - Issue table filtering by status, assignee, and project
 - Project column displayed in issue tables
+- Calendar view displaying worklogs for the current week (Mon-Fri) in a visual time-block format
 
 # 1.2.4
 
