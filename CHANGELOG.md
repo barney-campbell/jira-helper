@@ -7,6 +7,7 @@
 ### Added
 
 - Compact mode for Yesterday's Time Tracking widget with toggle to switch between detailed and aggregated views
+- Personal Analytics page displaying productivity insights, time tracking statistics, and visualizations based on historical worklog data
 
 # 1.3.2
 

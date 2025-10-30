@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { UserSettings, TimeTrackingRecord, KanbanItem, KanbanColumnType, VersionInfo, LogEntry } from '../common/types';
+import type { UserSettings, TimeTrackingRecord, KanbanItem, KanbanColumnType, VersionInfo, LogEntry, DailyStats, HourlyStats, IssueStats, ProductivityInsights } from '../common/types';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Native
@@ -52,6 +52,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getLogs: (date?: string) => ipcRenderer.invoke('logging:getLogs', date),
   getAllLogFiles: () => ipcRenderer.invoke('logging:getAllLogFiles'),
   getLogsPath: () => ipcRenderer.invoke('logging:getLogsPath'),
+
+  // Analytics
+  getDailyStats: (days: number) => ipcRenderer.invoke('analytics:getDailyStats', days),
+  getHourlyStats: () => ipcRenderer.invoke('analytics:getHourlyStats'),
+  getIssueStats: (limit: number) => ipcRenderer.invoke('analytics:getIssueStats', limit),
+  getProductivityInsights: () => ipcRenderer.invoke('analytics:getProductivityInsights'),
     
   // Event listeners
   onTimeTrackingChanged: (callback: () => void) => {
@@ -105,6 +111,10 @@ declare global {
       getLogs: (date?: string) => Promise<LogEntry[]>;
       getAllLogFiles: () => Promise<string[]>;
       getLogsPath: () => Promise<string>;
+      getDailyStats: (days: number) => Promise<DailyStats[]>;
+      getHourlyStats: () => Promise<HourlyStats[]>;
+      getIssueStats: (limit: number) => Promise<IssueStats[]>;
+      getProductivityInsights: () => Promise<ProductivityInsights>;
       onTimeTrackingChanged: (callback: () => void) => () => void;
       onSetTheme: (callback: (theme: string) => void) => () => void;
     };

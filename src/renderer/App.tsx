@@ -7,6 +7,7 @@ import { IssueDetailsView } from './views/IssueDetailsView';
 import { SettingsView } from './views/SettingsView';
 import { KanbanView } from './views/KanbanView';
 import { CalendarView } from './views/CalendarView';
+import { AnalyticsView } from './views/AnalyticsView';
 import type { ViewType, JiraIssue, ThemeMode } from './types';
 import { lightTheme, darkTheme } from './theme';
 
@@ -171,6 +172,8 @@ export const App: React.FC = () => {
         return <KanbanView />;
       case 'calendar':
         return <CalendarView />;
+      case 'analytics':
+        return <AnalyticsView />;
       case 'settings':
         return <SettingsView currentTheme={themeMode} onThemeChange={handleThemeChange} />;
       default:
@@ -227,6 +230,13 @@ export const App: React.FC = () => {
             title="Calendar View"
           >
             <span className="icon">📅</span>
+          </SidebarButton>
+          <SidebarButton
+            $active={currentView === 'analytics'}
+            onClick={() => setCurrentView('analytics')}
+            title="Analytics"
+          >
+            <span className="icon">📈</span>
           </SidebarButton>
           <SidebarSpacer />
           <SidebarButton
