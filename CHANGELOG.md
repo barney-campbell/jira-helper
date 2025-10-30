@@ -8,6 +8,7 @@
 
 - Navigation menu now has background matching widgets to differentiate it from page contents
 - Settings area now fills available space by removing max-width constraint
+- Kanban board columns are now scrollable when items overflow, ensuring the "Add Item" button remains accessible
 
 # 1.3.0
 
