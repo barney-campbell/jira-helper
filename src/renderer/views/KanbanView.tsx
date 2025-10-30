@@ -45,6 +45,7 @@ const Column = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 0;
+  overflow: hidden;
 `;
 
 const ColumnHeader = styled.div`
