@@ -1,6 +1,19 @@
 # Planned
 
 - Better "empty" states
+# Next: 1.4.0
+
+### Added
+
+- Compact mode for Yesterday's Time Tracking widget with toggle to switch between detailed and aggregated views
+
+# 1.3.1
+
+### Fixed
+
+- Navigation menu now has background matching widgets to differentiate it from page contents
+- Settings area now fills available space by removing max-width constraint
+
 
 # Next
 
