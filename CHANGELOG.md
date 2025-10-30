@@ -6,14 +6,14 @@
 
 ### Added
 
-- Comprehensive automated testing framework with Jest and React Testing Library
+- Comprehensive automated testing framework with Vitest and React Testing Library
 - Unit tests for main process services (time tracking, Jira API, cryptography utilities)
 - Snapshot tests for React components with theme support
 - Component behavior tests for UI interactions
 - Mock utilities for isolated testing (database mocks, Jira API mocks)
 - GitHub Actions workflow for automated test execution on push and pull requests
 - Test coverage reporting with code coverage metrics
-- Test scripts in package.json (`test`, `test:watch`, `test:coverage`)
+- Test scripts in package.json (`test`, `test:watch`, `test:coverage`, `test:ui`)
 
 # 1.3.0
 

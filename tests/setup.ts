@@ -1,52 +1,55 @@
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Mock electron modules
-jest.mock('electron', () => ({
+vi.mock('electron', () => ({
   app: {
-    getPath: jest.fn(() => '/tmp/test-data'),
-    on: jest.fn(),
-    whenReady: jest.fn(() => Promise.resolve()),
+    getPath: vi.fn(() => '/tmp/test-data'),
+    on: vi.fn(),
+    whenReady: vi.fn(() => Promise.resolve()),
   },
-  BrowserWindow: jest.fn().mockImplementation(() => ({
-    loadURL: jest.fn(),
-    loadFile: jest.fn(),
-    on: jest.fn(),
+  BrowserWindow: vi.fn().mockImplementation(() => ({
+    loadURL: vi.fn(),
+    loadFile: vi.fn(),
+    on: vi.fn(),
     webContents: {
-      openDevTools: jest.fn(),
-      on: jest.fn(),
+      openDevTools: vi.fn(),
+      on: vi.fn(),
     },
   })),
   ipcMain: {
-    handle: jest.fn(),
-    on: jest.fn(),
+    handle: vi.fn(),
+    on: vi.fn(),
   },
   ipcRenderer: {
-    invoke: jest.fn(),
-    on: jest.fn(),
-    send: jest.fn(),
+    invoke: vi.fn(),
+    on: vi.fn(),
+    send: vi.fn(),
   },
   Menu: {
-    buildFromTemplate: jest.fn(),
-    setApplicationMenu: jest.fn(),
+    buildFromTemplate: vi.fn(),
+    setApplicationMenu: vi.fn(),
   },
 }));
 
 // Mock better-sqlite3
-jest.mock('better-sqlite3', () => {
-  return jest.fn().mockImplementation(() => ({
-    prepare: jest.fn().mockReturnValue({
-      run: jest.fn(),
-      get: jest.fn(),
-      all: jest.fn(() => []),
-    }),
-    exec: jest.fn(),
-    close: jest.fn(),
-  }));
+vi.mock('better-sqlite3', () => {
+  return {
+    default: vi.fn().mockImplementation(() => ({
+      prepare: vi.fn().mockReturnValue({
+        run: vi.fn(),
+        get: vi.fn(),
+        all: vi.fn(() => []),
+      }),
+      exec: vi.fn(),
+      close: vi.fn(),
+    })),
+  };
 });
 
 // Suppress console errors during tests
 global.console = {
   ...console,
-  error: jest.fn(),
-  warn: jest.fn(),
+  error: vi.fn(),
+  warn: vi.fn(),
 };

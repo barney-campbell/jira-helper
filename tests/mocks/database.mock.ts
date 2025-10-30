@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import type Database from 'better-sqlite3';
 
 export class MockDatabase {
@@ -9,7 +10,7 @@ export class MockDatabase {
 
   prepare(sql: string) {
     return {
-      run: jest.fn((...params: any[]) => {
+      run: vi.fn((...params: any[]) => {
         // Mock INSERT
         if (sql.toLowerCase().includes('insert')) {
           const tableName = this.extractTableName(sql);
@@ -25,12 +26,12 @@ export class MockDatabase {
         }
         return { changes: 1, lastInsertRowid: 1 };
       }),
-      get: jest.fn((...params: any[]) => {
+      get: vi.fn((...params: any[]) => {
         const tableName = this.extractTableName(sql);
         const table = this.data.get(tableName) || [];
         return table[0] || null;
       }),
-      all: jest.fn((...params: any[]) => {
+      all: vi.fn((...params: any[]) => {
         const tableName = this.extractTableName(sql);
         return this.data.get(tableName) || [];
       }),

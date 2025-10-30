@@ -9,7 +9,7 @@ tests/
 ├── unit/                 # Unit tests for services and components
 ├── snapshots/            # Snapshot tests for React components
 ├── mocks/               # Mock utilities for testing
-└── setup.ts             # Jest setup and global configuration
+└── setup.ts             # Vitest setup and global configuration
 ```
 
 ## Running Tests
@@ -27,6 +27,11 @@ npm run test:watch
 ### Run tests with coverage report
 ```bash
 npm run test:coverage
+```
+
+### Run tests with UI
+```bash
+npm run test:ui
 ```
 
 ## Test Categories

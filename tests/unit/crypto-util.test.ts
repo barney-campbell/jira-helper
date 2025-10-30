@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { encrypt, decrypt } from '../../src/main/services/crypto-util';
 
 describe('Crypto Utilities', () => {
