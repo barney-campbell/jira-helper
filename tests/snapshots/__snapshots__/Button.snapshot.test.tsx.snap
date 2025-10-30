@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Button Component Snapshots Dark Theme should match snapshot for primary variant in dark theme 1`] = `
+<button
+  class="sc-bRKDuR fkBUrQ"
+  type="button"
+>
+  Primary Button
+</button>
+`;
+
+exports[`Button Component Snapshots Dark Theme should match snapshot for secondary variant in dark theme 1`] = `
+<button
+  class="sc-bRKDuR cVMdTV"
+  type="button"
+>
+  Secondary Button
+</button>
+`;
+
+exports[`Button Component Snapshots Light Theme should match snapshot for danger variant 1`] = `
+<button
+  class="sc-bRKDuR erlJhh"
+  type="button"
+>
+  Danger Button
+</button>
+`;
+
+exports[`Button Component Snapshots Light Theme should match snapshot for disabled state 1`] = `
+<button
+  class="sc-bRKDuR dubmwv"
+  disabled=""
+  type="button"
+>
+  Disabled Button
+</button>
+`;
+
+exports[`Button Component Snapshots Light Theme should match snapshot for primary variant 1`] = `
+<button
+  class="sc-bRKDuR dubmwv"
+  type="button"
+>
+  Primary Button
+</button>
+`;
+
+exports[`Button Component Snapshots Light Theme should match snapshot for secondary variant 1`] = `
+<button
+  class="sc-bRKDuR bQwuSZ"
+  type="button"
+>
+  Secondary Button
+</button>
+`;
