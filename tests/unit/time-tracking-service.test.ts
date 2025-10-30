@@ -1,45 +1,47 @@
-import { TimeTrackingService } from '../../src/main/services/time-tracking-service';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 // Mock electron app
-jest.mock('electron', () => ({
+vi.mock('electron', () => ({
   app: {
-    getPath: jest.fn(() => '/tmp/test-data'),
+    getPath: vi.fn(() => '/tmp/test-data'),
   },
 }));
 
 // Mock better-sqlite3
-jest.mock('better-sqlite3');
+const mockPrepare = vi.fn();
+const mockExec = vi.fn();
+const mockClose = vi.fn();
+
+vi.mock('better-sqlite3', () => {
+  class MockDatabase {
+    prepare = mockPrepare;
+    exec = mockExec;
+    close = mockClose;
+  }
+  return { default: MockDatabase };
+});
+
+// Import after mocks are set up
+const { TimeTrackingService } = await import('../../src/main/services/time-tracking-service');
 
 describe('TimeTrackingService', () => {
   let service: TimeTrackingService;
-  let mockDb: any;
 
   beforeEach(() => {
     // Reset mocks
-    jest.clearAllMocks();
-
-    // Create mock database
-    mockDb = {
-      prepare: jest.fn(),
-      exec: jest.fn(),
-      close: jest.fn(),
-    };
-
-    // Mock the Database constructor
-    const Database = require('better-sqlite3');
-    Database.mockImplementation(() => mockDb);
+    vi.clearAllMocks();
 
     // Create service instance
     service = new TimeTrackingService();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('constructor', () => {
     it('should initialize the database', () => {
-      expect(mockDb.exec).toHaveBeenCalledWith(
+      expect(mockExec).toHaveBeenCalledWith(
         expect.stringContaining('CREATE TABLE IF NOT EXISTS TimeTrackingRecords')
       );
     });
@@ -47,33 +49,33 @@ describe('TimeTrackingService', () => {
 
   describe('startTracking', () => {
     it('should insert a new tracking record', () => {
-      const mockPrepare = {
-        run: jest.fn(),
+      const mockStatement = {
+        run: vi.fn(),
       };
-      mockDb.prepare.mockReturnValue(mockPrepare);
+      mockPrepare.mockReturnValue(mockStatement);
 
       service.startTracking('TEST-123');
 
-      expect(mockDb.prepare).toHaveBeenCalledWith(
+      expect(mockPrepare).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO TimeTrackingRecords')
       );
-      expect(mockPrepare.run).toHaveBeenCalledWith('TEST-123', expect.any(String));
+      expect(mockStatement.run).toHaveBeenCalledWith('TEST-123', expect.any(String));
     });
   });
 
   describe('stopTracking', () => {
     it('should update the end time for an active tracking record', () => {
-      const mockPrepare = {
-        run: jest.fn(),
+      const mockStatement = {
+        run: vi.fn(),
       };
-      mockDb.prepare.mockReturnValue(mockPrepare);
+      mockPrepare.mockReturnValue(mockStatement);
 
       service.stopTracking('TEST-123');
 
-      expect(mockDb.prepare).toHaveBeenCalledWith(
+      expect(mockPrepare).toHaveBeenCalledWith(
         expect.stringContaining('UPDATE TimeTrackingRecords')
       );
-      expect(mockPrepare.run).toHaveBeenCalledWith(expect.any(String), 'TEST-123');
+      expect(mockStatement.run).toHaveBeenCalledWith(expect.any(String), 'TEST-123');
     });
   });
 
@@ -89,17 +91,17 @@ describe('TimeTrackingService', () => {
         },
       ];
 
-      const mockPrepare = {
-        all: jest.fn().mockReturnValue(mockRecords),
+      const mockStatement = {
+        all: vi.fn().mockReturnValue(mockRecords),
       };
-      mockDb.prepare.mockReturnValue(mockPrepare);
+      mockPrepare.mockReturnValue(mockStatement);
 
       const records = service.getRecords('TEST-123');
 
-      expect(mockDb.prepare).toHaveBeenCalledWith(
+      expect(mockPrepare).toHaveBeenCalledWith(
         expect.stringContaining('SELECT * FROM TimeTrackingRecords')
       );
-      expect(mockPrepare.all).toHaveBeenCalledWith('TEST-123');
+      expect(mockStatement.all).toHaveBeenCalledWith('TEST-123');
       expect(records).toHaveLength(1);
       expect(records[0].issueKey).toBe('TEST-123');
     });
@@ -117,14 +119,14 @@ describe('TimeTrackingService', () => {
         },
       ];
 
-      const mockPrepare = {
-        all: jest.fn().mockReturnValue(mockRecords),
+      const mockStatement = {
+        all: vi.fn().mockReturnValue(mockRecords),
       };
-      mockDb.prepare.mockReturnValue(mockPrepare);
+      mockPrepare.mockReturnValue(mockStatement);
 
       const records = service.getUnsentCompletedRecords();
 
-      expect(mockDb.prepare).toHaveBeenCalledWith(
+      expect(mockPrepare).toHaveBeenCalledWith(
         expect.stringContaining('WHERE IsUploaded = 0 AND EndTime IS NOT NULL')
       );
       expect(records).toHaveLength(1);
@@ -144,14 +146,14 @@ describe('TimeTrackingService', () => {
         },
       ];
 
-      const mockPrepare = {
-        all: jest.fn().mockReturnValue(mockRecords),
+      const mockStatement = {
+        all: vi.fn().mockReturnValue(mockRecords),
       };
-      mockDb.prepare.mockReturnValue(mockPrepare);
+      mockPrepare.mockReturnValue(mockStatement);
 
       const records = service.getActiveRecords();
 
-      expect(mockDb.prepare).toHaveBeenCalledWith(
+      expect(mockPrepare).toHaveBeenCalledWith(
         expect.stringContaining('WHERE EndTime IS NULL')
       );
       expect(records).toHaveLength(1);
@@ -161,33 +163,33 @@ describe('TimeTrackingService', () => {
 
   describe('markAsUploaded', () => {
     it('should mark a record as uploaded', () => {
-      const mockPrepare = {
-        run: jest.fn(),
+      const mockStatement = {
+        run: vi.fn(),
       };
-      mockDb.prepare.mockReturnValue(mockPrepare);
+      mockPrepare.mockReturnValue(mockStatement);
 
       service.markAsUploaded(1);
 
-      expect(mockDb.prepare).toHaveBeenCalledWith(
+      expect(mockPrepare).toHaveBeenCalledWith(
         'UPDATE TimeTrackingRecords SET IsUploaded = 1 WHERE Id = ?'
       );
-      expect(mockPrepare.run).toHaveBeenCalledWith(1);
+      expect(mockStatement.run).toHaveBeenCalledWith(1);
     });
   });
 
   describe('deleteRecord', () => {
     it('should delete a record by id', () => {
-      const mockPrepare = {
-        run: jest.fn(),
+      const mockStatement = {
+        run: vi.fn(),
       };
-      mockDb.prepare.mockReturnValue(mockPrepare);
+      mockPrepare.mockReturnValue(mockStatement);
 
       service.deleteRecord(1);
 
-      expect(mockDb.prepare).toHaveBeenCalledWith(
+      expect(mockPrepare).toHaveBeenCalledWith(
         'DELETE FROM TimeTrackingRecords WHERE Id = ?'
       );
-      expect(mockPrepare.run).toHaveBeenCalledWith(1);
+      expect(mockStatement.run).toHaveBeenCalledWith(1);
     });
   });
 
@@ -195,7 +197,7 @@ describe('TimeTrackingService', () => {
     it('should close the database connection', () => {
       service.close();
 
-      expect(mockDb.close).toHaveBeenCalled();
+      expect(mockClose).toHaveBeenCalled();
     });
   });
 });

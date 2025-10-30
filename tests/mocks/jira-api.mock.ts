@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import type { JiraIssue, JiraWorklog } from '../../src/common/types';
 
 export const mockJiraIssue: JiraIssue = {
@@ -31,16 +32,16 @@ export const mockJiraSearchResponse = {
 };
 
 export function mockFetch(response: any, ok: boolean = true) {
-  global.fetch = jest.fn(() =>
+  global.fetch = vi.fn(() =>
     Promise.resolve({
       ok,
       json: () => Promise.resolve(response),
       text: () => Promise.resolve(JSON.stringify(response)),
       status: ok ? 200 : 400,
     } as Response)
-  );
+  ) as any;
 }
 
 export function mockFetchError(message: string) {
-  global.fetch = jest.fn(() => Promise.reject(new Error(message)));
+  global.fetch = vi.fn(() => Promise.reject(new Error(message))) as any;
 }

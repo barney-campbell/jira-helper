@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Button Component Snapshots Dark Theme should match snapshot for primary variant in dark theme 1`] = `
+exports[`Button Component Snapshots > Dark Theme > should match snapshot for primary variant in dark theme 1`] = `
 <button
   class="sc-bRKDuR fkBUrQ"
   type="button"
@@ -9,7 +9,7 @@ exports[`Button Component Snapshots Dark Theme should match snapshot for primary
 </button>
 `;
 
-exports[`Button Component Snapshots Dark Theme should match snapshot for secondary variant in dark theme 1`] = `
+exports[`Button Component Snapshots > Dark Theme > should match snapshot for secondary variant in dark theme 1`] = `
 <button
   class="sc-bRKDuR cVMdTV"
   type="button"
@@ -18,7 +18,7 @@ exports[`Button Component Snapshots Dark Theme should match snapshot for seconda
 </button>
 `;
 
-exports[`Button Component Snapshots Light Theme should match snapshot for danger variant 1`] = `
+exports[`Button Component Snapshots > Light Theme > should match snapshot for danger variant 1`] = `
 <button
   class="sc-bRKDuR erlJhh"
   type="button"
@@ -27,7 +27,7 @@ exports[`Button Component Snapshots Light Theme should match snapshot for danger
 </button>
 `;
 
-exports[`Button Component Snapshots Light Theme should match snapshot for disabled state 1`] = `
+exports[`Button Component Snapshots > Light Theme > should match snapshot for disabled state 1`] = `
 <button
   class="sc-bRKDuR dubmwv"
   disabled=""
@@ -37,7 +37,7 @@ exports[`Button Component Snapshots Light Theme should match snapshot for disabl
 </button>
 `;
 
-exports[`Button Component Snapshots Light Theme should match snapshot for primary variant 1`] = `
+exports[`Button Component Snapshots > Light Theme > should match snapshot for primary variant 1`] = `
 <button
   class="sc-bRKDuR dubmwv"
   type="button"
@@ -46,7 +46,7 @@ exports[`Button Component Snapshots Light Theme should match snapshot for primar
 </button>
 `;
 
-exports[`Button Component Snapshots Light Theme should match snapshot for secondary variant 1`] = `
+exports[`Button Component Snapshots > Light Theme > should match snapshot for secondary variant 1`] = `
 <button
   class="sc-bRKDuR bQwuSZ"
   type="button"

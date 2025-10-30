@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
@@ -43,7 +44,7 @@ describe('Input Component', () => {
 
   describe('Interactions', () => {
     it('should call onChange when value changes', () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn();
       renderWithTheme(<Input value="" onChange={handleChange} />);
 
       const input = screen.getByDisplayValue('');
@@ -53,7 +54,7 @@ describe('Input Component', () => {
     });
 
     it('should not call onChange when disabled', () => {
-      const handleChange = jest.fn();
+      const handleChange = vi.fn();
       renderWithTheme(<Input value="" onChange={handleChange} disabled />);
 
       const input = screen.getByDisplayValue('');
@@ -64,7 +65,7 @@ describe('Input Component', () => {
     });
 
     it('should call onKeyDown when key is pressed', () => {
-      const handleKeyDown = jest.fn();
+      const handleKeyDown = vi.fn();
       renderWithTheme(
         <Input value="" onChange={() => {}} onKeyDown={handleKeyDown} />
       );

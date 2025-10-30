@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { JiraService } from '../../src/main/services/jira-service';
 import { mockJiraSearchResponse, mockFetch, mockFetchError } from '../mocks/jira-api.mock';
 import type { UserSettings } from '../../src/common/types';
@@ -18,7 +19,7 @@ describe('JiraService', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('constructor', () => {

@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
@@ -36,7 +37,7 @@ describe('Button Component', () => {
 
   describe('Interactions', () => {
     it('should call onClick when clicked', () => {
-      const handleClick = jest.fn();
+      const handleClick = vi.fn();
       renderWithTheme(<Button onClick={handleClick}>Click Me</Button>);
 
       const button = screen.getByText('Click Me');
@@ -46,7 +47,7 @@ describe('Button Component', () => {
     });
 
     it('should not call onClick when disabled', () => {
-      const handleClick = jest.fn();
+      const handleClick = vi.fn();
       renderWithTheme(
         <Button onClick={handleClick} disabled>
           Disabled
