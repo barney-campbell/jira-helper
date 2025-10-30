@@ -6,6 +6,15 @@
 ### Added
 
 - Compact mode for Yesterday's Time Tracking widget with toggle to switch between detailed and aggregated views
+- Comprehensive automated testing framework with Jest and React Testing Library
+  - Unit tests for main process services (time tracking, Jira API, cryptography utilities)
+  - Snapshot tests for React components with theme support
+  - Component behavior tests for UI interactions
+  - Mock utilities for isolated testing (database mocks, Jira API mocks)
+  - GitHub Actions workflow for automated test execution on push and pull requests
+  - Test coverage reporting with code coverage metrics
+  - Test scripts in package.json (`test`, `test:watch`, `test:coverage`)
+
 
 # 1.3.1
 
@@ -13,7 +22,6 @@
 
 - Navigation menu now has background matching widgets to differentiate it from page contents
 - Settings area now fills available space by removing max-width constraint
-
 
 # 1.3.0
 
