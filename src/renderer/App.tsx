@@ -6,6 +6,7 @@ import { IssueSearchView } from './views/IssueSearchView';
 import { IssueDetailsView } from './views/IssueDetailsView';
 import { SettingsView } from './views/SettingsView';
 import { KanbanView } from './views/KanbanView';
+import { CalendarView } from './views/CalendarView';
 import type { ViewType, JiraIssue, ThemeMode } from './types';
 import { lightTheme, darkTheme } from './theme';
 
@@ -52,7 +53,7 @@ const AppContainer = styled.div`
 
 const Sidebar = styled.div`
   width: 70px;
-  background-color: ${props => props.theme.colors.sidebar};
+  background-color: ${props => props.theme.colors.surface};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -168,6 +169,8 @@ export const App: React.FC = () => {
         return selectedIssueKey ? <IssueDetailsView issueKey={selectedIssueKey} /> : <DashboardView onIssueDoubleClick={handleIssueKeyDoubleClick} />;
       case 'kanban':
         return <KanbanView />;
+      case 'calendar':
+        return <CalendarView />;
       case 'settings':
         return <SettingsView currentTheme={themeMode} onThemeChange={handleThemeChange} />;
       default:
@@ -217,6 +220,13 @@ export const App: React.FC = () => {
             title="Kanban Board"
           >
             <span className="icon">📝</span>
+          </SidebarButton>
+          <SidebarButton
+            $active={currentView === 'calendar'}
+            onClick={() => setCurrentView('calendar')}
+            title="Calendar View"
+          >
+            <span className="icon">📅</span>
           </SidebarButton>
           <SidebarSpacer />
           <SidebarButton

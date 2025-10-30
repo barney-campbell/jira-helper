@@ -1,8 +1,22 @@
 # Planned
 
 - Better "empty" states
-- Filtering issues table
-- Logging and a log viewer in settings
+
+# Next: 1.3.1
+
+### Fixed
+
+- Navigation menu now has background matching widgets to differentiate it from page contents
+
+# 1.3.0
+
+### Added
+
+- Issue table filtering by status, assignee, and project
+- Project column displayed in issue tables
+- Calendar view displaying worklogs for the current week (Mon-Fri) in a visual time-block format
+- Error logging service that captures errors throughout the application with timestamps, error messages, stack traces, and code locations
+- Log viewer in settings page showing logs in a side-by-side layout with credentials/theme settings
 
 # Next
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
+import { LogViewer } from '../components/LogViewer';
 import type { UserSettings, VersionInfo, ThemeMode } from '../../common/types';
 
 const SettingsContainer = styled.div`
@@ -97,7 +98,37 @@ const ThemeButton = styled.button<{ $active: boolean }>`
 
 const PageContainer = styled.div`
   display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 40px);
+`;
+
+const LeftColumn = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: 10px;
+  overflow-y: auto;
+`;
+
+const RightColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+const LogViewerContainer = styled.div`
+  background-color: ${props => props.theme.colors.surface};
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  h2 {
+    margin-bottom: 25px;
+    color: ${props => props.theme.colors.text};
+  }
 `;
 
 interface SettingsViewProps {
@@ -161,93 +192,102 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
 
   return (
     <PageContainer>
-      <SettingsContainer>
-        <h2>Settings</h2>
-        <FormGroup>
-          <label>Base URL:</label>
-          <Input
-            value={settings.baseUrl}
-            onChange={(value) => setSettings({ ...settings, baseUrl: value })}
-            placeholder="https://your-domain.atlassian.net"
-          />
-        </FormGroup>
-        <FormGroup>
-          <label>Email:</label>
-          <Input
-            type="email"
-            value={settings.email}
-            onChange={(value) => setSettings({ ...settings, email: value })}
-            placeholder="your-email@example.com"
-          />
-        </FormGroup>
-        <FormGroup>
-          <label>API Token:</label>
-          <Input
-            type="password"
-            value={settings.apiToken}
-            onChange={(value) => setSettings({ ...settings, apiToken: value })}
-            placeholder="Your Jira API token"
-          />
-        </FormGroup>
-        <ButtonGroup>
-          <Button onClick={handleSave}>Save</Button>
-        </ButtonGroup>
-        {message && <Message>{message}</Message>}
+      <LeftColumn>
+        <SettingsContainer>
+          <h2>Settings</h2>
+          <FormGroup>
+            <label>Base URL:</label>
+            <Input
+              value={settings.baseUrl}
+              onChange={(value) => setSettings({ ...settings, baseUrl: value })}
+              placeholder="https://your-domain.atlassian.net"
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Email:</label>
+            <Input
+              type="email"
+              value={settings.email}
+              onChange={(value) => setSettings({ ...settings, email: value })}
+              placeholder="your-email@example.com"
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>API Token:</label>
+            <Input
+              type="password"
+              value={settings.apiToken}
+              onChange={(value) => setSettings({ ...settings, apiToken: value })}
+              placeholder="Your Jira API token"
+            />
+          </FormGroup>
+          <ButtonGroup>
+            <Button onClick={handleSave}>Save</Button>
+          </ButtonGroup>
+          {message && <Message>{message}</Message>}
 
 
-        <VersionContainer>
-          <h3>Version Information</h3>
-          {versionInfo && (
-            <>
-              <VersionText>
-                <strong>Version:</strong> {versionInfo.version}
-                {versionInfo.isDev && ' (Development Build)'}
-              </VersionText>
-              {versionInfo.latestVersion && (
+          <VersionContainer>
+            <h3>Version Information</h3>
+            {versionInfo && (
+              <>
                 <VersionText>
-                  <strong>Latest Version:</strong> {versionInfo.latestVersion}
+                  <strong>Version:</strong> {versionInfo.version}
+                  {versionInfo.isDev && ' (Development Build)'}
                 </VersionText>
-              )}
-              {versionInfo.updateAvailable && (
-                <UpdateMessage>
-                  A new version ({versionInfo.latestVersion}) is available!
-                </UpdateMessage>
-              )}
-              <ButtonGroup>
-                <Button onClick={handleCheckForUpdates} disabled={checkingUpdates}>
-                  {checkingUpdates ? 'Checking...' : 'Check for Updates'}
-                </Button>
-              </ButtonGroup>
-            </>
-          )}
-        </VersionContainer>
-      </SettingsContainer>
+                {versionInfo.latestVersion && (
+                  <VersionText>
+                    <strong>Latest Version:</strong> {versionInfo.latestVersion}
+                  </VersionText>
+                )}
+                {versionInfo.updateAvailable && (
+                  <UpdateMessage>
+                    A new version ({versionInfo.latestVersion}) is available!
+                  </UpdateMessage>
+                )}
+                <ButtonGroup>
+                  <Button onClick={handleCheckForUpdates} disabled={checkingUpdates}>
+                    {checkingUpdates ? 'Checking...' : 'Check for Updates'}
+                  </Button>
+                </ButtonGroup>
+              </>
+            )}
+          </VersionContainer>
+        </SettingsContainer>
 
-      <SettingsContainer>
-        <h3>Theme</h3>
-        <FormGroup>
-          <ThemeToggle>
-            <ThemeButton 
-              $active={currentTheme === 'light'} 
-              onClick={() => handleThemeToggle('light')}
-            >
-              ☀️ Light
-            </ThemeButton>
-            <ThemeButton 
-              $active={currentTheme === 'dark'} 
-              onClick={() => handleThemeToggle('dark')}
-            >
-              🌙 Dark
-            </ThemeButton>
-            <ThemeButton 
-              $active={currentTheme === 'system'} 
-              onClick={() => handleThemeToggle('system')}
-            >
-              💻 System
-            </ThemeButton>
-          </ThemeToggle>
-        </FormGroup>
-      </SettingsContainer>
+        <SettingsContainer>
+          <h3>Theme</h3>
+          <FormGroup>
+            <ThemeToggle>
+              <ThemeButton 
+                $active={currentTheme === 'light'} 
+                onClick={() => handleThemeToggle('light')}
+              >
+                ☀️ Light
+              </ThemeButton>
+              <ThemeButton 
+                $active={currentTheme === 'dark'} 
+                onClick={() => handleThemeToggle('dark')}
+              >
+                🌙 Dark
+              </ThemeButton>
+              <ThemeButton 
+                $active={currentTheme === 'system'} 
+                onClick={() => handleThemeToggle('system')}
+              >
+                💻 System
+              </ThemeButton>
+            </ThemeToggle>
+          </FormGroup>
+        </SettingsContainer>
+      </LeftColumn>
+
+      <RightColumn>
+        <LogViewerContainer>
+          <h2>Logs</h2>
+          <LogViewer />
+        </LogViewerContainer>
+      </RightColumn>
     </PageContainer>
   );
 };
