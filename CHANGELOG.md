@@ -2,6 +2,12 @@
 
 - Better "empty" states
 
+# Next: 1.3.1
+
+### Fixed
+
+- Navigation menu now has background matching widgets to differentiate it from page contents
+
 # 1.3.0
 
 ### Added
