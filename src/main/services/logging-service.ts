@@ -94,7 +94,8 @@ export class LoggingService {
             return null;
           }
         })
-        .filter((entry): entry is LogEntry => entry !== null);
+        .filter((entry): entry is LogEntry => entry !== null)
+        .reverse(); // Newest logs first
     } catch (err) {
       console.error('Failed to read logs:', err);
       return [];

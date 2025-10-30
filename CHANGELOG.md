@@ -4,6 +4,9 @@
 
 # 1.3.2
 
+### Fixed
+
+- Logs now display in reverse chronological order (newest first, oldest last) for easier access to recent logs
 - Kanban board columns are now scrollable when items overflow, ensuring the "Add Item" button remains accessible
 
 # 1.3.1
