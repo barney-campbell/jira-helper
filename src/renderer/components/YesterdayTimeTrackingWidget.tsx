@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { DataGrid, Column } from './DataGrid';
 import { WidgetContainer } from './Widget';
-import { Button } from './Button';
+import { Toggle } from './Toggle';
 import type { TimeTrackingRecord } from '../../common/types';
 
 interface YesterdayTimeTrackingWidgetProps {
@@ -171,12 +171,11 @@ export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetPr
     <WidgetContainer>
       <WidgetHeader>
         <h3>{getYesterdayLabel()} Time Tracking</h3>
-        <Button 
-          variant="secondary" 
-          onClick={() => setIsCompactMode(!isCompactMode)}
-        >
-          {isCompactMode ? 'Show Details' : 'Compact View'}
-        </Button>
+        <Toggle 
+          checked={isCompactMode}
+          onChange={setIsCompactMode}
+          label="Compact View"
+        />
       </WidgetHeader>
       {isCompactMode ? (
         <DataGrid 

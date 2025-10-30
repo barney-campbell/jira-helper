@@ -6,6 +6,7 @@ export type { Column } from './DataGrid';
 export { IssueTable } from './IssueTable';
 export { LoadingSpinner } from './LoadingSpinner';
 export { Modal } from './Modal';
+export { Toggle } from './Toggle';
 export { WidgetContainer, WidgetFooter } from './Widget';
 export { UnuploadedTimeTrackingWidget } from './UnuploadedTimeTrackingWidget';
 export { ActiveTimeTrackingWidget } from './ActiveTimeTrackingWidget';
