@@ -2,7 +2,11 @@
 
 - Better "empty" states
 
-# Next: 1.3.1
+# 1.3.2
+
+- Kanban board columns are now scrollable when items overflow, ensuring the "Add Item" button remains accessible
+
+# 1.3.1
 
 ### Fixed
 
