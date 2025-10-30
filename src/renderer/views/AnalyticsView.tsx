@@ -228,11 +228,15 @@ export const AnalyticsView: React.FC = () => {
     ? ((insights.totalTimeThisWeek - insights.totalTimeLastWeek) / insights.totalTimeLastWeek) * 100
     : 0;
 
+  // Constants
+  const LAST_DAYS_COUNT = 7;
+  const BAR_VALUE_VISIBILITY_THRESHOLD = 20; // Percentage threshold for showing bar values
+
   // Prepare hourly chart data
   const maxHourlySeconds = Math.max(...hourlyStats.map(h => h.totalSeconds), 1);
 
   // Prepare daily chart data (last 7 days)
-  const last7Days = dailyStats.slice(0, 7).reverse();
+  const last7Days = dailyStats.slice(0, LAST_DAYS_COUNT).reverse();
   const maxDailySeconds = Math.max(...last7Days.map(d => d.totalSeconds), 1);
 
   return (
@@ -339,7 +343,7 @@ export const AnalyticsView: React.FC = () => {
               
               return (
                 <Bar key={index} $height={heightPercent}>
-                  {heightPercent > 20 && <BarValue>{formatDuration(hour.totalSeconds)}</BarValue>}
+                  {heightPercent > BAR_VALUE_VISIBILITY_THRESHOLD && <BarValue>{formatDuration(hour.totalSeconds)}</BarValue>}
                   <BarLabel>{hour.hour}h</BarLabel>
                 </Bar>
               );

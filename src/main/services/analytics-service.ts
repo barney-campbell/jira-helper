@@ -146,13 +146,18 @@ export class AnalyticsService {
   }
 
   getProductivityInsights(): ProductivityInsights {
+    const MAX_WEEKLY_DAYS = 7;
+    const TOP_PRODUCTIVE_HOURS_COUNT = 3;
+    const TOP_ISSUES_COUNT = 5;
+    const STATS_PERIOD_DAYS = 30;
+
     const hourlyStats = this.getHourlyStats();
-    const issueStats = this.getIssueStats(5);
-    const dailyStats = this.getDailyStats(30);
+    const issueStats = this.getIssueStats(TOP_ISSUES_COUNT);
+    const dailyStats = this.getDailyStats(STATS_PERIOD_DAYS);
 
     // Find most productive hours (top 3)
     const sortedHours = [...hourlyStats].sort((a, b) => b.totalSeconds - a.totalSeconds);
-    const mostProductiveHours = sortedHours.slice(0, 3).map(h => h.hour);
+    const mostProductiveHours = sortedHours.slice(0, TOP_PRODUCTIVE_HOURS_COUNT).map(h => h.hour);
 
     // Calculate daily average
     const totalSeconds = dailyStats.reduce((sum, day) => sum + day.totalSeconds, 0);
@@ -168,9 +173,9 @@ export class AnalyticsService {
 
     const thisWeekStart = monday.toISOString();
     const lastWeekStart = new Date(monday);
-    lastWeekStart.setDate(monday.getDate() - 7);
+    lastWeekStart.setDate(monday.getDate() - MAX_WEEKLY_DAYS);
 
-    const weeklyTrend = dailyStats.filter(day => day.date >= thisWeekStart.split('T')[0]).slice(0, 7);
+    const weeklyTrend = dailyStats.filter(day => day.date >= thisWeekStart.split('T')[0]).slice(0, MAX_WEEKLY_DAYS);
     const totalTimeThisWeek = weeklyTrend.reduce((sum, day) => sum + day.totalSeconds, 0);
 
     const lastWeekData = dailyStats.filter(day => {
