@@ -7,6 +7,7 @@
 ### Added
 
 - Compact mode for Yesterday's Time Tracking widget with toggle to switch between detailed and aggregated views
+- Week navigation controls in Calendar view with Previous Week, Next Week, and Current Week buttons
 
 # 1.3.2
 

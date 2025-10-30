@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import type { TimeTrackingRecord } from '../../common/types';
+import { Button } from '../components/Button';
 
 const CalendarContainer = styled.div`
   margin: 0 auto;
@@ -12,11 +13,24 @@ const CalendarContainer = styled.div`
   }
 `;
 
+const WeekNavigationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+`;
+
 const WeekHeader = styled.div`
   text-align: center;
-  margin-bottom: 20px;
   font-size: 16px;
   color: ${props => props.theme.colors.textSecondary};
+  min-width: 250px;
+`;
+
+const NavButton = styled(Button)`
+  padding: 8px 16px;
+  font-size: 14px;
 `;
 
 const CalendarGrid = styled.div`
@@ -119,6 +133,7 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
   const [records, setRecords] = useState<TimeTrackingRecord[]>([]);
   const [summaries, setSummaries] = useState<Record<string, string>>({});
   const [weekDates, setWeekDates] = useState<Date[]>([]);
+  const [weekOffset, setWeekOffset] = useState<number>(0);
 
   useEffect(() => {
     loadRecords();
@@ -132,7 +147,7 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
     return () => {
       removeListener();
     };
-  }, []);
+  }, [weekOffset]);
 
   const calculateWeekDates = () => {
     const today = new Date();
@@ -142,6 +157,9 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
     const monday = new Date(today);
     const daysFromMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
     monday.setDate(today.getDate() + daysFromMonday);
+    
+    // Apply week offset
+    monday.setDate(monday.getDate() + (weekOffset * 7));
     
     const dates: Date[] = [];
     for (let i = 0; i < 5; i++) {
@@ -155,7 +173,7 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
 
   const loadRecords = async () => {
     try {
-      const data = await window.electronAPI.getCurrentWeekTimeTrackingRecords();
+      const data = await window.electronAPI.getWeekTimeTrackingRecords(weekOffset);
       setRecords(data);
       
       // Extract unique issue keys
@@ -167,7 +185,7 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
         setSummaries(fetchedSummaries);
       }
     } catch (error) {
-      console.error('Error loading current week records:', error);
+      console.error('Error loading week records:', error);
     }
   };
 
@@ -239,6 +257,18 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
     return `${displayHours}:${String(minutes).padStart(2, '0')} ${ampm}`;
   };
 
+  const goToPreviousWeek = () => {
+    setWeekOffset(prev => prev - 1);
+  };
+
+  const goToNextWeek = () => {
+    setWeekOffset(prev => prev + 1);
+  };
+
+  const goToCurrentWeek = () => {
+    setWeekOffset(0);
+  };
+
   // Generate time slots from 8 AM to 6 PM
   const timeSlots = Array.from({ length: 11 }, (_, i) => {
     const hour = i + 8;
@@ -250,7 +280,22 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
   return (
     <CalendarContainer>
       <h1>Calendar View</h1>
-      <WeekHeader>Week of {getWeekRange()}</WeekHeader>
+      <WeekNavigationContainer>
+        <NavButton variant="secondary" onClick={goToPreviousWeek}>
+          &lt; Previous Week
+        </NavButton>
+        <WeekHeader>Week of {getWeekRange()}</WeekHeader>
+        <NavButton variant="secondary" onClick={goToNextWeek}>
+          Next Week &gt;
+        </NavButton>
+      </WeekNavigationContainer>
+      {weekOffset !== 0 && (
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <NavButton variant="primary" onClick={goToCurrentWeek}>
+            Current Week
+          </NavButton>
+        </div>
+      )}
       <CalendarGrid>
         {/* Time column */}
         <div>
