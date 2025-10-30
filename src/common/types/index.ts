@@ -34,6 +34,7 @@ export interface JiraIssue {
   summary: string;
   status: string;
   assignee: string;
+  project?: string;
   descriptionBlocks?: JiraTextBlock[];
   comments?: JiraComment[];
 }
@@ -72,4 +73,13 @@ export interface VersionInfo {
   isDev: boolean;
   updateAvailable?: boolean;
   latestVersion?: string;
+}
+
+export interface LogEntry {
+  timestamp: string;
+  level: 'error' | 'warning' | 'info';
+  message: string;
+  error?: string;
+  stack?: string;
+  location?: string;
 }

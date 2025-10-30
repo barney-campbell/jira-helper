@@ -108,6 +108,32 @@ export class TimeTrackingService {
     return rows.map(row => this.mapRowToRecord(row));
   }
 
+  getCurrentWeekRecords(): TimeTrackingRecord[] {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    
+    // Calculate Monday of current week (day 1)
+    const monday = new Date(today);
+    const daysFromMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // If Sunday, go back 6 days
+    monday.setDate(today.getDate() + daysFromMonday);
+    monday.setHours(0, 0, 0, 0);
+    const startOfWeek = monday.toISOString();
+    
+    // Calculate Friday of current week (day 5)
+    const friday = new Date(monday);
+    friday.setDate(monday.getDate() + 4);
+    friday.setHours(23, 59, 59, 999);
+    const endOfWeek = friday.toISOString();
+
+    const rows = this.db.prepare(`
+      SELECT * FROM TimeTrackingRecords 
+      WHERE StartTime >= ? AND StartTime <= ?
+      ORDER BY StartTime ASC
+    `).all(startOfWeek, endOfWeek) as any[];
+
+    return rows.map(row => this.mapRowToRecord(row));
+  }
+
   stopTrackingById(id: number): void {
     const now = new Date().toISOString();
     this.db.prepare(`

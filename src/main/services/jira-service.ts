@@ -20,7 +20,7 @@ export class JiraService {
   async getAssignedIssues(user: string): Promise<JiraIssue[]> {
     try {
       const jql = `assignee=${user} ORDER BY Updated`;
-      const url = `${this.baseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=key,summary,status,assignee`;
+      const url = `${this.baseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=key,summary,status,assignee,project`;
       
       const response = await fetch(url, {
         headers: {
@@ -49,7 +49,8 @@ export class JiraService {
           key: issue.key,
           summary: fields.summary || '',
           status: fields.status?.name || '',
-          assignee: assignee
+          assignee: assignee,
+          project: fields.project?.name || ''
         });
       }
 
@@ -61,7 +62,7 @@ export class JiraService {
   }
 
   async getIssue(key: string): Promise<JiraIssue> {
-    const url = `${this.baseUrl}/rest/api/3/issue/${key}?fields=key,summary,status,assignee,description,comment`;
+    const url = `${this.baseUrl}/rest/api/3/issue/${key}?fields=key,summary,status,assignee,description,comment,project`;
     
     const response = await fetch(url, {
       headers: {
@@ -92,6 +93,7 @@ export class JiraService {
       summary: fields.summary || '',
       status: fields.status?.name || '',
       assignee: assignee,
+      project: fields.project?.name || '',
       descriptionBlocks: descriptionBlocks,
       comments: comments
     };
@@ -147,7 +149,7 @@ export class JiraService {
 
   async searchIssues(jql: string): Promise<JiraIssue[]> {
     try {
-      const url = `${this.baseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=key,summary,status,assignee`;
+      const url = `${this.baseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=key,summary,status,assignee,project`;
       
       const response = await fetch(url, {
         headers: {
@@ -176,7 +178,8 @@ export class JiraService {
           key: issue.key,
           summary: fields.summary || '',
           status: fields.status?.name || '',
-          assignee: assignee
+          assignee: assignee,
+          project: fields.project?.name || ''
         });
       }
 

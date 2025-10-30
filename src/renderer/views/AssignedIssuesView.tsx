@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button } from '../components/Button';
-import { DataGrid, Column } from '../components/DataGrid';
+import { IssueTable } from '../components/IssueTable';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import type { JiraIssue } from '../../common/types';
 
@@ -57,13 +57,6 @@ export const AssignedIssuesView: React.FC<AssignedIssuesViewProps> = ({ onIssueD
     }
   };
 
-  const columns: Column<JiraIssue>[] = [
-    { header: 'Key', accessor: 'key', width: '100px' },
-    { header: 'Summary', accessor: 'summary', width: '700px' },
-    { header: 'Status', accessor: 'status', width: '200px' },
-    { header: 'Assignee', accessor: 'assignee', width: '120px' }
-  ];
-
   return (
     <ViewContainer>
       <h2>Assigned Jira Issues</h2>
@@ -81,7 +74,7 @@ export const AssignedIssuesView: React.FC<AssignedIssuesViewProps> = ({ onIssueD
           Refresh
         </Button>
       </ViewHeader>
-      <DataGrid columns={columns} data={issues} onRowDoubleClick={onIssueDoubleClick} />
+      <IssueTable issues={issues} onIssueDoubleClick={onIssueDoubleClick} />
     </ViewContainer>
   );
 };

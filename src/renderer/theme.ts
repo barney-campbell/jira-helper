@@ -18,6 +18,8 @@ export interface Theme {
     info: string;
     infoBorder: string;
     infoText: string;
+    error: string;
+    warning: string;
     sidebar: string;
     sidebarButtonHover: string;
     sidebarButtonActive: string;
@@ -47,6 +49,8 @@ export const lightTheme: Theme = {
     info: '#d1ecf1',
     infoBorder: '#bee5eb',
     infoText: '#0c5460',
+    error: '#e53935',
+    warning: '#fb8c00',
     sidebar: '#222222',
     sidebarButtonHover: 'rgba(0, 0, 0, 0.05)',
     sidebarButtonActive: 'rgba(0, 0, 0, 0.1)',
@@ -76,6 +80,8 @@ export const darkTheme: Theme = {
     info: '#1f3a4a',
     infoBorder: '#2a4f6a',
     infoText: '#7ecaff',
+    error: '#ff5630',
+    warning: '#ffab00',
     sidebar: '#1a1a1a',
     sidebarButtonHover: 'rgba(255, 255, 255, 0.08)',
     sidebarButtonActive: 'rgba(255, 255, 255, 0.15)',
