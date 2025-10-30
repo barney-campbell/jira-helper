@@ -2,6 +2,12 @@
 
 - Better "empty" states
 
+# 1.4.0
+
+### Added
+
+- Compact mode for Yesterday's Time Tracking widget with toggle to switch between detailed and aggregated views
+
 # 1.3.0
 
 ### Added
