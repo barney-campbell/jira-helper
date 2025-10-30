@@ -7,6 +7,7 @@
 ### Fixed
 
 - Navigation menu now has background matching widgets to differentiate it from page contents
+- Settings area now fills available space by removing max-width constraint
 
 # 1.3.0
 
@@ -17,12 +18,6 @@
 - Calendar view displaying worklogs for the current week (Mon-Fri) in a visual time-block format
 - Error logging service that captures errors throughout the application with timestamps, error messages, stack traces, and code locations
 - Log viewer in settings page showing logs in a side-by-side layout with credentials/theme settings
-
-# Next
-
-### Fixed
-
-- Settings area now fills available space by removing max-width constraint
 
 # 1.2.4
 
