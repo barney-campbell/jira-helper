@@ -33,6 +33,11 @@ const NavButton = styled(Button)`
   font-size: 14px;
 `;
 
+const CurrentWeekButtonContainer = styled.div`
+  text-align: center;
+  margin-bottom: 20px;
+`;
+
 const CalendarGrid = styled.div`
   display: grid;
   grid-template-columns: 80px repeat(5, 1fr);
@@ -290,11 +295,11 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
         </NavButton>
       </WeekNavigationContainer>
       {weekOffset !== 0 && (
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <CurrentWeekButtonContainer>
           <NavButton variant="primary" onClick={goToCurrentWeek}>
             Current Week
           </NavButton>
-        </div>
+        </CurrentWeekButtonContainer>
       )}
       <CalendarGrid>
         {/* Time column */}
