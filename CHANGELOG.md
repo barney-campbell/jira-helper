@@ -7,6 +7,7 @@
 ### Fixed
 
 - Navigation menu now has background matching widgets to differentiate it from page contents
+- Settings area now fills available space by removing max-width constraint
 
 # 1.3.0
 

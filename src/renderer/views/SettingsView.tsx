@@ -6,7 +6,6 @@ import { LogViewer } from '../components/LogViewer';
 import type { UserSettings, VersionInfo, ThemeMode } from '../../common/types';
 
 const SettingsContainer = styled.div`
-  max-width: 600px;
   background-color: ${props => props.theme.colors.surface};
   padding: 30px;
   border-radius: 8px;
