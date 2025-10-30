@@ -1,11 +1,19 @@
 # Planned
 
 - Better "empty" states
+
 # Next: 1.4.0
 
 ### Added
 
 - Compact mode for Yesterday's Time Tracking widget with toggle to switch between detailed and aggregated views
+
+# 1.3.2
+
+### Fixed
+
+- Logs now display in reverse chronological order (newest first, oldest last) for easier access to recent logs
+- Kanban board columns are now scrollable when items overflow, ensuring the "Add Item" button remains accessible
 
 # 1.3.1
 
