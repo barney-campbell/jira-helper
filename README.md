@@ -77,7 +77,7 @@ On first launch, go to Settings (gear icon at the bottom of the sidebar) and con
 jira-helper/
 ├── src/
 │   ├── main/                    # Electron main process
-│   │   ├── services/           # Backend services (Jira, Kanban, Time Tracking, Logging, Settings, Version)
+│   │   ├── services/           # Backend services and utilities
 │   │   ├── main.ts             # Main entry point
 │   │   ├── preload.ts          # Preload script for IPC
 │   │   └── ipc-handlers.ts     # IPC communication handlers
