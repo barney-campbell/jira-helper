@@ -12,7 +12,8 @@ Electron desktop application for managing Jira-related tasks such as time tracki
 - **Calendar View** - Visualize your week's worklogs in a time-block format
 - **Kanban Board** - Personal to-do list with ability to link Jira issues
 - **Theme Support** - Dark, light, and system themes
-- **Settings** - Configure Jira connection and view application logs
+- **Log Viewer** - View application error logs
+- **Settings** - Configure Jira connection and preferences
 
 ## Technology Stack
 
@@ -76,7 +77,7 @@ On first launch, go to Settings (gear icon at the bottom of the sidebar) and con
 jira-helper/
 ├── src/
 │   ├── main/                    # Electron main process
-│   │   ├── services/           # Backend services (Jira, Kanban, Time Tracking, etc.)
+│   │   ├── services/           # Backend services (Jira, Kanban, Time Tracking, Logging, Settings, Version)
 │   │   ├── main.ts             # Main entry point
 │   │   ├── preload.ts          # Preload script for IPC
 │   │   └── ipc-handlers.ts     # IPC communication handlers
