@@ -492,6 +492,11 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
           <InfoRow>
             <strong>Assignee:</strong> <span>{issue.assignee}</span>
           </InfoRow>
+          {issue.parent && (
+            <InfoRow>
+              <strong>Parent Issue:</strong> <span>{issue.parent.key} - {issue.parent.summary}</span>
+            </InfoRow>
+          )}
           <InfoRow>
             <strong>Web Link:</strong>{' '}
             <Button onClick={() => {

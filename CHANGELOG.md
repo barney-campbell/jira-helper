@@ -9,6 +9,7 @@
 - Compact mode for Yesterday's Time Tracking widget with toggle to switch between detailed and aggregated views
 - Personal Analytics page displaying productivity insights, time tracking statistics, and visualizations based on historical worklog data
 - Week navigation controls in Calendar view with Previous Week, Next Week, and Current Week buttons
+- Display parent issue on issue details page when available
 
 ### Changed
 
