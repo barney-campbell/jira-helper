@@ -26,6 +26,7 @@
   "build": {
     "appId": "com.jirahelper.app",
     "productName": "Jira Helper",
+    "icon": "assets/jira-helper-icon.jpg",
     "files": [
       "dist/**/*",
       "package.json"
