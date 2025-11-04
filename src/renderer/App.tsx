@@ -211,29 +211,44 @@ export const App: React.FC = () => {
     setSelectedIssueKey(issueKey || null);
   };
 
+  // Store the latest state in refs for event handlers
+  const navigationHistoryRef = useRef(navigationHistory);
+  const historyIndexRef = useRef(historyIndex);
+
+  useEffect(() => {
+    navigationHistoryRef.current = navigationHistory;
+    historyIndexRef.current = historyIndex;
+  }, [navigationHistory, historyIndex]);
+
   // Navigate back
   const navigateBack = useCallback(() => {
-    if (historyIndex > 0) {
+    const currentIndex = historyIndexRef.current;
+    const currentHistory = navigationHistoryRef.current;
+    
+    if (currentIndex > 0) {
       isNavigatingRef.current = true;
-      const newIndex = historyIndex - 1;
-      const state = navigationHistory[newIndex];
+      const newIndex = currentIndex - 1;
+      const state = currentHistory[newIndex];
       setHistoryIndex(newIndex);
       setCurrentView(state.view);
       setSelectedIssueKey(state.issueKey || null);
     }
-  }, [historyIndex, navigationHistory]);
+  }, []);
 
   // Navigate forward
   const navigateForward = useCallback(() => {
-    if (historyIndex < navigationHistory.length - 1) {
+    const currentIndex = historyIndexRef.current;
+    const currentHistory = navigationHistoryRef.current;
+    
+    if (currentIndex < currentHistory.length - 1) {
       isNavigatingRef.current = true;
-      const newIndex = historyIndex + 1;
-      const state = navigationHistory[newIndex];
+      const newIndex = currentIndex + 1;
+      const state = currentHistory[newIndex];
       setHistoryIndex(newIndex);
       setCurrentView(state.view);
       setSelectedIssueKey(state.issueKey || null);
     }
-  }, [historyIndex, navigationHistory]);
+  }, []);
 
   const handleIssueDoubleClick = (issue: JiraIssue) => {
     navigateToView('issueDetails', issue.key);
