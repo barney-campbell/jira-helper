@@ -5,6 +5,7 @@ import { SettingsService } from './services/settings-service';
 import { KanbanService } from './services/kanban-service';
 import { VersionService } from './services/version-service';
 import { LoggingService } from './services/logging-service';
+import { AnalyticsService } from './services/analytics-service';
 import type { UserSettings, KanbanColumnType } from '../common/types';
 
 let jiraService: JiraService | null = null;
@@ -13,6 +14,7 @@ const settingsService = new SettingsService();
 const kanbanService = new KanbanService();
 const versionService = new VersionService();
 const loggingService = new LoggingService();
+const analyticsService = new AnalyticsService();
 
 export function notifyTimeTrackingChanged() {
   const windows = BrowserWindow.getAllWindows();
@@ -160,6 +162,10 @@ export function registerIpcHandlers() {
     return timeTrackingService.getCurrentWeekRecords();
   });
 
+  ipcMain.handle('timeTracking:getWeekRecords', async (_, weekOffset: number) => {
+    return timeTrackingService.getWeekRecords(weekOffset);
+  });
+
   ipcMain.handle('timeTracking:updateRecord', async (_, record: any) => {
     timeTrackingService.updateRecord(record);
     notifyTimeTrackingChanged();
@@ -231,5 +237,22 @@ export function registerIpcHandlers() {
 
   ipcMain.handle('logging:getLogsPath', async () => {
     return loggingService.getLogsPath();
+  });
+
+  // Analytics handlers
+  ipcMain.handle('analytics:getDailyStats', async (_, days: number) => {
+    return analyticsService.getDailyStats(days);
+  });
+
+  ipcMain.handle('analytics:getHourlyStats', async () => {
+    return analyticsService.getHourlyStats();
+  });
+
+  ipcMain.handle('analytics:getIssueStats', async (_, limit: number) => {
+    return analyticsService.getIssueStats(limit);
+  });
+
+  ipcMain.handle('analytics:getProductivityInsights', async () => {
+    return analyticsService.getProductivityInsights();
   });
 }

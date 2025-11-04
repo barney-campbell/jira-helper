@@ -1,15 +1,31 @@
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import { DataGrid, Column } from './DataGrid';
 import { WidgetContainer } from './Widget';
+import { Toggle } from './Toggle';
 import type { TimeTrackingRecord } from '../../common/types';
 
 interface YesterdayTimeTrackingWidgetProps {
   onIssueDoubleClick?: (issueKey: string) => void;
 }
 
+const WidgetHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    color: ${props => props.theme.colors.text};
+  }
+`;
+
 export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetProps> = ({ onIssueDoubleClick }) => {
   const [records, setRecords] = useState<TimeTrackingRecord[]>([]);
   const [summaries, setSummaries] = useState<Record<string, string>>({});
+  const [isCompactMode, setIsCompactMode] = useState<boolean>(false);
 
   useEffect(() => {
     loadRecords();
@@ -42,16 +58,22 @@ export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetPr
     }
   };
 
-  const formatElapsed = (start: Date, end?: Date): string => {
+  const calculateDuration = (start: Date, end?: Date): number => {
     const startTime = new Date(start);
     const endTime = end ? new Date(end) : new Date();
-    const diff = endTime.getTime() - startTime.getTime();
-    
-    const hours = Math.floor(diff / 3600000);
-    const minutes = Math.floor((diff % 3600000) / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
+    return endTime.getTime() - startTime.getTime();
+  };
+
+  const formatDuration = (durationMs: number): string => {
+    const hours = Math.floor(durationMs / 3600000);
+    const minutes = Math.floor((durationMs % 3600000) / 60000);
+    const seconds = Math.floor((durationMs % 60000) / 1000);
     
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  };
+
+  const formatElapsed = (start: Date, end?: Date): string => {
+    return formatDuration(calculateDuration(start, end));
   };
 
   const formatDateTime = (date: Date): string => {
@@ -88,14 +110,54 @@ export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetPr
     elapsed: string;
   };
 
-  const columns: Column<DisplayRecord>[] = [
+  type CompactDisplayRecord = {
+    issueKey: string;
+    summary: string;
+    totalDuration: string;
+    logCount: number;
+  };
+
+  // Aggregate records by issue key for compact mode
+  const aggregateRecords = (): CompactDisplayRecord[] => {
+    const aggregated = new Map<string, { totalMs: number; count: number }>();
+
+    records.forEach(record => {
+      const durationMs = calculateDuration(record.startTime, record.endTime);
+
+      if (aggregated.has(record.issueKey)) {
+        const existing = aggregated.get(record.issueKey)!;
+        existing.totalMs += durationMs;
+        existing.count += 1;
+      } else {
+        aggregated.set(record.issueKey, { totalMs: durationMs, count: 1 });
+      }
+    });
+
+    return Array.from(aggregated.entries()).map(([issueKey, data]) => ({
+      issueKey,
+      summary: summaries[issueKey] || 'Loading...',
+      totalDuration: formatDuration(data.totalMs),
+      logCount: data.count
+    }));
+  };
+
+  const detailedColumns: Column<DisplayRecord>[] = [
     { header: 'Issue Key', accessor: 'issueKey', width: '20%' },
     { header: 'Summary', accessor: 'summary', width: '35%' },
     { header: 'Started', accessor: 'startTime', width: '25%' },
     { header: 'Duration', accessor: 'elapsed', width: '20%' }
   ];
 
-  const displayData: DisplayRecord[] = records.map(record => ({
+  const formatLogCount = (row: CompactDisplayRecord) => row.logCount.toString();
+
+  const compactColumns: Column<CompactDisplayRecord>[] = [
+    { header: 'Issue Key', accessor: 'issueKey', width: '20%' },
+    { header: 'Summary', accessor: 'summary', width: '50%' },
+    { header: 'Total Duration', accessor: 'totalDuration', width: '20%' },
+    { header: 'Logs', accessor: formatLogCount, width: '10%' }
+  ];
+
+  const detailedDisplayData: DisplayRecord[] = records.map(record => ({
     id: record.id,
     issueKey: record.issueKey,
     summary: summaries[record.issueKey] || 'Loading...',
@@ -103,14 +165,31 @@ export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetPr
     elapsed: formatElapsed(record.startTime, record.endTime)
   }));
 
+  const compactDisplayData = aggregateRecords();
+
   return (
     <WidgetContainer>
-      <h3>{getYesterdayLabel()} Time Tracking</h3>
-      <DataGrid 
-        columns={columns} 
-        data={displayData}
-        onRowDoubleClick={(row) => onIssueDoubleClick?.(row.issueKey)}
-      />
+      <WidgetHeader>
+        <h3>{getYesterdayLabel()} Time Tracking</h3>
+        <Toggle 
+          checked={isCompactMode}
+          onChange={setIsCompactMode}
+          label="Compact View"
+        />
+      </WidgetHeader>
+      {isCompactMode ? (
+        <DataGrid 
+          columns={compactColumns} 
+          data={compactDisplayData}
+          onRowDoubleClick={(row) => onIssueDoubleClick?.(row.issueKey)}
+        />
+      ) : (
+        <DataGrid 
+          columns={detailedColumns} 
+          data={detailedDisplayData}
+          onRowDoubleClick={(row) => onIssueDoubleClick?.(row.issueKey)}
+        />
+      )}
     </WidgetContainer>
   );
 };

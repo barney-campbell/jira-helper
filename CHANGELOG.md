@@ -2,6 +2,18 @@
 
 - Better "empty" states
 
+# Next: 1.4.0
+
+### Added
+
+- Compact mode for Yesterday's Time Tracking widget with toggle to switch between detailed and aggregated views
+- Personal Analytics page displaying productivity insights, time tracking statistics, and visualizations based on historical worklog data
+- Week navigation controls in Calendar view with Previous Week, Next Week, and Current Week buttons
+
+### Changed
+
+- Updated README to reflect current project features and simplified content
+
 # 1.3.2
 
 ### Fixed
@@ -15,6 +27,7 @@
 
 - Navigation menu now has background matching widgets to differentiate it from page contents
 - Settings area now fills available space by removing max-width constraint
+
 
 # 1.3.0
 

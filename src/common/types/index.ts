@@ -53,7 +53,7 @@ export interface TimeTrackingDisplay {
   recordId: number;
 }
 
-export type ViewType = 'dashboard' | 'assignedIssues' | 'search' | 'issueDetails' | 'settings' | 'kanban';
+export type ViewType = 'dashboard' | 'assignedIssues' | 'search' | 'issueDetails' | 'settings' | 'kanban' | 'calendar' | 'analytics';
 
 export type KanbanColumnType = 'todo' | 'inProgress' | 'done';
 
@@ -82,4 +82,39 @@ export interface LogEntry {
   error?: string;
   stack?: string;
   location?: string;
+}
+
+export interface DailyStats {
+  date: string;
+  totalSeconds: number;
+  issueCount: number;
+  issues: { [key: string]: number };
+}
+
+export interface HourlyStats {
+  hour: number;
+  totalSeconds: number;
+  sessionCount: number;
+}
+
+export interface IssueStats {
+  issueKey: string;
+  totalSeconds: number;
+  sessionCount: number;
+  firstSession: Date;
+  lastSession: Date;
+}
+
+export interface ProductivityInsights {
+  mostProductiveHours: number[];
+  mostWorkedIssues: IssueStats[];
+  dailyAverage: number;
+  weeklyTrend: DailyStats[];
+  totalTimeThisWeek: number;
+  totalTimeLastWeek: number;
+  longestSession: {
+    issueKey: string;
+    duration: number;
+    date: Date;
+  } | null;
 }
