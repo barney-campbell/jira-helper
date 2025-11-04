@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { DashboardView } from './views/DashboardView';
 import { AssignedIssuesView } from './views/AssignedIssuesView';
@@ -160,7 +160,7 @@ export const App: React.FC = () => {
     if (window.electronAPI.updateNavigationState) {
       window.electronAPI.updateNavigationState(canGoBack, canGoForward);
     }
-  }, [historyIndex, navigationHistory]);
+  }, [historyIndex, navigationHistory.length]);
 
   // Listen for navigation commands from main process
   useEffect(() => {
@@ -168,19 +168,14 @@ export const App: React.FC = () => {
       return;
     }
 
-    const unsubscribeBack = window.electronAPI.onNavigateBack(() => {
-      navigateBack();
-    });
-    
-    const unsubscribeForward = window.electronAPI.onNavigateForward(() => {
-      navigateForward();
-    });
+    const unsubscribeBack = window.electronAPI.onNavigateBack(navigateBack);
+    const unsubscribeForward = window.electronAPI.onNavigateForward(navigateForward);
     
     return () => {
       unsubscribeBack();
       unsubscribeForward();
     };
-  }, [historyIndex, navigationHistory]);
+  }, [navigateBack, navigateForward]);
 
   const handleThemeChange = async (newTheme: ThemeMode) => {
     setThemeMode(newTheme);
@@ -217,7 +212,7 @@ export const App: React.FC = () => {
   };
 
   // Navigate back
-  const navigateBack = () => {
+  const navigateBack = useCallback(() => {
     if (historyIndex > 0) {
       isNavigatingRef.current = true;
       const newIndex = historyIndex - 1;
@@ -226,10 +221,10 @@ export const App: React.FC = () => {
       setCurrentView(state.view);
       setSelectedIssueKey(state.issueKey || null);
     }
-  };
+  }, [historyIndex, navigationHistory]);
 
   // Navigate forward
-  const navigateForward = () => {
+  const navigateForward = useCallback(() => {
     if (historyIndex < navigationHistory.length - 1) {
       isNavigatingRef.current = true;
       const newIndex = historyIndex + 1;
@@ -238,7 +233,7 @@ export const App: React.FC = () => {
       setCurrentView(state.view);
       setSelectedIssueKey(state.issueKey || null);
     }
-  };
+  }, [historyIndex, navigationHistory]);
 
   const handleIssueDoubleClick = (issue: JiraIssue) => {
     navigateToView('issueDetails', issue.key);
