@@ -172,16 +172,22 @@ export class AnalyticsService {
     monday.setHours(0, 0, 0, 0);
 
     const thisWeekStart = monday.toISOString();
+    
+    // For fair comparison, calculate the same point in time last week
+    const sameTimeLasWeek = new Date(today);
+    sameTimeLasWeek.setDate(today.getDate() - MAX_WEEKLY_DAYS);
+    
     const lastWeekStart = new Date(monday);
     lastWeekStart.setDate(monday.getDate() - MAX_WEEKLY_DAYS);
 
     const weeklyTrend = dailyStats.filter(day => day.date >= thisWeekStart.split('T')[0]).slice(0, MAX_WEEKLY_DAYS);
     const totalTimeThisWeek = weeklyTrend.reduce((sum, day) => sum + day.totalSeconds, 0);
 
+    // Compare like-for-like: same days/time last week
     const lastWeekData = dailyStats.filter(day => {
       const dayDate = day.date;
-      const lastWeekEnd = monday.toISOString().split('T')[0];
-      return dayDate >= lastWeekStart.toISOString().split('T')[0] && dayDate < lastWeekEnd;
+      const lastWeekEnd = sameTimeLasWeek.toISOString().split('T')[0];
+      return dayDate >= lastWeekStart.toISOString().split('T')[0] && dayDate <= lastWeekEnd;
     });
     const totalTimeLastWeek = lastWeekData.reduce((sum, day) => sum + day.totalSeconds, 0);
 
