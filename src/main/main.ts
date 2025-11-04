@@ -2,18 +2,10 @@ import { app, BrowserWindow, Menu, dialog } from 'electron';
 import * as path from 'path';
 import { registerIpcHandlers } from './ipc-handlers';
 import { autoUpdater } from 'electron-updater';
-import { UpdateStatusType } from '../common/types';
+import { UpdateStatusType, UpdateStatusPayload } from '../common/types';
 
 let mainWindow: BrowserWindow | null = null;
 let updateCheckInterval: NodeJS.Timeout | null = null;
-
-type UpdateStatusPayload = {
-  status: UpdateStatusType;
-  version?: string;
-  percent?: number;
-  message?: string;
-};
-
 const UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000; // every 6 hours
 
 function broadcastUpdateStatus(payload: UpdateStatusPayload) {
