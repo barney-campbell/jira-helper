@@ -1,6 +1,6 @@
 {
   "name": "jira-helper",
-  "version": "1.4.1b",
+  "version": "1.4.1d",
   "description": "App for managing Jira related tasks such as time tracking.",
   "main": "dist/main/main/main.js",
   "repository": {
