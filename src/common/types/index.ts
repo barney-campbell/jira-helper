@@ -37,6 +37,7 @@ export interface JiraIssue {
   project?: string;
   descriptionBlocks?: JiraTextBlock[];
   comments?: JiraComment[];
+  children?: JiraIssue[];
 }
 
 export interface JiraWorklog {
