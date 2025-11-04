@@ -175,7 +175,7 @@ export const App: React.FC = () => {
       unsubscribeBack();
       unsubscribeForward();
     };
-  }, [navigateBack, navigateForward]);
+  }, []);
 
   const handleThemeChange = async (newTheme: ThemeMode) => {
     setThemeMode(newTheme);
@@ -196,9 +196,11 @@ export const App: React.FC = () => {
     const newState: NavigationState = { view, issueKey: issueKey || null };
     
     // Check if the new state is the same as the current state
-    const currentState = navigationHistory[historyIndex];
-    if (currentState.view === view && currentState.issueKey === issueKey) {
-      return; // Don't add duplicate
+    if (historyIndex >= 0 && historyIndex < navigationHistory.length) {
+      const currentState = navigationHistory[historyIndex];
+      if (currentState.view === view && currentState.issueKey === issueKey) {
+        return; // Don't add duplicate
+      }
     }
 
     // Remove any forward history when navigating to a new view
