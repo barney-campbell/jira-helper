@@ -109,6 +109,10 @@ export class TimeTrackingService {
   }
 
   getCurrentWeekRecords(): TimeTrackingRecord[] {
+    return this.getWeekRecords(0);
+  }
+
+  getWeekRecords(weekOffset: number): TimeTrackingRecord[] {
     const today = new Date();
     const dayOfWeek = today.getDay();
     
@@ -116,10 +120,13 @@ export class TimeTrackingService {
     const monday = new Date(today);
     const daysFromMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // If Sunday, go back 6 days
     monday.setDate(today.getDate() + daysFromMonday);
+    
+    // Apply week offset (positive = future weeks, negative = past weeks)
+    monday.setDate(monday.getDate() + (weekOffset * 7));
     monday.setHours(0, 0, 0, 0);
     const startOfWeek = monday.toISOString();
     
-    // Calculate Friday of current week (day 5)
+    // Calculate Friday of the target week (day 5)
     const friday = new Date(monday);
     friday.setDate(monday.getDate() + 4);
     friday.setHours(23, 59, 59, 999);
