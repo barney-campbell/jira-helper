@@ -52,4 +52,4 @@ export interface TimeTrackingDisplay {
   recordId: number;
 }
 
-export type ViewType = 'dashboard' | 'assignedIssues' | 'search' | 'issueDetails' | 'settings' | 'kanban' | 'calendar';
+export type ViewType = 'dashboard' | 'assignedIssues' | 'search' | 'issueDetails' | 'settings' | 'kanban' | 'calendar' | 'analytics';
