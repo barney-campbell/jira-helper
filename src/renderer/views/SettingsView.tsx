@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { LogViewer } from '../components/LogViewer';
-import type { UserSettings, VersionInfo, ThemeMode } from '../../common/types';
+import type { UserSettings, VersionInfo, ThemeMode, UpdateStatusPayload } from '../../common/types';
 
 const SettingsContainer = styled.div`
   background-color: ${props => props.theme.colors.surface};
@@ -131,6 +131,16 @@ const LogViewerContainer = styled.div`
   }
 `;
 
+const StatusBanner = styled.div<{ $variant: 'info' | 'error' }>`
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 4px;
+  background-color: ${props => props.$variant === 'error' ? props.theme.colors.danger : props.theme.colors.info};
+  border: 1px solid ${props => props.$variant === 'error' ? props.theme.colors.dangerHover : props.theme.colors.infoBorder};
+  color: ${props => props.$variant === 'error' ? '#ffffff' : props.theme.colors.infoText};
+  font-size: 14px;
+`;
+
 interface SettingsViewProps {
   currentTheme: ThemeMode;
   onThemeChange: (theme: ThemeMode) => void;
@@ -147,10 +157,53 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
   const [message, setMessage] = useState('');
   const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [checkingUpdates, setCheckingUpdates] = useState(false);
+  const [updateStatus, setUpdateStatus] = useState<UpdateStatusPayload | null>(null);
 
   useEffect(() => {
     loadSettings();
     loadVersionInfo();
+
+    const unsubscribe = window.electronAPI.onUpdateStatus(payload => {
+      setUpdateStatus(payload);
+
+      setVersionInfo(prev => {
+        if (!prev) {
+          return prev;
+        }
+
+        if (payload.status === 'update-available') {
+          return {
+            ...prev,
+            latestVersion: payload.version ?? prev.latestVersion,
+            updateAvailable: true
+          };
+        }
+
+        if (payload.status === 'update-not-available') {
+          return {
+            ...prev,
+            latestVersion: payload.version ?? prev.latestVersion,
+            updateAvailable: false
+          };
+        }
+
+        if (payload.status === 'update-downloaded') {
+          return {
+            ...prev,
+            latestVersion: payload.version ?? prev.latestVersion,
+            updateAvailable: false
+          };
+        }
+
+        return prev;
+      });
+    });
+
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
   }, []);
 
   const loadSettings = async () => {
@@ -167,9 +220,16 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
 
   const handleCheckForUpdates = async () => {
     setCheckingUpdates(true);
+    setUpdateStatus({ status: 'checking' });
     try {
       const info = await window.electronAPI.checkForUpdates();
       setVersionInfo(info);
+
+      if (info.updateAvailable) {
+        setUpdateStatus({ status: 'update-available', version: info.latestVersion });
+      } else {
+        setUpdateStatus({ status: 'update-not-available', version: info.version });
+      }
     } finally {
       setCheckingUpdates(false);
     }
@@ -189,6 +249,39 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
   const handleThemeToggle = (theme: ThemeMode) => {
     onThemeChange(theme);
   };
+
+  const updateStatusMessage = useMemo(() => {
+    if (!updateStatus) {
+      return null;
+    }
+
+    const versionLabel = updateStatus.version ?? versionInfo?.latestVersion ?? versionInfo?.version;
+
+    switch (updateStatus.status) {
+      case 'checking':
+        return 'Checking for updates…';
+      case 'update-available':
+        return versionLabel
+          ? `Update ${versionLabel} is available. Downloading now…`
+          : 'An update is available. Downloading now…';
+      case 'download-progress':
+        return `Downloading update… ${updateStatus.percent ? updateStatus.percent.toFixed(1) : 0}%`;
+      case 'update-downloaded':
+        return versionLabel
+          ? `Update ${versionLabel} has been downloaded. Restart the app to install.`
+          : 'An update has been downloaded. Restart the app to install.';
+      case 'update-not-available':
+        return versionLabel
+          ? `You're up to date (version ${versionLabel}).`
+          : `You're up to date.`;
+      case 'error':
+        return updateStatus.message
+          ? `Update check failed: ${updateStatus.message}`
+          : 'Update check failed. Please try again later.';
+      default:
+        return null;
+    }
+  }, [updateStatus, versionInfo]);
 
   return (
     <PageContainer>
@@ -239,6 +332,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
                   <VersionText>
                     <strong>Latest Version:</strong> {versionInfo.latestVersion}
                   </VersionText>
+                )}
+                {updateStatusMessage && (
+                  <StatusBanner $variant={updateStatus?.status === 'error' ? 'error' : 'info'}>
+                    {updateStatusMessage}
+                  </StatusBanner>
                 )}
                 {versionInfo.updateAvailable && (
                   <UpdateMessage>
