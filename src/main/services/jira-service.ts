@@ -91,20 +91,7 @@ export class JiraService {
     const children: JiraIssue[] = [];
     if (fields.subtasks && Array.isArray(fields.subtasks)) {
       for (const subtask of fields.subtasks) {
-        const subtaskFields = subtask.fields;
-        let subtaskAssignee = '';
-        if (subtaskFields.assignee && subtaskFields.assignee.displayName) {
-          subtaskAssignee = subtaskFields.assignee.displayName;
-        }
-        
-        children.push({
-          id: subtask.id,
-          key: subtask.key,
-          summary: subtaskFields.summary || '',
-          status: subtaskFields.status?.name || '',
-          assignee: subtaskAssignee,
-          project: subtaskFields.project?.name || ''
-        });
+        children.push(this.parseBasicIssue(subtask));
       }
     }
 
@@ -337,5 +324,22 @@ export class JiraService {
     }
 
     return comments;
+  }
+
+  private parseBasicIssue(issueData: any): JiraIssue {
+    const fields = issueData.fields;
+    let assignee = '';
+    if (fields.assignee && fields.assignee.displayName) {
+      assignee = fields.assignee.displayName;
+    }
+
+    return {
+      id: issueData.id,
+      key: issueData.key,
+      summary: fields.summary || '',
+      status: fields.status?.name || '',
+      assignee: assignee,
+      project: fields.project?.name || ''
+    };
   }
 }

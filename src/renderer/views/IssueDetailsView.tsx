@@ -293,13 +293,6 @@ const ChildIssueSummary = styled.div`
   line-height: 1.4;
 `;
 
-const NoChildren = styled.p`
-  margin: 0;
-  font-size: 14px;
-  color: ${props => props.theme.colors.textSecondary};
-  font-style: italic;
-`;
-
 interface IssueDetailsViewProps {
   issueKey: string;
   onNavigateToIssue?: (issueKey: string) => void;
