@@ -87,8 +87,10 @@ export class JiraService {
     const descriptionBlocks = this.parseDescriptionBlocks(fields.description);
     const comments = this.parseComments(fields.comment);
 
-    let parent = undefined;
+    // Parse parent issue if it exists (subtasks have parent issues)
+    let parent;
     if (fields.parent) {
+      // The parent object contains key and nested fields.summary
       parent = {
         key: fields.parent.key,
         summary: fields.parent.fields?.summary || ''
