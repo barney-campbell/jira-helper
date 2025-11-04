@@ -1,6 +1,6 @@
 {
   "name": "jira-helper",
-  "version": "1.4.1",
+  "version": "1.4.1b",
   "description": "App for managing Jira related tasks such as time tracking.",
   "main": "dist/main/main/main.js",
   "repository": {
@@ -33,7 +33,7 @@
     "directories": {
       "output": "release"
     },
-    "artifactName": "${productName}-Setup-${version}.${ext}",
+    "artifactName": "Jira-Helper-Setup-${version}.${ext}",
     "publish": [
       {
         "provider": "github",
