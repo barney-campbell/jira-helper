@@ -46,7 +46,6 @@ export class VersionService {
       }
 
       const result = await autoUpdater.checkForUpdates();
-      console.log(result)
 
       if (result?.updateInfo?.version) {
         const latestVersion = result.updateInfo.version;
