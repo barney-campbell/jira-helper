@@ -8,6 +8,10 @@
 
 - Compact mode for Yesterday's Time Tracking widget with toggle to switch between detailed and aggregated views
 
+### Changed
+
+- Updated README to reflect current project features and simplified content
+
 # 1.3.2
 
 ### Fixed
