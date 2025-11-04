@@ -114,8 +114,8 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
     // Then, sort if a column is selected
     if (sortConfig.columnIndex !== -1 && sortConfig.direction) {
       result = [...result].sort((a, b) => {
-        let aValue: any;
-        let bValue: any;
+        let aValue: string;
+        let bValue: string;
 
         // Get values based on column index
         switch (sortConfig.columnIndex) {

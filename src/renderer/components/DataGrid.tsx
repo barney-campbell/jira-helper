@@ -108,7 +108,7 @@ export function DataGrid<T extends { [key: string]: any }>({
     if (sortConfig?.columnIndex === columnIndex) {
       return sortConfig.direction === 'asc' ? '▲' : '▼';
     }
-    return null;
+    return '';
   };
 
   return (
