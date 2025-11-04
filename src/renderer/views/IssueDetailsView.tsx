@@ -250,19 +250,21 @@ const ChildrenList = styled.div`
   gap: 10px;
 `;
 
-const ChildIssueCard = styled.div`
+const ChildIssueCard = styled.div<{ $clickable: boolean }>`
   background-color: ${props => props.theme.colors.surfaceHover};
   padding: 15px;
   border-radius: 6px;
   border: 1px solid ${props => props.theme.colors.border};
-  cursor: pointer;
+  cursor: ${props => props.$clickable ? 'pointer' : 'default'};
   transition: all 0.2s;
 
-  &:hover {
-    background-color: ${props => props.theme.colors.surface};
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transform: translateX(5px);
-  }
+  ${props => props.$clickable && `
+    &:hover {
+      background-color: ${props.theme.colors.surface};
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transform: translateX(5px);
+    }
+  `}
 `;
 
 const ChildIssueHeader = styled.div`
@@ -611,6 +613,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
                 {issue.children.map((child) => (
                   <ChildIssueCard 
                     key={child.key}
+                    $clickable={!!onNavigateToIssue}
                     onClick={() => onNavigateToIssue && onNavigateToIssue(child.key)}
                   >
                     <ChildIssueHeader>
