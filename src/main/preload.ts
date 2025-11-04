@@ -74,6 +74,24 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.removeListener('menu:setTheme', callback as any);
     };
   },
+
+  // Navigation
+  updateNavigationState: (canGoBack: boolean, canGoForward: boolean) => 
+    ipcRenderer.send('navigation:updateState', canGoBack, canGoForward),
+  
+  onNavigateBack: (callback: () => void) => {
+    ipcRenderer.on('navigation:back', callback);
+    return () => {
+      ipcRenderer.removeListener('navigation:back', callback);
+    };
+  },
+
+  onNavigateForward: (callback: () => void) => {
+    ipcRenderer.on('navigation:forward', callback);
+    return () => {
+      ipcRenderer.removeListener('navigation:forward', callback);
+    };
+  },
 });
 
 declare global {
@@ -119,6 +137,9 @@ declare global {
       getProductivityInsights: () => Promise<ProductivityInsights>;
       onTimeTrackingChanged: (callback: () => void) => () => void;
       onSetTheme: (callback: (theme: string) => void) => () => void;
+      updateNavigationState: (canGoBack: boolean, canGoForward: boolean) => void;
+      onNavigateBack: (callback: () => void) => () => void;
+      onNavigateForward: (callback: () => void) => () => void;
     };
   }
 }
