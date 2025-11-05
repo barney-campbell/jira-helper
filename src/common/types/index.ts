@@ -79,6 +79,21 @@ export interface VersionInfo {
   latestVersion?: string;
 }
 
+export type UpdateStatusType =
+  | 'checking'
+  | 'update-available'
+  | 'update-not-available'
+  | 'download-progress'
+  | 'update-downloaded'
+  | 'error';
+
+export interface UpdateStatusPayload {
+  status: UpdateStatusType;
+  version?: string;
+  percent?: number;
+  message?: string;
+}
+
 export interface LogEntry {
   timestamp: string;
   level: 'error' | 'warning' | 'info';

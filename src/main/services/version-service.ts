@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { app } from 'electron';
+import { autoUpdater } from 'electron-updater';
 import type { VersionInfo } from '../../common/types';
 
 export class VersionService {
@@ -34,30 +35,25 @@ export class VersionService {
     const versionInfo = this.getVersionInfo();
     
     try {
-      // Get repository info from package.json or use default
-      const repository = this.packageJson.repository?.url || 
-                          this.packageJson.repository || 
-                          'https://github.com/barney-campbell/jira-helper';
-      
-      // Extract owner/repo from repository URL
-      const repoMatch = repository.match(/github\.com[\/:](.+?)(?:\.git)?$/);
-      if (!repoMatch) {
-        console.error('Could not parse repository URL:', repository);
+      if (!app.isReady()) {
+        await app.whenReady();
+      }
+
+      if (!app.isPackaged) {
+        versionInfo.latestVersion = versionInfo.version;
+        versionInfo.updateAvailable = false;
         return versionInfo;
       }
-      
-      const repoPath = repoMatch[1];
-      const apiUrl = `https://api.github.com/repos/${repoPath}/releases/latest`;
-      
-      // Fetch latest release from GitHub
-      const response = await fetch(apiUrl);
-      
-      if (response.ok) {
-        const data = await response.json();
-        const latestVersion = data.tag_name.replace(/^v/, ''); // Remove 'v' prefix if present
-        
+
+      const result = await autoUpdater.checkForUpdates();
+
+      if (result?.updateInfo?.version) {
+        const latestVersion = result.updateInfo.version;
         versionInfo.latestVersion = latestVersion;
         versionInfo.updateAvailable = this.compareVersions(versionInfo.version, latestVersion) < 0;
+      } else {
+        versionInfo.latestVersion = versionInfo.version;
+        versionInfo.updateAvailable = false;
       }
     } catch (error) {
       console.error('Failed to check for updates:', error);

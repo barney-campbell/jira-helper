@@ -2,7 +2,21 @@
 
 - Better "empty" states
 
-# Next: 1.4.0
+# 1.5.0
+
+### Added
+
+- Column sorting in issue tables - click column headers to sort ascending, click again for descending, and once more to clear sorting
+- Separate display for "Done" issues in assigned issues view, shown in secondary table below active issues
+- Navigation history state with forward/back support via Navigate menu, keyboard shortcuts (Alt+Left, Alt+Right), and mouse navigation buttons
+
+# 1.4.1
+
+### Added
+
+- Automatic in-app updates delivered via GitHub Releases using the Electron auto-updater
+
+# 1.4.0
 
 ### Added
 
