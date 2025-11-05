@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
-import { DataGrid, Column } from './DataGrid';
+import { DataGrid, Column, SortConfig, SortDirection } from './DataGrid';
 import type { JiraIssue } from '../../common/types';
 
 interface IssueTableProps {
@@ -80,6 +80,7 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [assigneeFilter, setAssigneeFilter] = useState<string>('');
   const [projectFilter, setProjectFilter] = useState<string>('');
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ columnIndex: -1, direction: null });
 
   // Extract unique values for filters
   const { statuses, assignees, projects } = useMemo(() => {
@@ -100,15 +101,61 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
     };
   }, [issues]);
 
-  // Filter issues based on selected filters
-  const filteredIssues = useMemo(() => {
-    return issues.filter(issue => {
+  // Filter and sort issues
+  const filteredAndSortedIssues = useMemo(() => {
+    // First, filter the issues
+    let result = issues.filter(issue => {
       if (statusFilter && issue.status !== statusFilter) return false;
       if (assigneeFilter && issue.assignee !== assigneeFilter) return false;
       if (projectFilter && (issue.project || '') !== projectFilter) return false;
       return true;
     });
-  }, [issues, statusFilter, assigneeFilter, projectFilter]);
+
+    // Then, sort if a column is selected
+    if (sortConfig.columnIndex !== -1 && sortConfig.direction) {
+      result = [...result].sort((a, b) => {
+        let aValue: string;
+        let bValue: string;
+
+        // Get values based on column index
+        switch (sortConfig.columnIndex) {
+          case 0: // Key
+            aValue = a.key;
+            bValue = b.key;
+            break;
+          case 1: // Summary
+            aValue = a.summary;
+            bValue = b.summary;
+            break;
+          case 2: // Status
+            aValue = a.status;
+            bValue = b.status;
+            break;
+          case 3: // Assignee
+            aValue = a.assignee;
+            bValue = b.assignee;
+            break;
+          case 4: // Project
+            aValue = a.project || '';
+            bValue = b.project || '';
+            break;
+          default:
+            return 0;
+        }
+
+        // Compare values
+        if (aValue < bValue) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+
+    return result;
+  }, [issues, statusFilter, assigneeFilter, projectFilter, sortConfig]);
 
   const hasActiveFilters = statusFilter || assigneeFilter || projectFilter;
 
@@ -116,6 +163,21 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
     setStatusFilter('');
     setAssigneeFilter('');
     setProjectFilter('');
+  };
+
+  const handleSort = (columnIndex: number) => {
+    setSortConfig(prevConfig => {
+      // If clicking the same column, cycle through: asc -> desc -> null
+      if (prevConfig.columnIndex === columnIndex) {
+        if (prevConfig.direction === 'asc') {
+          return { columnIndex, direction: 'desc' };
+        } else if (prevConfig.direction === 'desc') {
+          return { columnIndex: -1, direction: null };
+        }
+      }
+      // If clicking a new column, start with asc
+      return { columnIndex, direction: 'asc' };
+    });
   };
 
   const columns: Column<JiraIssue>[] = [
@@ -176,14 +238,16 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
         </ClearButton>
 
         <ResultCount>
-          Showing {filteredIssues.length} of {issues.length} issue{issues.length !== 1 ? 's' : ''}
+          Showing {filteredAndSortedIssues.length} of {issues.length} issue{issues.length !== 1 ? 's' : ''}
         </ResultCount>
       </FilterBar>
 
       <DataGrid 
         columns={columns} 
-        data={filteredIssues} 
-        onRowDoubleClick={onIssueDoubleClick} 
+        data={filteredAndSortedIssues} 
+        onRowDoubleClick={onIssueDoubleClick}
+        sortConfig={sortConfig}
+        onSort={handleSort}
       />
     </Container>
   );

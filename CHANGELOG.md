@@ -2,7 +2,19 @@
 
 - Better "empty" states
 
-# Next: 1.4.0
+# 1.5.0
+
+### Added
+
+- Column sorting in issue tables - click column headers to sort ascending, click again for descending, and once more to clear sorting
+
+# 1.4.1
+
+### Added
+
+- Automatic in-app updates delivered via GitHub Releases using the Electron auto-updater
+
+# 1.4.0
 
 ### Added
 
