@@ -220,7 +220,8 @@ function createWindow() {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
-    title: 'Jira Helper'
+    title: 'Jira Helper',
+    icon: path.join(__dirname, '../../assets/jira-helper-icon.jpg')
   });
 
   if (process.env.NODE_ENV === 'development') {
