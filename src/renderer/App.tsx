@@ -167,7 +167,7 @@ export const App: React.FC = () => {
       case 'search':
         return <IssueSearchView onIssueDoubleClick={handleIssueDoubleClick} />;
       case 'issueDetails':
-        return selectedIssueKey ? <IssueDetailsView issueKey={selectedIssueKey} /> : <DashboardView onIssueDoubleClick={handleIssueKeyDoubleClick} />;
+        return selectedIssueKey ? <IssueDetailsView issueKey={selectedIssueKey} onNavigateToIssue={handleIssueKeyDoubleClick} /> : <DashboardView onIssueDoubleClick={handleIssueKeyDoubleClick} />;
       case 'kanban':
         return <KanbanView />;
       case 'calendar':

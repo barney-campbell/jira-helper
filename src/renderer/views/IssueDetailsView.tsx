@@ -234,11 +234,73 @@ const NoKanbanItems = styled.p`
   font-style: italic;
 `;
 
+const ChildrenSection = styled.div`
+  margin-top: 30px;
+
+  > strong {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+`;
+
+const ChildrenList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const ChildIssueCard = styled.div<{ $clickable: boolean }>`
+  background-color: ${props => props.theme.colors.surfaceHover};
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid ${props => props.theme.colors.border};
+  cursor: ${props => props.$clickable ? 'pointer' : 'default'};
+  transition: all 0.2s;
+
+  ${props => props.$clickable && `
+    &:hover {
+      background-color: ${props.theme.colors.surface};
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transform: translateX(5px);
+    }
+  `}
+`;
+
+const ChildIssueHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+`;
+
+const ChildIssueKey = styled.span`
+  font-weight: 600;
+  color: ${props => props.theme.colors.primary};
+  font-size: 14px;
+`;
+
+const ChildIssueStatus = styled.span`
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  background-color: ${props => props.theme.colors.primary}33;
+  color: ${props => props.theme.colors.primary};
+`;
+
+const ChildIssueSummary = styled.div`
+  font-size: 14px;
+  color: ${props => props.theme.colors.text};
+  line-height: 1.4;
+`;
+
 interface IssueDetailsViewProps {
   issueKey: string;
+  onNavigateToIssue?: (issueKey: string) => void;
 }
 
-export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) => {
+export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, onNavigateToIssue }) => {
   const [issue, setIssue] = useState<JiraIssue | null>(null);
   const [timeRecords, setTimeRecords] = useState<TimeTrackingRecord[]>([]);
   const [jiraWorklogs, setJiraWorklogs] = useState<JiraWorklog[]>([]);
@@ -543,6 +605,27 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
               ))}
             </CommentsList>
           </CommentsSection>
+
+          {issue.children && issue.children.length > 0 && (
+            <ChildrenSection>
+              <strong>📎 Child Issues ({issue.children.length})</strong>
+              <ChildrenList>
+                {issue.children.map((child) => (
+                  <ChildIssueCard 
+                    key={child.key}
+                    $clickable={!!onNavigateToIssue}
+                    onClick={() => onNavigateToIssue && onNavigateToIssue(child.key)}
+                  >
+                    <ChildIssueHeader>
+                      <ChildIssueKey>{child.key}</ChildIssueKey>
+                      <ChildIssueStatus>{child.status}</ChildIssueStatus>
+                    </ChildIssueHeader>
+                    <ChildIssueSummary>{child.summary}</ChildIssueSummary>
+                  </ChildIssueCard>
+                ))}
+              </ChildrenList>
+            </ChildrenSection>
+          )}
         </IssueInfo>
 
         <div>

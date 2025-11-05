@@ -62,7 +62,7 @@ export class JiraService {
   }
 
   async getIssue(key: string): Promise<JiraIssue> {
-    const url = `${this.baseUrl}/rest/api/3/issue/${key}?fields=key,summary,status,assignee,description,comment,project`;
+    const url = `${this.baseUrl}/rest/api/3/issue/${key}?fields=key,summary,status,assignee,description,comment,project,subtasks`;
     
     const response = await fetch(url, {
       headers: {
@@ -87,6 +87,14 @@ export class JiraService {
     const descriptionBlocks = this.parseDescriptionBlocks(fields.description);
     const comments = this.parseComments(fields.comment);
 
+    // Parse subtasks/children
+    const children: JiraIssue[] = [];
+    if (fields.subtasks && Array.isArray(fields.subtasks)) {
+      for (const subtask of fields.subtasks) {
+        children.push(this.parseBasicIssue(subtask));
+      }
+    }
+
     return {
       id: data.id,
       key: data.key,
@@ -95,7 +103,8 @@ export class JiraService {
       assignee: assignee,
       project: fields.project?.name || '',
       descriptionBlocks: descriptionBlocks,
-      comments: comments
+      comments: comments,
+      children: children.length > 0 ? children : undefined
     };
   }
 
@@ -315,5 +324,22 @@ export class JiraService {
     }
 
     return comments;
+  }
+
+  private parseBasicIssue(issueData: any): JiraIssue {
+    const fields = issueData.fields;
+    let assignee = '';
+    if (fields.assignee && fields.assignee.displayName) {
+      assignee = fields.assignee.displayName;
+    }
+
+    return {
+      id: issueData.id,
+      key: issueData.key,
+      summary: fields.summary || '',
+      status: fields.status?.name || '',
+      assignee: assignee,
+      project: fields.project?.name || ''
+    };
   }
 }
