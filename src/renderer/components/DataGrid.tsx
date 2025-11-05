@@ -116,19 +116,20 @@ export function DataGrid<T extends { [key: string]: any }>({
       <Table>
         <thead>
           <tr>
-            {columns.map((column, index) => (
-              <th 
+            {columns.map((column, index) => {
+              const sortIndicator = getSortIndicator(index); 
+              return (<th 
                 key={index} 
                 style={{ width: column.width }}
                 className={column.sortable !== false ? 'sortable' : ''}
                 onClick={() => handleHeaderClick(index)}
               >
                 {column.header}
-                {getSortIndicator(index) && (
-                  <SortIndicator>{getSortIndicator(index)}</SortIndicator>
+                {sortIndicator && (
+                  <SortIndicator>{sortIndicator}</SortIndicator>
                 )}
-              </th>
-            ))}
+              </th>);
+            })}
           </tr>
         </thead>
         <tbody>
