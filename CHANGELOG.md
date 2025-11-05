@@ -9,6 +9,7 @@
 - Column sorting in issue tables - click column headers to sort ascending, click again for descending, and once more to clear sorting
 - Separate display for "Done" issues in assigned issues view, shown in secondary table below active issues
 - Navigation history state with forward/back support via Navigate menu, keyboard shortcuts (Alt+Left, Alt+Right), and mouse navigation buttons
+- Display parent issue on issue details page when available with clickable link to navigate to parent issue
 
 # 1.4.1
 
@@ -23,7 +24,6 @@
 - Compact mode for Yesterday's Time Tracking widget with toggle to switch between detailed and aggregated views
 - Personal Analytics page displaying productivity insights, time tracking statistics, and visualizations based on historical worklog data
 - Week navigation controls in Calendar view with Previous Week, Next Week, and Current Week buttons
-- Display parent issue on issue details page when available with clickable link to navigate to parent issue
 
 ### Changed
 
