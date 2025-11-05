@@ -62,7 +62,7 @@ export class JiraService {
   }
 
   async getIssue(key: string): Promise<JiraIssue> {
-    const url = `${this.baseUrl}/rest/api/3/issue/${key}?fields=key,summary,status,assignee,description,comment,project`;
+    const url = `${this.baseUrl}/rest/api/3/issue/${key}?fields=key,summary,status,assignee,description,comment,project,parent`;
     
     const response = await fetch(url, {
       headers: {
@@ -87,6 +87,16 @@ export class JiraService {
     const descriptionBlocks = this.parseDescriptionBlocks(fields.description);
     const comments = this.parseComments(fields.comment);
 
+    // Parse parent issue if it exists (subtasks have parent issues)
+    let parent;
+    if (fields.parent) {
+      // The parent object contains key and nested fields.summary
+      parent = {
+        key: fields.parent.key,
+        summary: fields.parent.fields?.summary || ''
+      };
+    }
+
     return {
       id: data.id,
       key: data.key,
@@ -94,6 +104,7 @@ export class JiraService {
       status: fields.status?.name || '',
       assignee: assignee,
       project: fields.project?.name || '',
+      parent: parent,
       descriptionBlocks: descriptionBlocks,
       comments: comments
     };

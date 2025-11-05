@@ -39,6 +39,16 @@ const InfoRow = styled.div`
   }
 `;
 
+const ClickableIssueLink = styled.span`
+  color: ${props => props.theme.colors.primary};
+  cursor: pointer;
+  text-decoration: none;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const DescriptionSection = styled.div`
   margin-top: 30px;
 
@@ -236,9 +246,10 @@ const NoKanbanItems = styled.p`
 
 interface IssueDetailsViewProps {
   issueKey: string;
+  onIssueKeyClick?: (issueKey: string) => void;
 }
 
-export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) => {
+export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, onIssueKeyClick }) => {
   const [issue, setIssue] = useState<JiraIssue | null>(null);
   const [timeRecords, setTimeRecords] = useState<TimeTrackingRecord[]>([]);
   const [jiraWorklogs, setJiraWorklogs] = useState<JiraWorklog[]>([]);
@@ -492,6 +503,15 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey }) 
           <InfoRow>
             <strong>Assignee:</strong> <span>{issue.assignee}</span>
           </InfoRow>
+          {issue.parent && (
+            <InfoRow>
+              <strong>Parent Issue:</strong>{' '}
+              <ClickableIssueLink onClick={() => onIssueKeyClick?.(issue.parent!.key)}>
+                {issue.parent.key}
+              </ClickableIssueLink>
+              {' '}- {issue.parent.summary}
+            </InfoRow>
+          )}
           <InfoRow>
             <strong>Web Link:</strong>{' '}
             <Button onClick={() => {
