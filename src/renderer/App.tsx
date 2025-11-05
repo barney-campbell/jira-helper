@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { DashboardView } from './views/DashboardView';
 import { AssignedIssuesView } from './views/AssignedIssuesView';
@@ -10,6 +10,11 @@ import { CalendarView } from './views/CalendarView';
 import { AnalyticsView } from './views/AnalyticsView';
 import type { ViewType, JiraIssue, ThemeMode } from './types';
 import { lightTheme, darkTheme } from './theme';
+
+interface NavigationState {
+  view: ViewType;
+  issueKey?: string | null;
+}
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -104,6 +109,13 @@ export const App: React.FC = () => {
   const [themeMode, setThemeMode] = useState<ThemeMode>('light');
   const [systemPrefersDark, setSystemPrefersDark] = useState(false);
 
+  // Navigation history management
+  const [navigationHistory, setNavigationHistory] = useState<NavigationState[]>([
+    { view: 'dashboard', issueKey: null }
+  ]);
+  const [historyIndex, setHistoryIndex] = useState<number>(0);
+  const isNavigatingRef = useRef<boolean>(false);
+
   useEffect(() => {
     // Load theme once on mount
     const loadTheme = async () => {
@@ -140,6 +152,31 @@ export const App: React.FC = () => {
     };
   }, []);
 
+  // Update navigation state to main process
+  useEffect(() => {
+    const canGoBack = historyIndex > 0;
+    const canGoForward = historyIndex < navigationHistory.length - 1;
+    
+    if (window.electronAPI.updateNavigationState) {
+      window.electronAPI.updateNavigationState(canGoBack, canGoForward);
+    }
+  }, [historyIndex, navigationHistory.length]);
+
+  // Listen for navigation commands from main process
+  useEffect(() => {
+    if (!window.electronAPI.onNavigateBack || !window.electronAPI.onNavigateForward) {
+      return;
+    }
+
+    const unsubscribeBack = window.electronAPI.onNavigateBack(navigateBack);
+    const unsubscribeForward = window.electronAPI.onNavigateForward(navigateForward);
+    
+    return () => {
+      unsubscribeBack();
+      unsubscribeForward();
+    };
+  }, []);
+
   const handleThemeChange = async (newTheme: ThemeMode) => {
     setThemeMode(newTheme);
     const settings = await window.electronAPI.loadSettings();
@@ -148,14 +185,79 @@ export const App: React.FC = () => {
     }
   };
 
+  // Navigation helper to add to history
+  const navigateToView = (view: ViewType, issueKey?: string | null) => {
+    if (isNavigatingRef.current) {
+      // This is a back/forward navigation, don't add to history
+      isNavigatingRef.current = false;
+      return;
+    }
+
+    const newState: NavigationState = { view, issueKey: issueKey || null };
+    
+    // Check if the new state is the same as the current state
+    if (historyIndex >= 0 && historyIndex < navigationHistory.length) {
+      const currentState = navigationHistory[historyIndex];
+      if (currentState.view === view && currentState.issueKey === issueKey) {
+        return; // Don't add duplicate
+      }
+    }
+
+    // Remove any forward history when navigating to a new view
+    const newHistory = navigationHistory.slice(0, historyIndex + 1);
+    newHistory.push(newState);
+    
+    setNavigationHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+    setCurrentView(view);
+    setSelectedIssueKey(issueKey || null);
+  };
+
+  // Store the latest state in refs for event handlers
+  const navigationHistoryRef = useRef(navigationHistory);
+  const historyIndexRef = useRef(historyIndex);
+
+  useEffect(() => {
+    navigationHistoryRef.current = navigationHistory;
+    historyIndexRef.current = historyIndex;
+  }, [navigationHistory, historyIndex]);
+
+  // Navigate back
+  const navigateBack = useCallback(() => {
+    const currentIndex = historyIndexRef.current;
+    const currentHistory = navigationHistoryRef.current;
+    
+    if (currentIndex > 0) {
+      isNavigatingRef.current = true;
+      const newIndex = currentIndex - 1;
+      const state = currentHistory[newIndex];
+      setHistoryIndex(newIndex);
+      setCurrentView(state.view);
+      setSelectedIssueKey(state.issueKey || null);
+    }
+  }, []);
+
+  // Navigate forward
+  const navigateForward = useCallback(() => {
+    const currentIndex = historyIndexRef.current;
+    const currentHistory = navigationHistoryRef.current;
+    
+    if (currentIndex < currentHistory.length - 1) {
+      isNavigatingRef.current = true;
+      const newIndex = currentIndex + 1;
+      const state = currentHistory[newIndex];
+      setHistoryIndex(newIndex);
+      setCurrentView(state.view);
+      setSelectedIssueKey(state.issueKey || null);
+    }
+  }, []);
+
   const handleIssueDoubleClick = (issue: JiraIssue) => {
-    setSelectedIssueKey(issue.key);
-    setCurrentView('issueDetails');
+    navigateToView('issueDetails', issue.key);
   };
 
   const handleIssueKeyDoubleClick = (issueKey: string) => {
-    setSelectedIssueKey(issueKey);
-    setCurrentView('issueDetails');
+    navigateToView('issueDetails', issueKey);
   };
 
   const renderView = () => {
@@ -167,7 +269,7 @@ export const App: React.FC = () => {
       case 'search':
         return <IssueSearchView onIssueDoubleClick={handleIssueDoubleClick} />;
       case 'issueDetails':
-        return selectedIssueKey ? <IssueDetailsView issueKey={selectedIssueKey} /> : <DashboardView onIssueDoubleClick={handleIssueKeyDoubleClick} />;
+        return selectedIssueKey ? <IssueDetailsView issueKey={selectedIssueKey} onIssueKeyClick={handleIssueKeyDoubleClick} /> : <DashboardView onIssueDoubleClick={handleIssueKeyDoubleClick} />;
       case 'kanban':
         return <KanbanView />;
       case 'calendar':
@@ -198,42 +300,42 @@ export const App: React.FC = () => {
         <Sidebar>
           <SidebarButton
             $active={currentView === 'dashboard'}
-            onClick={() => setCurrentView('dashboard')}
+            onClick={() => navigateToView('dashboard')}
             title="Dashboard"
           >
             <span className="icon">📊</span>
           </SidebarButton>
           <SidebarButton
             $active={currentView === 'assignedIssues'}
-            onClick={() => setCurrentView('assignedIssues')}
+            onClick={() => navigateToView('assignedIssues')}
             title="Assigned Issues"
           >
             <span className="icon">📋</span>
           </SidebarButton>
           <SidebarButton
             $active={currentView === 'search'}
-            onClick={() => setCurrentView('search')}
+            onClick={() => navigateToView('search')}
             title="Search"
           >
             <span className="icon">🔍</span>
           </SidebarButton>
           <SidebarButton
             $active={currentView === 'kanban'}
-            onClick={() => setCurrentView('kanban')}
+            onClick={() => navigateToView('kanban')}
             title="Kanban Board"
           >
             <span className="icon">📝</span>
           </SidebarButton>
           <SidebarButton
             $active={currentView === 'calendar'}
-            onClick={() => setCurrentView('calendar')}
+            onClick={() => navigateToView('calendar')}
             title="Calendar View"
           >
             <span className="icon">📅</span>
           </SidebarButton>
           <SidebarButton
             $active={currentView === 'analytics'}
-            onClick={() => setCurrentView('analytics')}
+            onClick={() => navigateToView('analytics')}
             title="Analytics"
           >
             <span className="icon">📈</span>
@@ -241,7 +343,7 @@ export const App: React.FC = () => {
           <SidebarSpacer />
           <SidebarButton
             $active={currentView === 'settings'}
-            onClick={() => setCurrentView('settings')}
+            onClick={() => navigateToView('settings')}
             title="Settings"
           >
             <span className="icon">⚙️</span>

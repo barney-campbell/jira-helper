@@ -35,6 +35,10 @@ export interface JiraIssue {
   status: string;
   assignee: string;
   project?: string;
+  parent?: {
+    key: string;
+    summary: string;
+  };
   descriptionBlocks?: JiraTextBlock[];
   comments?: JiraComment[];
 }
