@@ -1,5 +1,17 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { UserSettings, TimeTrackingRecord, KanbanItem, KanbanColumnType, VersionInfo, LogEntry, DailyStats, HourlyStats, IssueStats, ProductivityInsights } from '../common/types';
+import type {
+  UserSettings,
+  TimeTrackingRecord,
+  KanbanItem,
+  KanbanColumnType,
+  VersionInfo,
+  LogEntry,
+  DailyStats,
+  HourlyStats,
+  IssueStats,
+  ProductivityInsights,
+  UpdateStatusPayload
+} from '../common/types';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Native
@@ -75,6 +87,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
     };
   },
 
+  onUpdateStatus: (callback: (payload: UpdateStatusPayload) => void) => {
+    const channel = 'version:update-status';
+    const listener = (_event: Electron.IpcRendererEvent, payload: UpdateStatusPayload) => callback(payload);
+
+    ipcRenderer.on(channel, listener);
+    return () => {
+      ipcRenderer.removeListener(channel, listener);
+    };
+  },
+
   // Navigation
   updateNavigationState: (canGoBack: boolean, canGoForward: boolean) => 
     ipcRenderer.send('navigation:updateState', canGoBack, canGoForward),
@@ -137,6 +159,7 @@ declare global {
       getProductivityInsights: () => Promise<ProductivityInsights>;
       onTimeTrackingChanged: (callback: () => void) => () => void;
       onSetTheme: (callback: (theme: string) => void) => () => void;
+      onUpdateStatus: (callback: (payload: UpdateStatusPayload) => void) => () => void;
       updateNavigationState: (canGoBack: boolean, canGoForward: boolean) => void;
       onNavigateBack: (callback: () => void) => () => void;
       onNavigateForward: (callback: () => void) => () => void;

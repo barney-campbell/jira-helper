@@ -1,8 +1,99 @@
-import { app, BrowserWindow, Menu, MenuItem, ipcMain } from 'electron';
+import { app, BrowserWindow, Menu, dialog, MenuItem, ipcMain } from 'electron';
 import * as path from 'path';
 import { registerIpcHandlers } from './ipc-handlers';
+import { autoUpdater } from 'electron-updater';
+import { UpdateStatusType, UpdateStatusPayload } from '../common/types';
 
 let mainWindow: BrowserWindow | null = null;
+let updateCheckInterval: NodeJS.Timeout | null = null;
+const UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000; // every 6 hours
+
+function broadcastUpdateStatus(payload: UpdateStatusPayload) {
+  BrowserWindow.getAllWindows().forEach(window => {
+    window.webContents.send('version:update-status', payload);
+  });
+}
+
+async function promptAndInstallUpdate(version?: string) {
+  const targetWindow = BrowserWindow.getFocusedWindow() ?? mainWindow ?? BrowserWindow.getAllWindows()[0];
+
+  if (!targetWindow) {
+    autoUpdater.quitAndInstall();
+    return;
+  }
+
+  const { response } = await dialog.showMessageBox(targetWindow, {
+    type: 'info',
+    buttons: ['Restart now', 'Later'],
+    defaultId: 0,
+    cancelId: 1,
+    title: 'Update ready',
+    message: 'A new version of Jira Helper has been downloaded.',
+    detail: version ? `Version ${version} will be installed after restart.` : undefined
+  });
+
+  if (response === 0) {
+    autoUpdater.quitAndInstall();
+  }
+}
+
+function startAutoUpdater() {
+  if (!app.isPackaged) {
+    return;
+  }
+
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+
+  autoUpdater.on('checking-for-update', () => {
+    broadcastUpdateStatus({ status: 'checking' });
+  });
+
+  autoUpdater.on('update-available', info => {
+    broadcastUpdateStatus({ status: 'update-available', version: info.version });
+  });
+
+  autoUpdater.on('update-not-available', info => {
+    broadcastUpdateStatus({ status: 'update-not-available', version: info.version });
+  });
+
+  autoUpdater.on('download-progress', progress => {
+    broadcastUpdateStatus({ status: 'download-progress', percent: progress.percent });
+  });
+
+  autoUpdater.on('update-downloaded', info => {
+    broadcastUpdateStatus({ status: 'update-downloaded', version: info.version });
+    promptAndInstallUpdate(info.version).catch(error => {
+      console.error('Failed to prompt for update installation:', error);
+      autoUpdater.quitAndInstall();
+    });
+  });
+
+  autoUpdater.on('error', error => {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Auto updater error:', error);
+    broadcastUpdateStatus({ status: 'error', message });
+  });
+
+  const checkForUpdates = () => {
+    autoUpdater.checkForUpdates().catch(error => {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error('Failed to check for updates:', error);
+      broadcastUpdateStatus({ status: 'error', message });
+    });
+  };
+
+  checkForUpdates();
+  updateCheckInterval = setInterval(checkForUpdates, UPDATE_CHECK_INTERVAL_MS);
+
+  app.on('before-quit', () => {
+    if (updateCheckInterval) {
+      clearInterval(updateCheckInterval);
+      updateCheckInterval = null;
+    }
+  });
+}
+
 let canGoBack = false;
 let canGoForward = false;
 
@@ -148,6 +239,7 @@ app.whenReady().then(() => {
   registerIpcHandlers();
   createMenu();
   createWindow();
+  startAutoUpdater();
 
   // Listen for navigation state updates from renderer
   ipcMain.on('navigation:updateState', (_event, newCanGoBack: boolean, newCanGoForward: boolean) => {
