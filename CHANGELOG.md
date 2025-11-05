@@ -2,14 +2,25 @@
 
 - Better "empty" states
 
-# Next: 1.4.0
+# 1.5.0
+
+### Added
+
+- Column sorting in issue tables - click column headers to sort ascending, click again for descending, and once more to clear sorting
+
+# 1.4.1
+
+### Added
+
+- Automatic in-app updates delivered via GitHub Releases using the Electron auto-updater
+
+# 1.4.0
 
 ### Added
 
 - Compact mode for Yesterday's Time Tracking widget with toggle to switch between detailed and aggregated views
 - Personal Analytics page displaying productivity insights, time tracking statistics, and visualizations based on historical worklog data
 - Week navigation controls in Calendar view with Previous Week, Next Week, and Current Week buttons
-- Automatic in-app updates delivered via GitHub Releases using the Electron auto-updater
 
 ### Changed
 

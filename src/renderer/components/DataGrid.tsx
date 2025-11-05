@@ -1,10 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
+export type SortDirection = 'asc' | 'desc' | null;
+
 export interface Column<T> {
   header: string;
   accessor: keyof T | ((row: T) => React.ReactNode);
   width?: string;
+  sortable?: boolean;
+}
+
+export interface SortConfig {
+  columnIndex: number;
+  direction: SortDirection;
 }
 
 interface DataGridProps<T> {
@@ -12,6 +20,8 @@ interface DataGridProps<T> {
   data: T[];
   onRowDoubleClick?: (row: T) => void;
   className?: string;
+  sortConfig?: SortConfig;
+  onSort?: (columnIndex: number) => void;
 }
 
 const DataGridContainer = styled.div`
@@ -36,6 +46,16 @@ const Table = styled.table`
     position: sticky;
     top: 0;
     color: ${props => props.theme.colors.text};
+    user-select: none;
+
+    &.sortable {
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: ${props => props.theme.colors.border};
+      }
+    }
   }
 
   td {
@@ -56,11 +76,19 @@ const Table = styled.table`
   }
 `;
 
+const SortIndicator = styled.span`
+  margin-left: 8px;
+  font-size: 12px;
+  color: ${props => props.theme.colors.primary};
+`;
+
 export function DataGrid<T extends { [key: string]: any }>({
   columns,
   data,
   onRowDoubleClick,
-  className = ''
+  className = '',
+  sortConfig,
+  onSort
 }: DataGridProps<T>) {
   const getCellValue = (row: T, column: Column<T>) => {
     if (typeof column.accessor === 'function') {
@@ -69,14 +97,36 @@ export function DataGrid<T extends { [key: string]: any }>({
     return row[column.accessor];
   };
 
+  const handleHeaderClick = (columnIndex: number) => {
+    const column = columns[columnIndex];
+    if (column.sortable !== false && onSort) {
+      onSort(columnIndex);
+    }
+  };
+
+  const getSortIndicator = (columnIndex: number) => {
+    if (sortConfig?.columnIndex === columnIndex) {
+      return sortConfig.direction === 'asc' ? '▲' : '▼';
+    }
+    return '';
+  };
+
   return (
     <DataGridContainer className={className}>
       <Table>
         <thead>
           <tr>
             {columns.map((column, index) => (
-              <th key={index} style={{ width: column.width }}>
+              <th 
+                key={index} 
+                style={{ width: column.width }}
+                className={column.sortable !== false ? 'sortable' : ''}
+                onClick={() => handleHeaderClick(index)}
+              >
                 {column.header}
+                {getSortIndicator(index) && (
+                  <SortIndicator>{getSortIndicator(index)}</SortIndicator>
+                )}
               </th>
             ))}
           </tr>
