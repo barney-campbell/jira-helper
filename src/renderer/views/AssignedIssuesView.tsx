@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { IssueTable } from '../components/IssueTable';
@@ -31,6 +31,14 @@ const UpdatedInfo = styled.div`
   font-size: 12px;
 `;
 
+const SectionHeading = styled.h3`
+  margin-top: 40px;
+  margin-bottom: 20px;
+  color: ${props => props.theme.colors.textSecondary};
+  font-size: 18px;
+  font-weight: 500;
+`;
+
 interface AssignedIssuesViewProps {
   onIssueDoubleClick: (issue: JiraIssue) => void;
 }
@@ -57,6 +65,21 @@ export const AssignedIssuesView: React.FC<AssignedIssuesViewProps> = ({ onIssueD
     }
   };
 
+  const { activeIssues, doneIssues } = useMemo(() => {
+    const active: JiraIssue[] = [];
+    const done: JiraIssue[] = [];
+    
+    issues.forEach(issue => {
+      if (issue.status === 'Done') {
+        done.push(issue);
+      } else {
+        active.push(issue);
+      }
+    });
+    
+    return { activeIssues: active, doneIssues: done };
+  }, [issues]);
+
   return (
     <ViewContainer>
       <h2>Assigned Jira Issues</h2>
@@ -74,7 +97,14 @@ export const AssignedIssuesView: React.FC<AssignedIssuesViewProps> = ({ onIssueD
           Refresh
         </Button>
       </ViewHeader>
-      <IssueTable issues={issues} onIssueDoubleClick={onIssueDoubleClick} />
+      <IssueTable issues={activeIssues} onIssueDoubleClick={onIssueDoubleClick} />
+      
+      {doneIssues.length > 0 && (
+        <>
+          <SectionHeading>Done</SectionHeading>
+          <IssueTable issues={doneIssues} onIssueDoubleClick={onIssueDoubleClick} />
+        </>
+      )}
     </ViewContainer>
   );
 };
