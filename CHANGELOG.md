@@ -2,6 +2,12 @@
 
 - Better "empty" states
 
+# 1.6.0
+
+### Changed
+
+- Compact view is now enabled by default in Yesterday's Time Tracking widget on the homepage
+
 # 1.5.0
 
 ### Added

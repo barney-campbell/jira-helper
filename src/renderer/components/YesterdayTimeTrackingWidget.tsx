@@ -25,7 +25,7 @@ const WidgetHeader = styled.div`
 export const YesterdayTimeTrackingWidget: React.FC<YesterdayTimeTrackingWidgetProps> = ({ onIssueDoubleClick }) => {
   const [records, setRecords] = useState<TimeTrackingRecord[]>([]);
   const [summaries, setSummaries] = useState<Record<string, string>>({});
-  const [isCompactMode, setIsCompactMode] = useState<boolean>(false);
+  const [isCompactMode, setIsCompactMode] = useState<boolean>(true);
 
   useEffect(() => {
     loadRecords();
