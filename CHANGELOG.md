@@ -7,6 +7,7 @@
 ### Changed
 
 - Compact view is now enabled by default in Yesterday's Time Tracking widget on the homepage
+- Calendar view fixed to display time log blocks with correct time visually
 
 # 1.5.0
 
