@@ -5,7 +5,11 @@ import { LoadingSpinner } from './LoadingSpinner';
 import { WidgetContainer, WidgetFooter } from './Widget';
 import type { TimeTrackingRecord } from '../../common/types';
 
-export const UnuploadedTimeTrackingWidget: React.FC = () => {
+interface UnuploadedTimeTrackingWidgetProps {
+  onIssueDoubleClick?: (issueKey: string) => void;
+}
+
+export const UnuploadedTimeTrackingWidget: React.FC<UnuploadedTimeTrackingWidgetProps> = ({ onIssueDoubleClick }) => {
   const [records, setRecords] = useState<TimeTrackingRecord[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -115,7 +119,11 @@ export const UnuploadedTimeTrackingWidget: React.FC = () => {
   return (
     <WidgetContainer>
       <h3>Unuploaded Time Tracking Logs</h3>
-      <DataGrid columns={columns} data={displayData} />
+      <DataGrid 
+        columns={columns} 
+        data={displayData}
+        onRowDoubleClick={(row) => onIssueDoubleClick?.(row.issueKey)}
+      />
       <WidgetFooter>
         <Button onClick={handleUploadAll} disabled={loading || records.length === 0}>
           {loading ? <LoadingSpinner size="small" /> : 'Upload All to Jira'}

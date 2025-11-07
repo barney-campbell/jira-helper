@@ -4,6 +4,10 @@
 
 # 1.6.0
 
+### Added
+
+- Double-clicking an unuploaded time tracking log now navigates to the issue details page for that issue
+
 ### Changed
 
 - Compact view is now enabled by default in Yesterday's Time Tracking widget on the homepage
