@@ -43,7 +43,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onIssueDoubleClick
       <h1>Jira Dashboard</h1>
       <DashboardWidgets>
         <ActiveTimeTrackingWidget onIssueDoubleClick={onIssueDoubleClick} />
-        <UnuploadedTimeTrackingWidget />
+        <UnuploadedTimeTrackingWidget onIssueDoubleClick={onIssueDoubleClick} />
         <YesterdayWidgetContainer>
           <YesterdayTimeTrackingWidget onIssueDoubleClick={onIssueDoubleClick} />
         </YesterdayWidgetContainer>
