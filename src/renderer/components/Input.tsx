@@ -5,9 +5,10 @@ interface InputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  type?: 'text' | 'password' | 'email';
+  type?: 'text' | 'password' | 'email' | 'datetime-local';
   disabled?: boolean;
   className?: string;
+  step?: number | string;
   onKeyDown?: (e: React.KeyboardEvent) => void;
 }
 
@@ -40,7 +41,8 @@ export const Input: React.FC<InputProps> = ({
   type = 'text',
   disabled = false,
   className = '',
-  onKeyDown
+  onKeyDown,
+  step
 }) => {
   return (
     <StyledInput
@@ -51,6 +53,7 @@ export const Input: React.FC<InputProps> = ({
       disabled={disabled}
       onKeyDown={onKeyDown}
       className={className}
+      step={step}
     />
   );
 };
