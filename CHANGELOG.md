@@ -1,6 +1,14 @@
-# Planned
+# 1.6.0
 
-- Better "empty" states
+### Added
+
+- Double-clicking an unuploaded time tracking log now navigates to the issue details page for that issue
+
+### Changed
+
+- Compact view is now enabled by default in Yesterday's Time Tracking widget on the homepage
+- Fixed calendar view time block positioning to accurately reflect logged time periods
+- Worklog edit modal now uses date-time picker UI controls instead of text inputs for improved user experience
 
 # 1.5.0
 

@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import type { TimeTrackingRecord } from '../../common/types';
 import { Button } from '../components/Button';
 
+const pixelsPerHour = 55;
+
 const CalendarContainer = styled.div`
   margin: 0 auto;
 
@@ -18,7 +20,7 @@ const WeekNavigationContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 20px;
-  margin-bottom: 20px;
+  margin-top: 20px;
 `;
 
 const WeekHeader = styled.div`
@@ -35,7 +37,7 @@ const NavButton = styled(Button)`
 
 const CurrentWeekButtonContainer = styled.div`
   text-align: center;
-  margin-bottom: 20px;
+  margin-top: 20px;
 `;
 
 const CalendarGrid = styled.div`
@@ -51,11 +53,10 @@ const CalendarGrid = styled.div`
 const TimeColumn = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
 `;
 
 const TimeLabel = styled.div`
-  height: 60px;
+  height: ${pixelsPerHour}px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -68,7 +69,6 @@ const TimeLabel = styled.div`
 const DayColumn = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
   position: relative;
 `;
 
@@ -82,7 +82,7 @@ const DayHeader = styled.div`
 `;
 
 const TimeSlot = styled.div`
-  height: 60px;
+  height: ${pixelsPerHour}px;
   border: 1px solid ${props => props.theme.colors.border};
   border-radius: 4px;
   position: relative;
@@ -229,7 +229,6 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
     const minutes = startTime.getMinutes();
     
     // Calculate position from 8 AM (work day starts at 8 AM)
-    const pixelsPerHour = 60; // Each hour slot is 60px
     const startHour = 8;
     const top = ((hours - startHour) * 60 + minutes) * (pixelsPerHour / 60);
     
@@ -284,23 +283,6 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
 
   return (
     <CalendarContainer>
-      <h1>Calendar View</h1>
-      <WeekNavigationContainer>
-        <NavButton variant="secondary" onClick={goToPreviousWeek}>
-          &lt; Previous Week
-        </NavButton>
-        <WeekHeader>Week of {getWeekRange()}</WeekHeader>
-        <NavButton variant="secondary" onClick={goToNextWeek}>
-          Next Week &gt;
-        </NavButton>
-      </WeekNavigationContainer>
-      {weekOffset !== 0 && (
-        <CurrentWeekButtonContainer>
-          <NavButton variant="primary" onClick={goToCurrentWeek}>
-            Current Week
-          </NavButton>
-        </CurrentWeekButtonContainer>
-      )}
       <CalendarGrid>
         {/* Time column */}
         <div>
@@ -348,6 +330,22 @@ export const CalendarView: React.FC<CalendarViewProps> = () => {
           </div>
         ))}
       </CalendarGrid>
+      <WeekNavigationContainer>
+        <NavButton variant="secondary" onClick={goToPreviousWeek}>
+          &lt; Previous Week
+        </NavButton>
+        <WeekHeader>Week of {getWeekRange()}</WeekHeader>
+        <NavButton variant="secondary" onClick={goToNextWeek}>
+          Next Week &gt;
+        </NavButton>
+      </WeekNavigationContainer>
+      {weekOffset !== 0 && (
+        <CurrentWeekButtonContainer>
+          <NavButton variant="primary" onClick={goToCurrentWeek}>
+            Current Week
+          </NavButton>
+        </CurrentWeekButtonContainer>
+      )}
     </CalendarContainer>
   );
 };
