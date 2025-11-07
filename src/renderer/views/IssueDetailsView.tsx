@@ -374,7 +374,8 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
     const day = String(d.getDate()).padStart(2, '0');
     const hours = String(d.getHours()).padStart(2, '0');
     const minutes = String(d.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
+    const seconds = String(d.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   };
 
   const formatDuration = (seconds: number, isActive: boolean = false): string => {
@@ -633,6 +634,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
             type="datetime-local"
             value={editStartTime}
             onChange={setEditStartTime}
+            step={1}
           />
         </FormGroup>
         <FormGroup>
@@ -641,6 +643,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
             type="datetime-local"
             value={editEndTime}
             onChange={setEditEndTime}
+            step={1}
           />
         </FormGroup>
       </Modal>
