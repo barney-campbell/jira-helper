@@ -368,7 +368,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
 
   const formatDateTimeForInput = (date: Date): string => {
     const d = new Date(date);
-    return d.toISOString().substring(0, 19);
+    return d.toISOString().substring(0, 16);
   };
 
   const formatDuration = (seconds: number, isActive: boolean = false): string => {
@@ -624,19 +624,17 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
         <FormGroup>
           <label>Start Time:</label>
           <Input
-            type="text"
+            type="datetime-local"
             value={editStartTime}
             onChange={setEditStartTime}
-            placeholder="YYYY-MM-DDTHH:mm:ss"
           />
         </FormGroup>
         <FormGroup>
           <label>End Time:</label>
           <Input
-            type="text"
+            type="datetime-local"
             value={editEndTime}
             onChange={setEditEndTime}
-            placeholder="YYYY-MM-DDTHH:mm:ss"
           />
         </FormGroup>
       </Modal>

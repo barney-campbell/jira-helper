@@ -5,7 +5,7 @@ interface InputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  type?: 'text' | 'password' | 'email';
+  type?: 'text' | 'password' | 'email' | 'datetime-local';
   disabled?: boolean;
   className?: string;
   onKeyDown?: (e: React.KeyboardEvent) => void;

@@ -2,6 +2,12 @@
 
 - Better "empty" states
 
+# Next
+
+### Changed
+
+- Worklog edit modal now uses date-time picker UI controls instead of text inputs for improved user experience
+
 # 1.6.0
 
 ### Changed
