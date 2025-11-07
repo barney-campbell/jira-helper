@@ -234,6 +234,15 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // Handle mouse back/forward buttons
+  mainWindow.on('app-command', (_event, command) => {
+    if (command === 'browser-backward' && canGoBack) {
+      mainWindow?.webContents.send('navigation:back');
+    } else if (command === 'browser-forward' && canGoForward) {
+      mainWindow?.webContents.send('navigation:forward');
+    }
+  });
 }
 
 app.whenReady().then(() => {

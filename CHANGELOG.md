@@ -2,6 +2,12 @@
 
 - Better "empty" states
 
+# 1.5.1
+
+### Fixed
+
+- Mouse back/forward buttons (buttons 4 and 5) now properly trigger navigation actions
+
 # 1.5.0
 
 ### Added
