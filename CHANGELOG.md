@@ -1,12 +1,3 @@
-# Planned
-
-- Better "empty" states
-
-# Next
-
-### Changed
-
-
 # 1.6.0
 
 ### Added
