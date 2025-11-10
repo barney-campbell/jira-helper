@@ -1,15 +1,15 @@
-import Database from 'better-sqlite3';
-import { app } from 'electron';
-import * as path from 'path';
-import type { UserSettings } from '../../common/types';
-import { encrypt, decrypt } from './crypto-util';
+import Database from "better-sqlite3";
+import { app } from "electron";
+import * as path from "path";
+import type { UserSettings } from "../../common/types";
+import { encrypt, decrypt } from "./crypto-util";
 
 export class SettingsService {
   private db: Database.Database;
 
   constructor() {
-    const userDataPath = app.getPath('userData');
-    const dbPath = path.join(userDataPath, 'user_settings.db');
+    const userDataPath = app.getPath("userData");
+    const dbPath = path.join(userDataPath, "user_settings.db");
     this.db = new Database(dbPath);
     this.initializeDatabase();
   }
@@ -23,24 +23,30 @@ export class SettingsService {
         ApiToken TEXT NOT NULL
       )
     `);
-    
+
     // Safe migration: Add Theme column if it doesn't exist
-    const columns = this.db.pragma("table_info(Settings)") as Array<{ name: string }>;
-    const hasThemeColumn = columns.some((col) => col.name === 'Theme');
+    const columns = this.db.pragma("table_info(Settings)") as Array<{
+      name: string;
+    }>;
+    const hasThemeColumn = columns.some((col) => col.name === "Theme");
     if (!hasThemeColumn) {
-      this.db.exec(`ALTER TABLE Settings ADD COLUMN Theme TEXT DEFAULT 'light'`);
+      this.db.exec(
+        `ALTER TABLE Settings ADD COLUMN Theme TEXT DEFAULT 'light'`,
+      );
     }
   }
 
   loadSettings(): UserSettings | null {
-    const row = this.db.prepare('SELECT * FROM Settings WHERE Id = 1').get() as any;
+    const row = this.db
+      .prepare("SELECT * FROM Settings WHERE Id = 1")
+      .get() as any;
     if (!row) {
       return {
         id: 1,
-        baseUrl: '',
-        email: '',
-        apiToken: '',
-        theme: 'light'
+        baseUrl: "",
+        email: "",
+        apiToken: "",
+        theme: "light",
       };
     }
     let apiToken = row.ApiToken;
@@ -54,25 +60,35 @@ export class SettingsService {
       baseUrl: row.BaseUrl,
       email: row.Email,
       apiToken,
-      theme: row.Theme || 'light'
+      theme: row.Theme || "light",
     };
   }
 
   saveSettings(settings: UserSettings): void {
     const encryptedToken = encrypt(settings.apiToken);
-    const theme = settings.theme || 'light';
-    const existing = this.db.prepare('SELECT * FROM Settings WHERE Id = 1').get();
+    const theme = settings.theme || "light";
+    const existing = this.db
+      .prepare("SELECT * FROM Settings WHERE Id = 1")
+      .get();
     if (existing) {
-      this.db.prepare(`
+      this.db
+        .prepare(
+          `
         UPDATE Settings 
         SET BaseUrl = ?, Email = ?, ApiToken = ?, Theme = ? 
         WHERE Id = 1
-      `).run(settings.baseUrl, settings.email, encryptedToken, theme);
+      `,
+        )
+        .run(settings.baseUrl, settings.email, encryptedToken, theme);
     } else {
-      this.db.prepare(`
+      this.db
+        .prepare(
+          `
         INSERT INTO Settings (Id, BaseUrl, Email, ApiToken, Theme) 
         VALUES (1, ?, ?, ?, ?)
-      `).run(settings.baseUrl, settings.email, encryptedToken, theme);
+      `,
+        )
+        .run(settings.baseUrl, settings.email, encryptedToken, theme);
     }
   }
 

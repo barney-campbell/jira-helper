@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import { ipc } from '../ipc';
-import styled from 'styled-components';
-import { Button } from '../components/Button';
-import { Input } from '../components/Input';
-import { IssueTable } from '../components/IssueTable';
-import { LoadingSpinner } from '../components/LoadingSpinner';
-import type { JiraIssue } from '../../common/types';
+import React, { useState } from "react";
+import { ipc } from "../ipc";
+import styled from "styled-components";
+import { Button } from "../components/Button";
+import { Input } from "../components/Input";
+import { IssueTable } from "../components/IssueTable";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+import type { JiraIssue } from "../../common/types";
 
 const ViewContainer = styled.div`
-  background-color: ${props => props.theme.colors.surface};
+  background-color: ${(props) => props.theme.colors.surface};
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   h2 {
     margin-bottom: 20px;
-    color: ${props => props.theme.colors.text};
+    color: ${(props) => props.theme.colors.text};
   }
 `;
 
@@ -32,7 +32,7 @@ const SearchInput = styled(Input)`
 
 const ResultText = styled.div`
   margin-bottom: 15px;
-  color: ${props => props.theme.colors.textSecondary};
+  color: ${(props) => props.theme.colors.textSecondary};
   font-size: 14px;
 `;
 
@@ -40,17 +40,19 @@ interface IssueSearchViewProps {
   onIssueDoubleClick: (issue: JiraIssue) => void;
 }
 
-export const IssueSearchView: React.FC<IssueSearchViewProps> = ({ onIssueDoubleClick }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+export const IssueSearchView: React.FC<IssueSearchViewProps> = ({
+  onIssueDoubleClick,
+}) => {
+  const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState<JiraIssue[]>([]);
   const [loading, setLoading] = useState(false);
-  const [resultText, setResultText] = useState('');
+  const [resultText, setResultText] = useState("");
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
 
     setLoading(true);
-    setResultText('');
+    setResultText("");
     try {
       const isJiraKey = /^[A-Z]+-\d+$/i.test(searchQuery);
       let data: JiraIssue[] = [];
@@ -73,15 +75,15 @@ export const IssueSearchView: React.FC<IssueSearchViewProps> = ({ onIssueDoubleC
       setResults(data);
       setResultText(`Found ${data.length} issue(s)`);
     } catch (error) {
-      console.error('Error searching issues:', error);
-      setResultText('Error searching issues');
+      console.error("Error searching issues:", error);
+      setResultText("Error searching issues");
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };

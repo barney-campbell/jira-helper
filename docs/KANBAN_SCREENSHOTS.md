@@ -178,6 +178,7 @@ Clicking the edit icon (✏️) on an item shows:
 ## 6. Linking a Jira Issue (Search Flow)
 
 Step 1 - Enter issue key:
+
 ```
 │ Link to Jira Issue (Optional)   │
 │ ┌─────────────────────────────┐ │
@@ -187,6 +188,7 @@ Step 1 - Enter issue key:
 ```
 
 Step 2 - Searching (loading state):
+
 ```
 │ Link to Jira Issue (Optional)   │
 │ ┌─────────────────────────────┐ │
@@ -197,6 +199,7 @@ Step 2 - Searching (loading state):
 ```
 
 Step 3 - Issue found and linked:
+
 ```
 │ Link to Jira Issue (Optional)   │
 │ ┌─────────────────────────────┐ │
@@ -210,6 +213,7 @@ Step 3 - Issue found and linked:
 ```
 
 Step 4 - Issue not found (error state):
+
 ```
 │ Link to Jira Issue (Optional)   │
 │ ┌─────────────────────────────┐ │
@@ -223,6 +227,7 @@ Step 4 - Issue not found (error state):
 ## 7. Drag and Drop States
 
 ### Before Drag
+
 ```
 │  ┌─────────────────┐
 │  │ To Do       [2] │
@@ -240,6 +245,7 @@ Step 4 - Issue not found (error state):
 ```
 
 ### During Drag (Item Being Dragged)
+
 ```
 │  ┌─────────────────┐
 │  │ To Do       [2] │
@@ -257,6 +263,7 @@ Step 4 - Issue not found (error state):
 ```
 
 ### During Drag (Target Column Highlighted)
+
 ```
 │  ┌─────────────────┐
 │  │ In Progress [1] │  ← Light blue background
@@ -271,6 +278,7 @@ Step 4 - Issue not found (error state):
 ```
 
 ### After Drop (Item Moved)
+
 ```
 │  ┌─────────────────┐
 │  │ In Progress [2] │  ← Count updated
@@ -290,6 +298,7 @@ Step 4 - Issue not found (error state):
 ## 8. Item Card Hover State
 
 Normal state:
+
 ```
 ┌─────────────────┐
 │ Setup Database  │
@@ -302,6 +311,7 @@ Normal state:
 ```
 
 Hover state (elevated with shadow):
+
 ```
    ┌─────────────────┐
    │ Setup Database  │  ← Slightly raised
@@ -316,6 +326,7 @@ Hover state (elevated with shadow):
 ## 9. Item with Jira Badge
 
 Item card showing linked Jira issue:
+
 ```
 ┌─────────────────────┐
 │ Fix authentication  │
@@ -328,6 +339,7 @@ Item card showing linked Jira issue:
 ```
 
 Hover on Jira badge (darker blue):
+
 ```
 ┌─────────────────────┐
 │ Fix authentication  │
@@ -342,6 +354,7 @@ Hover on Jira badge (darker blue):
 ## 10. Delete Confirmation
 
 Clicking delete icon (🗑️) shows browser confirmation:
+
 ```
 ┌───────────────────────────────────┐
 │ Confirm                           │
@@ -357,6 +370,7 @@ Clicking delete icon (🗑️) shows browser confirmation:
 ## 11. Loading State
 
 When initially loading the board:
+
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ 📋 Kanban Board                                                          │
@@ -386,12 +400,15 @@ When initially loading the board:
 ## Responsive Design
 
 ### Desktop (>1024px)
+
 Three equal columns side-by-side with 20px gap
 
 ### Tablet/Small Desktop (768px-1024px)
+
 Three columns may become narrower but still side-by-side
 
 ### Mobile (<768px)
+
 Columns stack vertically
 
 ## Accessibility Features

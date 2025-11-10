@@ -1,16 +1,18 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
-  variant?: 'primary' | 'secondary' | 'danger';
-  type?: 'button' | 'submit';
+  variant?: "primary" | "secondary" | "danger";
+  type?: "button" | "submit";
   className?: string;
 }
 
-const StyledButton = styled.button<{ $variant: 'primary' | 'secondary' | 'danger' }>`
+const StyledButton = styled.button<{
+  $variant: "primary" | "secondary" | "danger";
+}>`
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
@@ -25,7 +27,9 @@ const StyledButton = styled.button<{ $variant: 'primary' | 'secondary' | 'danger
     cursor: not-allowed;
   }
 
-  ${props => props.$variant === 'primary' && `
+  ${(props) =>
+    props.$variant === "primary" &&
+    `
     background-color: ${props.theme.colors.primary};
     color: white;
 
@@ -34,7 +38,9 @@ const StyledButton = styled.button<{ $variant: 'primary' | 'secondary' | 'danger
     }
   `}
 
-  ${props => props.$variant === 'secondary' && `
+  ${(props) =>
+    props.$variant === "secondary" &&
+    `
     background-color: ${props.theme.colors.secondary};
     color: white;
 
@@ -43,7 +49,9 @@ const StyledButton = styled.button<{ $variant: 'primary' | 'secondary' | 'danger
     }
   `}
 
-  ${props => props.$variant === 'danger' && `
+  ${(props) =>
+    props.$variant === "danger" &&
+    `
     background-color: ${props.theme.colors.danger};
     color: white;
 
@@ -57,9 +65,9 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   onClick,
   disabled = false,
-  variant = 'primary',
-  type = 'button',
-  className = ''
+  variant = "primary",
+  type = "button",
+  className = "",
 }) => {
   return (
     <StyledButton

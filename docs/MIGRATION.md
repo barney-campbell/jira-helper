@@ -5,6 +5,7 @@ This document outlines the migration of the Jira Helper application from a WPF (
 ## Architecture Changes
 
 ### Before (WPF)
+
 ```
 JiraHelper.Core (WPF UI) ──┐
                            ├──> JiraHelper.JiraApi
@@ -13,6 +14,7 @@ JiraHelper.Core (WPF UI) ──┐
 ```
 
 ### After (Electron)
+
 ```
 Main Process (Node.js)
 ├── IPC Handlers
@@ -29,21 +31,25 @@ Renderer Process (React)
 ## Key Migration Points
 
 ### 1. Database Access
+
 - **Before**: Entity Framework Core with SQLite
 - **After**: better-sqlite3 directly in main process
 - **Benefit**: Simpler, faster, no ORM overhead
 
 ### 2. UI Framework
+
 - **Before**: WPF with XAML
 - **After**: React with TypeScript
 - **Benefit**: Modern web technologies, hot reload, easier debugging
 
 ### 3. API Communication
+
 - **Before**: HttpClient in C#
 - **After**: Fetch API in TypeScript
 - **Benefit**: Native JavaScript API, consistent across platform
 
 ### 4. Inter-Process Communication
+
 - **Before**: Direct method calls
 - **After**: Electron IPC (Inter-Process Communication)
 - **Security**: Context isolation enabled, preload script for safe IPC
@@ -53,6 +59,7 @@ Renderer Process (React)
 All UI components are built as reusable React components that can be used throughout the application:
 
 ### Button Component
+
 ```tsx
 <Button onClick={handleClick} variant="primary">
   Click Me
@@ -62,23 +69,20 @@ All UI components are built as reusable React components that can be used throug
 ```
 
 ### Input Component
+
 ```tsx
-<Input
-  value={text}
-  onChange={setText}
-  placeholder="Enter text"
-  type="text"
-/>
+<Input value={text} onChange={setText} placeholder="Enter text" type="text" />
 
 // Types: text, password, email
 ```
 
 ### DataGrid Component
+
 ```tsx
 <DataGrid
   columns={[
-    { header: 'Name', accessor: 'name' },
-    { header: 'Status', accessor: (row) => <Badge>{row.status}</Badge> }
+    { header: "Name", accessor: "name" },
+    { header: "Status", accessor: (row) => <Badge>{row.status}</Badge> },
   ]}
   data={items}
   onRowDoubleClick={handleRowClick}
@@ -86,6 +90,7 @@ All UI components are built as reusable React components that can be used throug
 ```
 
 ### LoadingSpinner Component
+
 ```tsx
 <LoadingSpinner size="medium" />
 
@@ -93,6 +98,7 @@ All UI components are built as reusable React components that can be used throug
 ```
 
 ### Modal Component
+
 ```tsx
 <Modal
   isOpen={open}
@@ -105,33 +111,36 @@ All UI components are built as reusable React components that can be used throug
 ```
 
 ### UnuploadedTimeTrackingWidget Component
+
 A specialized widget that displays unuploaded time tracking records and provides upload functionality. This component can be reused in any view that needs to show pending time logs.
 
 ## Feature Mapping
 
-| WPF Feature | Electron Equivalent | Status |
-|------------|---------------------|--------|
-| MainWindow | App.tsx + Sidebar Navigation | ✅ Complete |
-| DashboardView | DashboardView.tsx | ✅ Complete |
-| AssignedIssuesView | AssignedIssuesView.tsx | ✅ Complete |
-| IssueSearchView | IssueSearchView.tsx | ✅ Complete |
-| IssueDetailsView | IssueDetailsView.tsx | ✅ Complete |
-| SettingsView | SettingsView.tsx | ✅ Complete |
-| UnuploadedTimeTrackingWidget | UnuploadedTimeTrackingWidget.tsx | ✅ Complete |
-| EditTimeTrackingDialog | Modal + Form in IssueDetailsView | ✅ Complete |
-| JiraService | jira-service.ts (Main Process) | ✅ Complete |
-| TimeTrackingService | time-tracking-service.ts (Main Process) | ✅ Complete |
-| SettingsService | settings-service.ts (Main Process) | ✅ Complete |
+| WPF Feature                  | Electron Equivalent                     | Status      |
+| ---------------------------- | --------------------------------------- | ----------- |
+| MainWindow                   | App.tsx + Sidebar Navigation            | ✅ Complete |
+| DashboardView                | DashboardView.tsx                       | ✅ Complete |
+| AssignedIssuesView           | AssignedIssuesView.tsx                  | ✅ Complete |
+| IssueSearchView              | IssueSearchView.tsx                     | ✅ Complete |
+| IssueDetailsView             | IssueDetailsView.tsx                    | ✅ Complete |
+| SettingsView                 | SettingsView.tsx                        | ✅ Complete |
+| UnuploadedTimeTrackingWidget | UnuploadedTimeTrackingWidget.tsx        | ✅ Complete |
+| EditTimeTrackingDialog       | Modal + Form in IssueDetailsView        | ✅ Complete |
+| JiraService                  | jira-service.ts (Main Process)          | ✅ Complete |
+| TimeTrackingService          | time-tracking-service.ts (Main Process) | ✅ Complete |
+| SettingsService              | settings-service.ts (Main Process)      | ✅ Complete |
 
 ## Data Flow
 
 ### Before (WPF - Direct Access)
+
 ```
 UI Component → Service → Database
             → Jira API
 ```
 
 ### After (Electron - IPC)
+
 ```
 React Component → IPC → Main Process → Service → Database
                                                 → Jira API
@@ -183,11 +192,13 @@ src/
 ## Testing the Application
 
 1. Build the application:
+
    ```bash
    npm run build:dev
    ```
 
 2. Run the application:
+
    ```bash
    npm start
    ```
@@ -218,15 +229,18 @@ Potential improvements that leverage the new architecture:
 ## Troubleshooting
 
 ### Build Issues
+
 - Clear `dist` folder and rebuild: `rm -rf dist && npm run build:dev`
 - Reinstall dependencies: `rm -rf node_modules package-lock.json && npm install`
 
 ### Runtime Issues
+
 - Check the Electron console (View → Toggle Developer Tools)
 - Verify settings are correctly configured
 - Check database files exist in the user data directory
 
 ### Database Location
+
 - **Linux**: `~/.config/jira-helper/`
 - **macOS**: `~/Library/Application Support/jira-helper/`
 - **Windows**: `%APPDATA%\jira-helper\`

@@ -10,41 +10,41 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    
+
     steps:
       - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      
+
       - name: Get PR branch version
         id: pr-version
         run: |
           PR_VERSION=$(node -p "require('./package.json').version")
           echo "version=$PR_VERSION" >> $GITHUB_OUTPUT
           echo "PR branch version: $PR_VERSION"
-      
+
       - name: Checkout base branch
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.base.ref }}
-      
+
       - name: Get base branch version
         id: base-version
         run: |
           BASE_VERSION=$(node -p "require('./package.json').version")
           echo "version=$BASE_VERSION" >> $GITHUB_OUTPUT
           echo "Base branch version: $BASE_VERSION"
-      
+
       - name: Compare versions
         run: |
           PR_VERSION="${{ steps.pr-version.outputs.version }}"
           BASE_VERSION="${{ steps.base-version.outputs.version }}"
-          
+
           echo "Comparing versions:"
           echo "  PR branch:   $PR_VERSION"
           echo "  Base branch: $BASE_VERSION"
-          
+
           if [ "$PR_VERSION" == "$BASE_VERSION" ]; then
             echo "❌ ERROR: Version has not been updated!"
             echo "Please update the version in package.json before merging to master-electron."

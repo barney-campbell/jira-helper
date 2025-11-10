@@ -1,14 +1,14 @@
-import { app } from 'electron';
-import * as path from 'path';
-import * as fs from 'fs';
-import type { LogEntry } from '../../common/types';
+import { app } from "electron";
+import * as path from "path";
+import * as fs from "fs";
+import type { LogEntry } from "../../common/types";
 
 export class LoggingService {
   private logsDir: string;
 
   constructor() {
-    const userDataPath = app.getPath('userData');
-    this.logsDir = path.join(userDataPath, 'logs');
+    const userDataPath = app.getPath("userData");
+    this.logsDir = path.join(userDataPath, "logs");
     this.ensureLogsDirExists();
   }
 
@@ -19,27 +19,27 @@ export class LoggingService {
   }
 
   private getLogFilePath(date: Date = new Date()): string {
-    const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+    const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD
     return path.join(this.logsDir, `${dateStr}.log`);
   }
 
   private writeLog(entry: LogEntry): void {
     const logFilePath = this.getLogFilePath();
-    const logLine = JSON.stringify(entry) + '\n';
-    
+    const logLine = JSON.stringify(entry) + "\n";
+
     try {
-      fs.appendFileSync(logFilePath, logLine, 'utf8');
+      fs.appendFileSync(logFilePath, logLine, "utf8");
     } catch (err) {
-      console.error('Failed to write log:', err);
+      console.error("Failed to write log:", err);
     }
   }
 
   logError(message: string, error?: Error | unknown, location?: string): void {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
-      level: 'error',
+      level: "error",
       message,
-      location
+      location,
     };
 
     if (error instanceof Error) {
@@ -55,9 +55,9 @@ export class LoggingService {
   logWarning(message: string, location?: string): void {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
-      level: 'warning',
+      level: "warning",
       message,
-      location
+      location,
     };
 
     this.writeLog(entry);
@@ -66,9 +66,9 @@ export class LoggingService {
   logInfo(message: string, location?: string): void {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
-      level: 'info',
+      level: "info",
       message,
-      location
+      location,
     };
 
     this.writeLog(entry);
@@ -76,18 +76,18 @@ export class LoggingService {
 
   getLogs(date?: Date): LogEntry[] {
     const logFilePath = this.getLogFilePath(date);
-    
+
     if (!fs.existsSync(logFilePath)) {
       return [];
     }
 
     try {
-      const content = fs.readFileSync(logFilePath, 'utf8');
-      const lines = content.trim().split('\n');
-      
+      const content = fs.readFileSync(logFilePath, "utf8");
+      const lines = content.trim().split("\n");
+
       return lines
-        .filter(line => line.trim())
-        .map(line => {
+        .filter((line) => line.trim())
+        .map((line) => {
           try {
             return JSON.parse(line) as LogEntry;
           } catch {
@@ -97,7 +97,7 @@ export class LoggingService {
         .filter((entry): entry is LogEntry => entry !== null)
         .reverse(); // Newest logs first
     } catch (err) {
-      console.error('Failed to read logs:', err);
+      console.error("Failed to read logs:", err);
       return [];
     }
   }
@@ -106,12 +106,12 @@ export class LoggingService {
     try {
       const files = fs.readdirSync(this.logsDir);
       return files
-        .filter(file => file.endsWith('.log'))
-        .map(file => file.replace('.log', ''))
+        .filter((file) => file.endsWith(".log"))
+        .map((file) => file.replace(".log", ""))
         .sort()
         .reverse(); // Most recent first
     } catch (err) {
-      console.error('Failed to list log files:', err);
+      console.error("Failed to list log files:", err);
       return [];
     }
   }

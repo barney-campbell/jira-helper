@@ -12,8 +12,8 @@ import type {
   HourlyStats,
   IssueStats,
   ProductivityInsights,
-  TimeTrackingRecord
-} from '../common/types';
+  TimeTrackingRecord,
+} from "../common/types";
 
 export interface ElectronAPI {
   openExternal(url: string): Promise<void>;
@@ -24,7 +24,11 @@ export interface ElectronAPI {
   getIssueSummaries(issueKeys: string[]): Promise<Record<string, string>>;
   searchIssues(jql: string): Promise<any[]>;
   getWorklogs(issueKey: string): Promise<any[]>;
-  uploadTimeTracking(issueKey: string, timeSpentSeconds: number, started?: Date): Promise<void>;
+  uploadTimeTracking(
+    issueKey: string,
+    timeSpentSeconds: number,
+    started?: Date,
+  ): Promise<void>;
   getBaseUrl(): Promise<string>;
   startTracking(issueKey: string): Promise<{ success: boolean }>;
   stopTracking(issueKey: string): Promise<{ success: boolean }>;
@@ -37,9 +41,23 @@ export interface ElectronAPI {
   getAllKanbanItems(): Promise<KanbanItem[]>;
   getKanbanItemsByColumn?(column: KanbanColumnType): Promise<KanbanItem[]>;
   getKanbanItemsByIssue(issueKey: string): Promise<KanbanItem[]>;
-  createKanbanItem(title: string, description: string, column: KanbanColumnType, linkedIssueKey?: string): Promise<KanbanItem>;
-  updateKanbanItem(id: number, title: string, description: string, linkedIssueKey?: string): Promise<{ success: boolean }>;
-  moveKanbanItem(id: number, newColumn: KanbanColumnType, newPosition: number): Promise<{ success: boolean }>;
+  createKanbanItem(
+    title: string,
+    description: string,
+    column: KanbanColumnType,
+    linkedIssueKey?: string,
+  ): Promise<KanbanItem>;
+  updateKanbanItem(
+    id: number,
+    title: string,
+    description: string,
+    linkedIssueKey?: string,
+  ): Promise<{ success: boolean }>;
+  moveKanbanItem(
+    id: number,
+    newColumn: KanbanColumnType,
+    newPosition: number,
+  ): Promise<{ success: boolean }>;
   deleteKanbanItem(id: number): Promise<{ success: boolean }>;
   // Version
   getVersionInfo(): Promise<VersionInfo>;
@@ -62,10 +80,9 @@ export interface ElectronAPI {
   onUpdateStatus(callback: (payload: UpdateStatusPayload) => void): () => void;
 }
 
-
 if (!window.electronAPI) {
   throw new Error(
-    "window.electronAPI is undefined. This usually means the Electron preload script did not properly expose the API. Please check your preload configuration."
+    "window.electronAPI is undefined. This usually means the Electron preload script did not properly expose the API. Please check your preload configuration.",
   );
 }
 export const ipc: ElectronAPI = window.electronAPI as ElectronAPI;

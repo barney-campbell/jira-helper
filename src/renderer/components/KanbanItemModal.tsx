@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { Modal } from './Modal';
-import { Input } from './Input';
-import { Button } from './Button';
-import type { KanbanItem, JiraIssue } from '../../common/types';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { Modal } from "./Modal";
+import { Input } from "./Input";
+import { Button } from "./Button";
+import type { KanbanItem, JiraIssue } from "../../common/types";
 
 interface KanbanItemModalProps {
   isOpen: boolean;
@@ -19,7 +19,7 @@ const FormGroup = styled.div`
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: ${props => props.theme.colors.text};
+    color: ${(props) => props.theme.colors.text};
   }
 `;
 
@@ -27,18 +27,18 @@ const TextArea = styled.textarea`
   width: 100%;
   min-height: 120px;
   padding: 10px;
-  border: 1px solid ${props => props.theme.colors.border};
+  border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 4px;
   font-family: inherit;
   font-size: 14px;
   resize: vertical;
-  background-color: ${props => props.theme.colors.surface};
-  color: ${props => props.theme.colors.text};
+  background-color: ${(props) => props.theme.colors.surface};
+  color: ${(props) => props.theme.colors.text};
 
   &:focus {
     outline: none;
-    border-color: ${props => props.theme.colors.primary};
-    box-shadow: 0 0 0 2px ${props => props.theme.colors.primary}33;
+    border-color: ${(props) => props.theme.colors.primary};
+    box-shadow: 0 0 0 2px ${(props) => props.theme.colors.primary}33;
   }
 `;
 
@@ -53,9 +53,9 @@ const IssueSearchButton = styled(Button)`
 const LinkedIssueDisplay = styled.div`
   margin-top: 10px;
   padding: 15px;
-  background-color: ${props => props.theme.colors.surfaceHover};
+  background-color: ${(props) => props.theme.colors.surfaceHover};
   border-radius: 4px;
-  border: 1px solid ${props => props.theme.colors.border};
+  border: 1px solid ${(props) => props.theme.colors.border};
 
   .issue-header {
     display: flex;
@@ -66,7 +66,7 @@ const LinkedIssueDisplay = styled.div`
 
   .issue-key {
     font-weight: 600;
-    color: ${props => props.theme.colors.primary};
+    color: ${(props) => props.theme.colors.primary};
     cursor: pointer;
 
     &:hover {
@@ -77,25 +77,25 @@ const LinkedIssueDisplay = styled.div`
   .unlink-btn {
     background: none;
     border: none;
-    color: ${props => props.theme.colors.textSecondary};
+    color: ${(props) => props.theme.colors.textSecondary};
     cursor: pointer;
     font-size: 12px;
 
     &:hover {
-      color: ${props => props.theme.colors.danger};
+      color: ${(props) => props.theme.colors.danger};
     }
   }
 
   .issue-summary {
     font-size: 14px;
-    color: ${props => props.theme.colors.text};
+    color: ${(props) => props.theme.colors.text};
     margin-bottom: 5px;
   }
 
   .issue-status {
     display: inline-block;
     padding: 2px 8px;
-    background-color: ${props => props.theme.colors.primary};
+    background-color: ${(props) => props.theme.colors.primary};
     color: white;
     border-radius: 3px;
     font-size: 12px;
@@ -108,7 +108,7 @@ const SearchInput = styled(Input)`
 `;
 
 const ErrorMessage = styled.div`
-  color: ${props => props.theme.colors.danger};
+  color: ${(props) => props.theme.colors.danger};
   font-size: 13px;
   margin-top: 5px;
 `;
@@ -119,34 +119,39 @@ const ButtonGroup = styled.div`
   justify-content: flex-end;
 `;
 
-export const KanbanItemModal: React.FC<KanbanItemModalProps> = ({ isOpen, item, onClose, onSave }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [linkedIssueKey, setLinkedIssueKey] = useState('');
-  const [issueSearchKey, setIssueSearchKey] = useState('');
+export const KanbanItemModal: React.FC<KanbanItemModalProps> = ({
+  isOpen,
+  item,
+  onClose,
+  onSave,
+}) => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [linkedIssueKey, setLinkedIssueKey] = useState("");
+  const [issueSearchKey, setIssueSearchKey] = useState("");
   const [linkedIssue, setLinkedIssue] = useState<JiraIssue | null>(null);
-  const [searchError, setSearchError] = useState('');
+  const [searchError, setSearchError] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (item) {
       setTitle(item.title);
       setDescription(item.description);
-      setLinkedIssueKey(item.linkedIssueKey || '');
-      setIssueSearchKey(item.linkedIssueKey || '');
-      
+      setLinkedIssueKey(item.linkedIssueKey || "");
+      setIssueSearchKey(item.linkedIssueKey || "");
+
       // Load linked issue if exists
       if (item.linkedIssueKey) {
         loadLinkedIssue(item.linkedIssueKey);
       }
     } else {
       // Reset for new item
-      setTitle('');
-      setDescription('');
-      setLinkedIssueKey('');
-      setIssueSearchKey('');
+      setTitle("");
+      setDescription("");
+      setLinkedIssueKey("");
+      setIssueSearchKey("");
       setLinkedIssue(null);
-      setSearchError('');
+      setSearchError("");
     }
   }, [item, isOpen]);
 
@@ -154,32 +159,32 @@ export const KanbanItemModal: React.FC<KanbanItemModalProps> = ({ isOpen, item, 
     try {
       const issue = await window.electronAPI.getIssue(issueKey);
       setLinkedIssue(issue);
-      setSearchError('');
+      setSearchError("");
     } catch (error) {
-      console.error('Failed to load linked issue:', error);
+      console.error("Failed to load linked issue:", error);
       setLinkedIssue(null);
     }
   };
 
   const handleSearchIssue = async () => {
     if (!issueSearchKey.trim()) {
-      setSearchError('Please enter an issue key');
+      setSearchError("Please enter an issue key");
       return;
     }
 
     setLoading(true);
-    setSearchError('');
+    setSearchError("");
 
     try {
       const issue = await window.electronAPI.getIssue(issueSearchKey.trim());
       setLinkedIssue(issue);
       setLinkedIssueKey(issueSearchKey.trim());
-      setSearchError('');
+      setSearchError("");
     } catch (error) {
-      console.error('Failed to search issue:', error);
-      setSearchError('Issue not found or failed to load');
+      console.error("Failed to search issue:", error);
+      setSearchError("Issue not found or failed to load");
       setLinkedIssue(null);
-      setLinkedIssueKey('');
+      setLinkedIssueKey("");
     } finally {
       setLoading(false);
     }
@@ -187,9 +192,9 @@ export const KanbanItemModal: React.FC<KanbanItemModalProps> = ({ isOpen, item, 
 
   const handleUnlinkIssue = () => {
     setLinkedIssue(null);
-    setLinkedIssueKey('');
-    setIssueSearchKey('');
-    setSearchError('');
+    setLinkedIssueKey("");
+    setIssueSearchKey("");
+    setSearchError("");
   };
 
   const handleViewIssue = async (issueKey: string) => {
@@ -200,13 +205,13 @@ export const KanbanItemModal: React.FC<KanbanItemModalProps> = ({ isOpen, item, 
         await window.electronAPI.openExternal(url);
       }
     } catch (error) {
-      console.error('Failed to open issue:', error);
+      console.error("Failed to open issue:", error);
     }
   };
 
   const handleSave = () => {
     if (!title.trim()) {
-      alert('Title is required');
+      alert("Title is required");
       return;
     }
 
@@ -215,8 +220,12 @@ export const KanbanItemModal: React.FC<KanbanItemModalProps> = ({ isOpen, item, 
 
   const footer = (
     <ButtonGroup>
-      <Button onClick={onClose} variant="secondary">Cancel</Button>
-      <Button onClick={handleSave} variant="primary">Save</Button>
+      <Button onClick={onClose} variant="secondary">
+        Cancel
+      </Button>
+      <Button onClick={handleSave} variant="primary">
+        Save
+      </Button>
     </ButtonGroup>
   );
 
@@ -224,7 +233,7 @@ export const KanbanItemModal: React.FC<KanbanItemModalProps> = ({ isOpen, item, 
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={item ? 'Edit Item' : 'Add New Item'}
+      title={item ? "Edit Item" : "Add New Item"}
       footer={footer}
     >
       <FormGroup>
@@ -272,7 +281,7 @@ export const KanbanItemModal: React.FC<KanbanItemModalProps> = ({ isOpen, item, 
               onChange={setIssueSearchKey}
               placeholder="Enter Jira issue key (e.g., PROJ-123)"
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   handleSearchIssue();
                 }
               }}
@@ -282,7 +291,7 @@ export const KanbanItemModal: React.FC<KanbanItemModalProps> = ({ isOpen, item, 
               variant="secondary"
               disabled={loading}
             >
-              {loading ? 'Searching...' : 'Link Issue'}
+              {loading ? "Searching..." : "Link Issue"}
             </IssueSearchButton>
             {searchError && <ErrorMessage>{searchError}</ErrorMessage>}
           </IssueSearchContainer>

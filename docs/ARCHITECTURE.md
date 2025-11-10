@@ -254,18 +254,21 @@ For each record:
 ## Technology Stack
 
 ### Frontend (Renderer Process)
+
 - **React 19.2**: UI library
 - **TypeScript 5.9**: Type safety
 - **CSS3**: Styling
 - **Webpack 5**: Module bundling
 
 ### Backend (Main Process)
+
 - **Electron 38**: Desktop framework
 - **Node.js 20**: Runtime
 - **better-sqlite3 12**: Database
 - **TypeScript 5.9**: Type safety
 
 ### Development Tools
+
 - **ts-loader**: TypeScript compilation
 - **webpack-dev-server**: Development server
 - **electron-builder**: Application packaging
@@ -286,6 +289,7 @@ Total App Size:                ~156 MB
 ## Performance Considerations
 
 ### Startup Time
+
 1. **Electron Launch**: ~500ms
 2. **Main Process Init**: ~200ms
 3. **Renderer Load**: ~300ms
@@ -293,11 +297,13 @@ Total App Size:                ~156 MB
 5. **Total**: ~1.2 seconds
 
 ### Memory Usage
+
 - **Main Process**: ~50 MB
 - **Renderer Process**: ~80 MB
 - **Total**: ~130 MB (idle)
 
 ### Optimization Strategies
+
 1. **Code Splitting**: Separate bundles for main/renderer
 2. **Tree Shaking**: Remove unused code
 3. **Lazy Loading**: Load views on demand
@@ -354,6 +360,7 @@ Source Code (TypeScript + React)
 ## Future Enhancements
 
 ### Planned Features
+
 1. **Auto-updates**: Electron's built-in updater
 2. **Offline Mode**: IndexedDB cache for issues
 3. **Notifications**: Native desktop notifications
@@ -366,6 +373,7 @@ Source Code (TypeScript + React)
 10. **Cloud Sync**: Optional cloud backup of time tracking
 
 ### Performance Improvements
+
 1. **Virtual Scrolling**: For large issue lists
 2. **Worker Threads**: Background processing
 3. **React Memo**: Optimize re-renders

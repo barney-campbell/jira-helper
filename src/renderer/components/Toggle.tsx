@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 interface ToggleProps {
   checked: boolean;
@@ -12,7 +12,7 @@ const ToggleContainer = styled.label<{ $disabled: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${(props) => (props.$disabled ? "not-allowed" : "pointer")};
   user-select: none;
 `;
 
@@ -20,22 +20,24 @@ const ToggleSwitch = styled.div<{ $checked: boolean; $disabled: boolean }>`
   position: relative;
   width: 44px;
   height: 24px;
-  background-color: ${props => 
+  background-color: ${(props) =>
     props.$checked ? props.theme.colors.primary : props.theme.colors.border};
   border-radius: 12px;
   transition: background-color 0.2s;
-  opacity: ${props => props.$disabled ? 0.5 : 1};
+  opacity: ${(props) => (props.$disabled ? 0.5 : 1)};
 
   &:hover {
-    background-color: ${props => 
-      props.$checked ? props.theme.colors.primaryHover : props.theme.colors.textSecondary};
+    background-color: ${(props) =>
+      props.$checked
+        ? props.theme.colors.primaryHover
+        : props.theme.colors.textSecondary};
   }
 `;
 
 const ToggleSlider = styled.div<{ $checked: boolean }>`
   position: absolute;
   top: 2px;
-  left: ${props => props.$checked ? '22px' : '2px'};
+  left: ${(props) => (props.$checked ? "22px" : "2px")};
   width: 20px;
   height: 20px;
   background-color: white;
@@ -46,7 +48,7 @@ const ToggleSlider = styled.div<{ $checked: boolean }>`
 
 const ToggleLabel = styled.span`
   font-size: 14px;
-  color: ${props => props.theme.colors.text};
+  color: ${(props) => props.theme.colors.text};
 `;
 
 const HiddenInput = styled.input`
@@ -60,7 +62,7 @@ export const Toggle: React.FC<ToggleProps> = ({
   checked,
   onChange,
   label,
-  disabled = false
+  disabled = false,
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!disabled) {
@@ -75,8 +77,8 @@ export const Toggle: React.FC<ToggleProps> = ({
         checked={checked}
         onChange={handleChange}
         disabled={disabled}
-        />
-        {label && <ToggleLabel>{label}</ToggleLabel>}
+      />
+      {label && <ToggleLabel>{label}</ToggleLabel>}
       <ToggleSwitch $checked={checked} $disabled={disabled}>
         <ToggleSlider $checked={checked} />
       </ToggleSwitch>

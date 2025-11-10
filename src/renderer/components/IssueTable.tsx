@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import styled from 'styled-components';
-import { DataGrid, Column, SortConfig, SortDirection } from './DataGrid';
-import type { JiraIssue } from '../../common/types';
+import React, { useState, useMemo } from "react";
+import styled from "styled-components";
+import { DataGrid, Column, SortConfig, SortDirection } from "./DataGrid";
+import type { JiraIssue } from "../../common/types";
 
 interface IssueTableProps {
   issues: JiraIssue[];
@@ -30,38 +30,38 @@ const FilterGroup = styled.div`
 const FilterLabel = styled.label`
   font-size: 14px;
   font-weight: 500;
-  color: ${props => props.theme.colors.text};
+  color: ${(props) => props.theme.colors.text};
 `;
 
 const FilterSelect = styled.select`
   padding: 6px 10px;
-  border: 1px solid ${props => props.theme.colors.border};
+  border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 4px;
   font-size: 14px;
-  background-color: ${props => props.theme.colors.surface};
-  color: ${props => props.theme.colors.text};
+  background-color: ${(props) => props.theme.colors.surface};
+  color: ${(props) => props.theme.colors.text};
   cursor: pointer;
   min-width: 150px;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.theme.colors.primary};
-    box-shadow: 0 0 0 2px ${props => props.theme.colors.primary}33;
+    border-color: ${(props) => props.theme.colors.primary};
+    box-shadow: 0 0 0 2px ${(props) => props.theme.colors.primary}33;
   }
 `;
 
 const ClearButton = styled.button`
   padding: 6px 12px;
-  border: 1px solid ${props => props.theme.colors.border};
+  border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 4px;
-  background-color: ${props => props.theme.colors.surface};
-  color: ${props => props.theme.colors.text};
+  background-color: ${(props) => props.theme.colors.surface};
+  color: ${(props) => props.theme.colors.text};
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background-color: ${props => props.theme.colors.surfaceHover};
+    background-color: ${(props) => props.theme.colors.surfaceHover};
   }
 
   &:disabled {
@@ -72,15 +72,21 @@ const ClearButton = styled.button`
 
 const ResultCount = styled.div`
   font-size: 14px;
-  color: ${props => props.theme.colors.textSecondary};
+  color: ${(props) => props.theme.colors.textSecondary};
   margin-left: auto;
 `;
 
-export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleClick }) => {
-  const [statusFilter, setStatusFilter] = useState<string>('');
-  const [assigneeFilter, setAssigneeFilter] = useState<string>('');
-  const [projectFilter, setProjectFilter] = useState<string>('');
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ columnIndex: -1, direction: null });
+export const IssueTable: React.FC<IssueTableProps> = ({
+  issues,
+  onIssueDoubleClick,
+}) => {
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [assigneeFilter, setAssigneeFilter] = useState<string>("");
+  const [projectFilter, setProjectFilter] = useState<string>("");
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    columnIndex: -1,
+    direction: null,
+  });
 
   // Extract unique values for filters
   const { statuses, assignees, projects } = useMemo(() => {
@@ -88,7 +94,7 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
     const assigneeSet = new Set<string>();
     const projectSet = new Set<string>();
 
-    issues.forEach(issue => {
+    issues.forEach((issue) => {
       if (issue.status) statusSet.add(issue.status);
       if (issue.assignee) assigneeSet.add(issue.assignee);
       if (issue.project) projectSet.add(issue.project);
@@ -97,17 +103,18 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
     return {
       statuses: Array.from(statusSet).sort(),
       assignees: Array.from(assigneeSet).sort(),
-      projects: Array.from(projectSet).sort()
+      projects: Array.from(projectSet).sort(),
     };
   }, [issues]);
 
   // Filter and sort issues
   const filteredAndSortedIssues = useMemo(() => {
     // First, filter the issues
-    let result = issues.filter(issue => {
+    let result = issues.filter((issue) => {
       if (statusFilter && issue.status !== statusFilter) return false;
       if (assigneeFilter && issue.assignee !== assigneeFilter) return false;
-      if (projectFilter && (issue.project || '') !== projectFilter) return false;
+      if (projectFilter && (issue.project || "") !== projectFilter)
+        return false;
       return true;
     });
 
@@ -136,8 +143,8 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
             bValue = b.assignee;
             break;
           case 4: // Project
-            aValue = a.project || '';
-            bValue = b.project || '';
+            aValue = a.project || "";
+            bValue = b.project || "";
             break;
           default:
             return 0;
@@ -145,10 +152,10 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
 
         // Compare values
         if (aValue < bValue) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
+          return sortConfig.direction === "asc" ? -1 : 1;
         }
         if (aValue > bValue) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
+          return sortConfig.direction === "asc" ? 1 : -1;
         }
         return 0;
       });
@@ -160,32 +167,32 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
   const hasActiveFilters = statusFilter || assigneeFilter || projectFilter;
 
   const handleClearFilters = () => {
-    setStatusFilter('');
-    setAssigneeFilter('');
-    setProjectFilter('');
+    setStatusFilter("");
+    setAssigneeFilter("");
+    setProjectFilter("");
   };
 
   const handleSort = (columnIndex: number) => {
-    setSortConfig(prevConfig => {
+    setSortConfig((prevConfig) => {
       // If clicking the same column, cycle through: asc -> desc -> null
       if (prevConfig.columnIndex === columnIndex) {
-        if (prevConfig.direction === 'asc') {
-          return { columnIndex, direction: 'desc' };
-        } else if (prevConfig.direction === 'desc') {
+        if (prevConfig.direction === "asc") {
+          return { columnIndex, direction: "desc" };
+        } else if (prevConfig.direction === "desc") {
           return { columnIndex: -1, direction: null };
         }
       }
       // If clicking a new column, start with asc
-      return { columnIndex, direction: 'asc' };
+      return { columnIndex, direction: "asc" };
     });
   };
 
   const columns: Column<JiraIssue>[] = [
-    { header: 'Key', accessor: 'key', width: '100px' },
-    { header: 'Summary', accessor: 'summary', width: '500px' },
-    { header: 'Status', accessor: 'status', width: '150px' },
-    { header: 'Assignee', accessor: 'assignee', width: '150px' },
-    { header: 'Project', accessor: (row) => row.project || '', width: '150px' }
+    { header: "Key", accessor: "key", width: "100px" },
+    { header: "Summary", accessor: "summary", width: "500px" },
+    { header: "Status", accessor: "status", width: "150px" },
+    { header: "Assignee", accessor: "assignee", width: "150px" },
+    { header: "Project", accessor: (row) => row.project || "", width: "150px" },
   ];
 
   return (
@@ -193,58 +200,62 @@ export const IssueTable: React.FC<IssueTableProps> = ({ issues, onIssueDoubleCli
       <FilterBar>
         <FilterGroup>
           <FilterLabel>Status:</FilterLabel>
-          <FilterSelect 
-            value={statusFilter} 
+          <FilterSelect
+            value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
             <option value="">All</option>
-            {statuses.map(status => (
-              <option key={status} value={status}>{status}</option>
+            {statuses.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
             ))}
           </FilterSelect>
         </FilterGroup>
 
         <FilterGroup>
           <FilterLabel>Assignee:</FilterLabel>
-          <FilterSelect 
-            value={assigneeFilter} 
+          <FilterSelect
+            value={assigneeFilter}
             onChange={(e) => setAssigneeFilter(e.target.value)}
           >
             <option value="">All</option>
-            {assignees.map(assignee => (
-              <option key={assignee} value={assignee}>{assignee}</option>
+            {assignees.map((assignee) => (
+              <option key={assignee} value={assignee}>
+                {assignee}
+              </option>
             ))}
           </FilterSelect>
         </FilterGroup>
 
         <FilterGroup>
           <FilterLabel>Project:</FilterLabel>
-          <FilterSelect 
-            value={projectFilter} 
+          <FilterSelect
+            value={projectFilter}
             onChange={(e) => setProjectFilter(e.target.value)}
           >
             <option value="">All</option>
-            {projects.map(project => (
-              <option key={project} value={project}>{project}</option>
+            {projects.map((project) => (
+              <option key={project} value={project}>
+                {project}
+              </option>
             ))}
           </FilterSelect>
         </FilterGroup>
 
-        <ClearButton 
-          onClick={handleClearFilters}
-          disabled={!hasActiveFilters}
-        >
+        <ClearButton onClick={handleClearFilters} disabled={!hasActiveFilters}>
           Clear Filters
         </ClearButton>
 
         <ResultCount>
-          Showing {filteredAndSortedIssues.length} of {issues.length} issue{issues.length !== 1 ? 's' : ''}
+          Showing {filteredAndSortedIssues.length} of {issues.length} issue
+          {issues.length !== 1 ? "s" : ""}
         </ResultCount>
       </FilterBar>
 
-      <DataGrid 
-        columns={columns} 
-        data={filteredAndSortedIssues} 
+      <DataGrid
+        columns={columns}
+        data={filteredAndSortedIssues}
         onRowDoubleClick={onIssueDoubleClick}
         sortConfig={sortConfig}
         onSort={handleSort}
