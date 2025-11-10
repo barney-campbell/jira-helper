@@ -1,4 +1,4 @@
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type ThemeMode = "light" | "dark" | "system";
 
 export interface UserSettings {
   id: number;
@@ -52,4 +52,12 @@ export interface TimeTrackingDisplay {
   recordId: number;
 }
 
-export type ViewType = 'dashboard' | 'assignedIssues' | 'search' | 'issueDetails' | 'settings' | 'kanban' | 'calendar' | 'analytics';
+export type ViewType =
+  | "dashboard"
+  | "assignedIssues"
+  | "search"
+  | "issueDetails"
+  | "settings"
+  | "kanban"
+  | "calendar"
+  | "analytics";

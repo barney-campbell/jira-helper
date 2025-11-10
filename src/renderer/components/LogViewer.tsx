@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import type { LogEntry } from '../../common/types';
-import { Button } from './Button';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import type { LogEntry } from "../../common/types";
+import { Button } from "./Button";
 
 const ViewerContainer = styled.div`
   display: flex;
@@ -26,59 +26,68 @@ const DateSelector = styled.div`
 
 const Select = styled.select`
   padding: 8px 12px;
-  border: 1px solid ${props => props.theme.colors.border};
+  border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 4px;
-  background-color: ${props => props.theme.colors.surface};
-  color: ${props => props.theme.colors.text};
+  background-color: ${(props) => props.theme.colors.surface};
+  color: ${(props) => props.theme.colors.text};
   font-size: 14px;
   cursor: pointer;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.theme.colors.primary};
+    border-color: ${(props) => props.theme.colors.primary};
   }
 `;
 
 const LogsContainer = styled.div`
   flex: 1;
   overflow-y: auto;
-  border: 1px solid ${props => props.theme.colors.border};
+  border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 4px;
-  background-color: ${props => props.theme.colors.background};
+  background-color: ${(props) => props.theme.colors.background};
   padding: 10px;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 12px;
 `;
 
-const LogEntryDiv = styled.div<{ $level: 'error' | 'warning' | 'info' }>`
+const LogEntryDiv = styled.div<{ $level: "error" | "warning" | "info" }>`
   padding: 8px;
   margin-bottom: 8px;
-  border-left: 3px solid ${props => {
-    switch (props.$level) {
-      case 'error': return props.theme.colors.error || '#e53935';
-      case 'warning': return props.theme.colors.warning || '#fb8c00';
-      case 'info': return props.theme.colors.info || '#1e88e5';
-      default: return props.theme.colors.border;
-    }
-  }};
-  background-color: ${props => props.theme.colors.surface};
+  border-left: 3px solid
+    ${(props) => {
+      switch (props.$level) {
+        case "error":
+          return props.theme.colors.error || "#e53935";
+        case "warning":
+          return props.theme.colors.warning || "#fb8c00";
+        case "info":
+          return props.theme.colors.info || "#1e88e5";
+        default:
+          return props.theme.colors.border;
+      }
+    }};
+  background-color: ${(props) => props.theme.colors.surface};
   border-radius: 2px;
 `;
 
 const LogTimestamp = styled.div`
-  color: ${props => props.theme.colors.textSecondary};
+  color: ${(props) => props.theme.colors.textSecondary};
   font-size: 11px;
   margin-bottom: 4px;
 `;
 
-const LogLevel = styled.span<{ $level: 'error' | 'warning' | 'info' }>`
+const LogLevel = styled.span<{ $level: "error" | "warning" | "info" }>`
   font-weight: bold;
-  color: ${props => {
+  color: ${(props) => {
     switch (props.$level) {
-      case 'error': return props.theme.colors.error || '#e53935';
-      case 'warning': return props.theme.colors.warning || '#fb8c00';
-      case 'info': return props.theme.colors.info || '#1e88e5';
-      default: return props.theme.colors.text;
+      case "error":
+        return props.theme.colors.error || "#e53935";
+      case "warning":
+        return props.theme.colors.warning || "#fb8c00";
+      case "info":
+        return props.theme.colors.info || "#1e88e5";
+      default:
+        return props.theme.colors.text;
     }
   }};
   text-transform: uppercase;
@@ -86,30 +95,30 @@ const LogLevel = styled.span<{ $level: 'error' | 'warning' | 'info' }>`
 `;
 
 const LogMessage = styled.div`
-  color: ${props => props.theme.colors.text};
+  color: ${(props) => props.theme.colors.text};
   margin-bottom: 4px;
 `;
 
 const LogLocation = styled.div`
-  color: ${props => props.theme.colors.textSecondary};
+  color: ${(props) => props.theme.colors.textSecondary};
   font-size: 11px;
   font-style: italic;
 `;
 
 const LogError = styled.div`
-  color: ${props => props.theme.colors.error || '#e53935'};
+  color: ${(props) => props.theme.colors.error || "#e53935"};
   margin-top: 4px;
   padding: 4px;
-  background-color: ${props => props.theme.colors.background};
+  background-color: ${(props) => props.theme.colors.background};
   border-radius: 2px;
 `;
 
 const LogStack = styled.pre`
-  color: ${props => props.theme.colors.textSecondary};
+  color: ${(props) => props.theme.colors.textSecondary};
   font-size: 10px;
   margin-top: 4px;
   padding: 4px;
-  background-color: ${props => props.theme.colors.background};
+  background-color: ${(props) => props.theme.colors.background};
   border-radius: 2px;
   overflow-x: auto;
   white-space: pre-wrap;
@@ -117,22 +126,22 @@ const LogStack = styled.pre`
 `;
 
 const EmptyState = styled.div`
-  color: ${props => props.theme.colors.textSecondary};
+  color: ${(props) => props.theme.colors.textSecondary};
   text-align: center;
   padding: 40px 20px;
 `;
 
 const PathInfo = styled.div`
   font-size: 11px;
-  color: ${props => props.theme.colors.textSecondary};
+  color: ${(props) => props.theme.colors.textSecondary};
   margin-top: 5px;
 `;
 
 export const LogViewer: React.FC = () => {
   const [logFiles, setLogFiles] = useState<string[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const [logs, setLogs] = useState<LogEntry[]>([]);
-  const [logsPath, setLogsPath] = useState<string>('');
+  const [logsPath, setLogsPath] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -155,7 +164,7 @@ export const LogViewer: React.FC = () => {
         setSelectedDate(files[0]);
       }
     } catch (error) {
-      console.error('Failed to load log files:', error);
+      console.error("Failed to load log files:", error);
     } finally {
       setLoading(false);
     }
@@ -167,7 +176,7 @@ export const LogViewer: React.FC = () => {
       const logEntries = await window.electronAPI.getLogs(date);
       setLogs(logEntries);
     } catch (error) {
-      console.error('Failed to load logs:', error);
+      console.error("Failed to load logs:", error);
     } finally {
       setLoading(false);
     }
@@ -178,7 +187,7 @@ export const LogViewer: React.FC = () => {
       const path = await window.electronAPI.getLogsPath();
       setLogsPath(path);
     } catch (error) {
-      console.error('Failed to get logs path:', error);
+      console.error("Failed to get logs path:", error);
     }
   };
 
@@ -229,7 +238,7 @@ export const LogViewer: React.FC = () => {
             {logFiles.length === 0 && (
               <option value="">No logs available</option>
             )}
-            {logFiles.map(file => (
+            {logFiles.map((file) => (
               <option key={file} value={file}>
                 {formatDateLabel(file)}
               </option>
@@ -237,16 +246,14 @@ export const LogViewer: React.FC = () => {
           </Select>
         </DateSelector>
         <Button onClick={handleRefresh} disabled={loading}>
-          {loading ? 'Loading...' : 'Refresh'}
+          {loading ? "Loading..." : "Refresh"}
         </Button>
       </Header>
-      {logsPath && (
-        <PathInfo>Logs directory: {logsPath}</PathInfo>
-      )}
+      {logsPath && <PathInfo>Logs directory: {logsPath}</PathInfo>}
       <LogsContainer>
         {logs.length === 0 ? (
           <EmptyState>
-            {loading ? 'Loading logs...' : 'No logs for selected date'}
+            {loading ? "Loading logs..." : "No logs for selected date"}
           </EmptyState>
         ) : (
           logs.map((entry, index) => (
@@ -256,7 +263,9 @@ export const LogViewer: React.FC = () => {
                 {formatTimestamp(entry.timestamp)}
               </LogTimestamp>
               <LogMessage>{entry.message}</LogMessage>
-              {entry.location && <LogLocation>Location: {entry.location}</LogLocation>}
+              {entry.location && (
+                <LogLocation>Location: {entry.location}</LogLocation>
+              )}
               {entry.error && <LogError>Error: {entry.error}</LogError>}
               {entry.stack && <LogStack>{entry.stack}</LogStack>}
             </LogEntryDiv>

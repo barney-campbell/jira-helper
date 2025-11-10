@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { ipc } from '../ipc';
-import styled from 'styled-components';
-import { Button } from '../components/Button';
-import { LoadingSpinner } from '../components/LoadingSpinner';
-import { KanbanItemModal } from '../components/KanbanItemModal';
-import type { KanbanItem, KanbanColumnType } from '../../common/types';
+import React, { useState, useEffect } from "react";
+import { ipc } from "../ipc";
+import styled from "styled-components";
+import { Button } from "../components/Button";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+import { KanbanItemModal } from "../components/KanbanItemModal";
+import type { KanbanItem, KanbanColumnType } from "../../common/types";
 
 const ViewContainer = styled.div`
-  background-color: ${props => props.theme.colors.surface};
+  background-color: ${(props) => props.theme.colors.surface};
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -22,12 +22,12 @@ const Header = styled.div`
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 2px solid ${props => props.theme.colors.border};
+  border-bottom: 2px solid ${(props) => props.theme.colors.border};
 
   h1 {
     margin: 0;
     font-size: 28px;
-    color: ${props => props.theme.colors.text};
+    color: ${(props) => props.theme.colors.text};
   }
 `;
 
@@ -40,7 +40,7 @@ const BoardContainer = styled.div`
 `;
 
 const Column = styled.div`
-  background-color: ${props => props.theme.colors.surfaceHover};
+  background-color: ${(props) => props.theme.colors.surfaceHover};
   border-radius: 8px;
   padding: 15px;
   display: flex;
@@ -55,17 +55,17 @@ const ColumnHeader = styled.div`
   align-items: center;
   margin-bottom: 15px;
   padding-bottom: 10px;
-  border-bottom: 2px solid ${props => props.theme.colors.border};
+  border-bottom: 2px solid ${(props) => props.theme.colors.border};
 
   h2 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: ${props => props.theme.colors.text};
+    color: ${(props) => props.theme.colors.text};
   }
 
   .count {
-    background-color: ${props => props.theme.colors.textSecondary};
+    background-color: ${(props) => props.theme.colors.textSecondary};
     color: white;
     border-radius: 12px;
     padding: 2px 8px;
@@ -79,21 +79,23 @@ const ItemsList = styled.div<{ $isDragOver: boolean }>`
   overflow-y: auto;
   min-height: 100px;
   transition: background-color 0.2s;
-  ${props => props.$isDragOver && `
+  ${(props) =>
+    props.$isDragOver &&
+    `
     background-color: ${props.theme.colors.surfaceHover};
     border-radius: 4px;
   `}
 `;
 
 const ItemCard = styled.div<{ $isDragging: boolean }>`
-  background-color: ${props => props.theme.colors.surface};
-  border: 1px solid ${props => props.theme.colors.border};
+  background-color: ${(props) => props.theme.colors.surface};
+  border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 10px;
   cursor: move;
   transition: all 0.2s;
-  opacity: ${props => props.$isDragging ? 0.5 : 1};
+  opacity: ${(props) => (props.$isDragging ? 0.5 : 1)};
 
   &:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -103,13 +105,13 @@ const ItemCard = styled.div<{ $isDragging: boolean }>`
   .title {
     font-weight: 600;
     margin-bottom: 8px;
-    color: ${props => props.theme.colors.text};
+    color: ${(props) => props.theme.colors.text};
     word-wrap: break-word;
   }
 
   .description {
     font-size: 13px;
-    color: ${props => props.theme.colors.text};
+    color: ${(props) => props.theme.colors.text};
     margin-bottom: 8px;
     line-height: 1.4;
     word-wrap: break-word;
@@ -125,7 +127,7 @@ const ItemCard = styled.div<{ $isDragging: boolean }>`
     align-items: center;
     margin-top: 8px;
     padding-top: 8px;
-    border-top: 1px solid ${props => props.theme.colors.border};
+    border-top: 1px solid ${(props) => props.theme.colors.border};
   }
 
   .jira-badge {
@@ -168,19 +170,23 @@ const AddButton = styled(Button)`
 `;
 
 const columnTitles: Record<KanbanColumnType, string> = {
-  todo: 'To Do',
-  inProgress: 'In Progress',
-  done: 'Done'
+  todo: "To Do",
+  inProgress: "In Progress",
+  done: "Done",
 };
 
 export const KanbanView: React.FC = () => {
   const [items, setItems] = useState<KanbanItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [draggedItem, setDraggedItem] = useState<KanbanItem | null>(null);
-  const [dragOverColumn, setDragOverColumn] = useState<KanbanColumnType | null>(null);
+  const [dragOverColumn, setDragOverColumn] = useState<KanbanColumnType | null>(
+    null,
+  );
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<KanbanItem | null>(null);
-  const [newItemColumn, setNewItemColumn] = useState<KanbanColumnType | null>(null);
+  const [newItemColumn, setNewItemColumn] = useState<KanbanColumnType | null>(
+    null,
+  );
 
   useEffect(() => {
     loadItems();
@@ -189,10 +195,10 @@ export const KanbanView: React.FC = () => {
   const loadItems = async () => {
     try {
       setLoading(true);
-  const allItems = await ipc.getAllKanbanItems();
+      const allItems = await ipc.getAllKanbanItems();
       setItems(allItems);
     } catch (error) {
-      console.error('Failed to load kanban items:', error);
+      console.error("Failed to load kanban items:", error);
     } finally {
       setLoading(false);
     }
@@ -211,35 +217,49 @@ export const KanbanView: React.FC = () => {
   };
 
   const handleDeleteItem = async (id: number) => {
-    if (confirm('Are you sure you want to delete this item?')) {
+    if (confirm("Are you sure you want to delete this item?")) {
       try {
-  await ipc.deleteKanbanItem(id);
+        await ipc.deleteKanbanItem(id);
         await loadItems();
       } catch (error) {
-        console.error('Failed to delete item:', error);
+        console.error("Failed to delete item:", error);
       }
     }
   };
 
-  const handleSaveItem = async (title: string, description: string, linkedIssueKey?: string) => {
+  const handleSaveItem = async (
+    title: string,
+    description: string,
+    linkedIssueKey?: string,
+  ) => {
     try {
       if (selectedItem) {
         // Update existing item
-  await ipc.updateKanbanItem(selectedItem.id, title, description, linkedIssueKey);
+        await ipc.updateKanbanItem(
+          selectedItem.id,
+          title,
+          description,
+          linkedIssueKey,
+        );
       } else if (newItemColumn) {
         // Create new item
-  await ipc.createKanbanItem(title, description, newItemColumn, linkedIssueKey);
+        await ipc.createKanbanItem(
+          title,
+          description,
+          newItemColumn,
+          linkedIssueKey,
+        );
       }
       await loadItems();
       setModalOpen(false);
     } catch (error) {
-      console.error('Failed to save item:', error);
+      console.error("Failed to save item:", error);
     }
   };
 
   const handleDragStart = (e: React.DragEvent, item: KanbanItem) => {
     setDraggedItem(item);
-    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.effectAllowed = "move";
   };
 
   const handleDragEnd = () => {
@@ -249,7 +269,7 @@ export const KanbanView: React.FC = () => {
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+    e.dataTransfer.dropEffect = "move";
   };
 
   const handleDragEnter = (column: KanbanColumnType) => {
@@ -263,38 +283,43 @@ export const KanbanView: React.FC = () => {
     }
   };
 
-  const handleDrop = async (e: React.DragEvent, targetColumn: KanbanColumnType) => {
+  const handleDrop = async (
+    e: React.DragEvent,
+    targetColumn: KanbanColumnType,
+  ) => {
     e.preventDefault();
     setDragOverColumn(null);
 
     if (!draggedItem) return;
 
     // Get items in the target column
-    const columnItems = items.filter(item => item.column === targetColumn);
+    const columnItems = items.filter((item) => item.column === targetColumn);
     const newPosition = columnItems.length;
 
     try {
-  await ipc.moveKanbanItem(draggedItem.id, targetColumn, newPosition);
+      await ipc.moveKanbanItem(draggedItem.id, targetColumn, newPosition);
       await loadItems();
     } catch (error) {
-      console.error('Failed to move item:', error);
+      console.error("Failed to move item:", error);
     }
   };
 
   const handleViewIssue = async (issueKey: string) => {
     try {
-  const settings = await ipc.loadSettings();
+      const settings = await ipc.loadSettings();
       if (settings?.baseUrl) {
         const url = `${settings.baseUrl}/browse/${issueKey}`;
-  await ipc.openExternal(url);
+        await ipc.openExternal(url);
       }
     } catch (error) {
-      console.error('Failed to open issue:', error);
+      console.error("Failed to open issue:", error);
     }
   };
 
   const getItemsByColumn = (column: KanbanColumnType) => {
-    return items.filter(item => item.column === column).sort((a, b) => a.position - b.position);
+    return items
+      .filter((item) => item.column === column)
+      .sort((a, b) => a.position - b.position);
   };
 
   if (loading) {
@@ -312,78 +337,83 @@ export const KanbanView: React.FC = () => {
           <h1>📋 Kanban Board</h1>
         </Header>
         <BoardContainer>
-          {(['todo', 'inProgress', 'done'] as KanbanColumnType[]).map(column => {
-            const columnItems = getItemsByColumn(column);
-            return (
-              <Column
-                key={column}
-                onDragOver={handleDragOver}
-                onDragEnter={() => handleDragEnter(column)}
-                onDragLeave={handleDragLeave}
-                onDrop={(e) => handleDrop(e, column)}
-              >
-                <ColumnHeader>
-                  <h2>{columnTitles[column]}</h2>
-                  <span className="count">{columnItems.length}</span>
-                </ColumnHeader>
-                <ItemsList $isDragOver={dragOverColumn === column}>
-                  {columnItems.map(item => (
-                    <ItemCard
-                      key={item.id}
-                      draggable
-                      $isDragging={draggedItem?.id === item.id}
-                      onDragStart={(e) => handleDragStart(e, item)}
-                      onDragEnd={handleDragEnd}
-                    >
-                      <div className="title">{item.title}</div>
-                      {item.description && (
-                        <div className="description">{item.description}</div>
-                      )}
-                      <div className="footer">
-                        {item.linkedIssueKey && (
-                          <div
-                            className="jira-badge"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleViewIssue(item.linkedIssueKey!);
-                            }}
-                          >
-                            {item.linkedIssueKey}
-                          </div>
+          {(["todo", "inProgress", "done"] as KanbanColumnType[]).map(
+            (column) => {
+              const columnItems = getItemsByColumn(column);
+              return (
+                <Column
+                  key={column}
+                  onDragOver={handleDragOver}
+                  onDragEnter={() => handleDragEnter(column)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, column)}
+                >
+                  <ColumnHeader>
+                    <h2>{columnTitles[column]}</h2>
+                    <span className="count">{columnItems.length}</span>
+                  </ColumnHeader>
+                  <ItemsList $isDragOver={dragOverColumn === column}>
+                    {columnItems.map((item) => (
+                      <ItemCard
+                        key={item.id}
+                        draggable
+                        $isDragging={draggedItem?.id === item.id}
+                        onDragStart={(e) => handleDragStart(e, item)}
+                        onDragEnd={handleDragEnd}
+                      >
+                        <div className="title">{item.title}</div>
+                        {item.description && (
+                          <div className="description">{item.description}</div>
                         )}
-                        {!item.linkedIssueKey && <div></div>}
-                        <div className="actions">
-                          <button
-                            className="action-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEditItem(item);
-                            }}
-                            title="Edit"
-                          >
-                            ✏️
-                          </button>
-                          <button
-                            className="action-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteItem(item.id);
-                            }}
-                            title="Delete"
-                          >
-                            🗑️
-                          </button>
+                        <div className="footer">
+                          {item.linkedIssueKey && (
+                            <div
+                              className="jira-badge"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewIssue(item.linkedIssueKey!);
+                              }}
+                            >
+                              {item.linkedIssueKey}
+                            </div>
+                          )}
+                          {!item.linkedIssueKey && <div></div>}
+                          <div className="actions">
+                            <button
+                              className="action-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditItem(item);
+                              }}
+                              title="Edit"
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              className="action-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteItem(item.id);
+                              }}
+                              title="Delete"
+                            >
+                              🗑️
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    </ItemCard>
-                  ))}
-                </ItemsList>
-                <AddButton onClick={() => handleAddItem(column)} variant="secondary">
-                  + Add Item
-                </AddButton>
-              </Column>
-            );
-          })}
+                      </ItemCard>
+                    ))}
+                  </ItemsList>
+                  <AddButton
+                    onClick={() => handleAddItem(column)}
+                    variant="secondary"
+                  >
+                    + Add Item
+                  </AddButton>
+                </Column>
+              );
+            },
+          )}
         </BoardContainer>
       </ViewContainer>
 

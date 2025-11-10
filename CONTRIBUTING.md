@@ -19,6 +19,7 @@ Thank you for your interest in contributing to Jira Helper!
   - This should be a commit hash as `([reference](link))`
 
 **Example:**
+
 ```
 ### Added
 

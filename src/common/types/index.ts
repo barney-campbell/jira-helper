@@ -1,4 +1,4 @@
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type ThemeMode = "light" | "dark" | "system";
 
 export interface UserSettings {
   id: number;
@@ -57,9 +57,17 @@ export interface TimeTrackingDisplay {
   recordId: number;
 }
 
-export type ViewType = 'dashboard' | 'assignedIssues' | 'search' | 'issueDetails' | 'settings' | 'kanban' | 'calendar' | 'analytics';
+export type ViewType =
+  | "dashboard"
+  | "assignedIssues"
+  | "search"
+  | "issueDetails"
+  | "settings"
+  | "kanban"
+  | "calendar"
+  | "analytics";
 
-export type KanbanColumnType = 'todo' | 'inProgress' | 'done';
+export type KanbanColumnType = "todo" | "inProgress" | "done";
 
 export interface KanbanItem {
   id: number;
@@ -80,12 +88,12 @@ export interface VersionInfo {
 }
 
 export type UpdateStatusType =
-  | 'checking'
-  | 'update-available'
-  | 'update-not-available'
-  | 'download-progress'
-  | 'update-downloaded'
-  | 'error';
+  | "checking"
+  | "update-available"
+  | "update-not-available"
+  | "download-progress"
+  | "update-downloaded"
+  | "error";
 
 export interface UpdateStatusPayload {
   status: UpdateStatusType;
@@ -96,7 +104,7 @@ export interface UpdateStatusPayload {
 
 export interface LogEntry {
   timestamp: string;
-  level: 'error' | 'warning' | 'info';
+  level: "error" | "warning" | "info";
   message: string;
   error?: string;
   stack?: string;

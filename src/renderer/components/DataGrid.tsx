@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
-export type SortDirection = 'asc' | 'desc' | null;
+export type SortDirection = "asc" | "desc" | null;
 
 export interface Column<T> {
   header: string;
@@ -27,25 +27,25 @@ interface DataGridProps<T> {
 const DataGridContainer = styled.div`
   width: 100%;
   overflow-x: auto;
-  border: 1px solid ${props => props.theme.colors.border};
+  border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 4px;
 `;
 
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  background-color: ${props => props.theme.colors.surface};
-  color: ${props => props.theme.colors.text};
+  background-color: ${(props) => props.theme.colors.surface};
+  color: ${(props) => props.theme.colors.text};
 
   th {
-    background-color: ${props => props.theme.colors.surfaceHover};
+    background-color: ${(props) => props.theme.colors.surfaceHover};
     padding: 12px;
     text-align: left;
     font-weight: 600;
-    border-bottom: 2px solid ${props => props.theme.colors.border};
+    border-bottom: 2px solid ${(props) => props.theme.colors.border};
     position: sticky;
     top: 0;
-    color: ${props => props.theme.colors.text};
+    color: ${(props) => props.theme.colors.text};
     user-select: none;
 
     &.sortable {
@@ -53,18 +53,18 @@ const Table = styled.table`
       transition: background-color 0.2s;
 
       &:hover {
-        background-color: ${props => props.theme.colors.border};
+        background-color: ${(props) => props.theme.colors.border};
       }
     }
   }
 
   td {
     padding: 10px 12px;
-    border-bottom: 1px solid ${props => props.theme.colors.border};
+    border-bottom: 1px solid ${(props) => props.theme.colors.border};
   }
 
   tbody tr:hover {
-    background-color: ${props => props.theme.colors.surfaceHover};
+    background-color: ${(props) => props.theme.colors.surfaceHover};
   }
 
   tbody tr.clickable {
@@ -72,26 +72,26 @@ const Table = styled.table`
   }
 
   tbody tr.clickable:hover {
-    background-color: ${props => props.theme.colors.primary}22;
+    background-color: ${(props) => props.theme.colors.primary}22;
   }
 `;
 
 const SortIndicator = styled.span`
   margin-left: 8px;
   font-size: 12px;
-  color: ${props => props.theme.colors.primary};
+  color: ${(props) => props.theme.colors.primary};
 `;
 
 export function DataGrid<T extends { [key: string]: any }>({
   columns,
   data,
   onRowDoubleClick,
-  className = '',
+  className = "",
   sortConfig,
-  onSort
+  onSort,
 }: DataGridProps<T>) {
   const getCellValue = (row: T, column: Column<T>) => {
-    if (typeof column.accessor === 'function') {
+    if (typeof column.accessor === "function") {
       return column.accessor(row);
     }
     return row[column.accessor];
@@ -106,9 +106,9 @@ export function DataGrid<T extends { [key: string]: any }>({
 
   const getSortIndicator = (columnIndex: number) => {
     if (sortConfig?.columnIndex === columnIndex) {
-      return sortConfig.direction === 'asc' ? '▲' : '▼';
+      return sortConfig.direction === "asc" ? "▲" : "▼";
     }
-    return '';
+    return "";
   };
 
   return (
@@ -117,25 +117,30 @@ export function DataGrid<T extends { [key: string]: any }>({
         <thead>
           <tr>
             {columns.map((column, index) => {
-              const sortIndicator = getSortIndicator(index); 
-              return (<th 
-                key={index} 
-                style={{ width: column.width }}
-                className={column.sortable !== false ? 'sortable' : ''}
-                onClick={() => handleHeaderClick(index)}
-              >
-                {column.header}
-                {sortIndicator && (
-                  <SortIndicator>{sortIndicator}</SortIndicator>
-                )}
-              </th>);
+              const sortIndicator = getSortIndicator(index);
+              return (
+                <th
+                  key={index}
+                  style={{ width: column.width }}
+                  className={column.sortable !== false ? "sortable" : ""}
+                  onClick={() => handleHeaderClick(index)}
+                >
+                  {column.header}
+                  {sortIndicator && (
+                    <SortIndicator>{sortIndicator}</SortIndicator>
+                  )}
+                </th>
+              );
             })}
           </tr>
         </thead>
         <tbody>
           {data.length === 0 ? (
             <tr>
-              <td colSpan={columns.length} style={{ textAlign: 'center', padding: '20px' }}>
+              <td
+                colSpan={columns.length}
+                style={{ textAlign: "center", padding: "20px" }}
+              >
                 No data available
               </td>
             </tr>
@@ -144,7 +149,7 @@ export function DataGrid<T extends { [key: string]: any }>({
               <tr
                 key={rowIndex}
                 onDoubleClick={() => onRowDoubleClick?.(row)}
-                className={onRowDoubleClick ? 'clickable' : ''}
+                className={onRowDoubleClick ? "clickable" : ""}
               >
                 {columns.map((column, colIndex) => (
                   <td key={colIndex}>{getCellValue(row, column)}</td>

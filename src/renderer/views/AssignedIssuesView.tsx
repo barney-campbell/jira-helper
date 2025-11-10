@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import styled from 'styled-components';
-import { Button } from '../components/Button';
-import { IssueTable } from '../components/IssueTable';
-import { LoadingSpinner } from '../components/LoadingSpinner';
-import type { JiraIssue } from '../../common/types';
+import React, { useState, useEffect, useMemo } from "react";
+import styled from "styled-components";
+import { Button } from "../components/Button";
+import { IssueTable } from "../components/IssueTable";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+import type { JiraIssue } from "../../common/types";
 
 const ViewContainer = styled.div`
-  background-color: ${props => props.theme.colors.surface};
+  background-color: ${(props) => props.theme.colors.surface};
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   h2 {
     margin-bottom: 20px;
-    color: ${props => props.theme.colors.text};
+    color: ${(props) => props.theme.colors.text};
   }
 `;
 
@@ -34,7 +34,7 @@ const UpdatedInfo = styled.div`
 const SectionHeading = styled.h3`
   margin-top: 40px;
   margin-bottom: 20px;
-  color: ${props => props.theme.colors.textSecondary};
+  color: ${(props) => props.theme.colors.textSecondary};
   font-size: 18px;
   font-weight: 500;
 `;
@@ -43,7 +43,9 @@ interface AssignedIssuesViewProps {
   onIssueDoubleClick: (issue: JiraIssue) => void;
 }
 
-export const AssignedIssuesView: React.FC<AssignedIssuesViewProps> = ({ onIssueDoubleClick }) => {
+export const AssignedIssuesView: React.FC<AssignedIssuesViewProps> = ({
+  onIssueDoubleClick,
+}) => {
   const [issues, setIssues] = useState<JiraIssue[]>([]);
   const [loading, setLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -55,11 +57,11 @@ export const AssignedIssuesView: React.FC<AssignedIssuesViewProps> = ({ onIssueD
   const loadIssues = async () => {
     setLoading(true);
     try {
-      const data = await window.electronAPI.getAssignedIssues('currentuser()');
+      const data = await window.electronAPI.getAssignedIssues("currentuser()");
       setIssues(data);
       setLastUpdated(new Date());
     } catch (error) {
-      console.error('Error loading assigned issues:', error);
+      console.error("Error loading assigned issues:", error);
     } finally {
       setLoading(false);
     }
@@ -68,15 +70,15 @@ export const AssignedIssuesView: React.FC<AssignedIssuesViewProps> = ({ onIssueD
   const { activeIssues, doneIssues } = useMemo(() => {
     const active: JiraIssue[] = [];
     const done: JiraIssue[] = [];
-    
-    issues.forEach(issue => {
-      if (issue.status === 'Done') {
+
+    issues.forEach((issue) => {
+      if (issue.status === "Done") {
         done.push(issue);
       } else {
         active.push(issue);
       }
     });
-    
+
     return { activeIssues: active, doneIssues: done };
   }, [issues]);
 
@@ -97,12 +99,18 @@ export const AssignedIssuesView: React.FC<AssignedIssuesViewProps> = ({ onIssueD
           Refresh
         </Button>
       </ViewHeader>
-      <IssueTable issues={activeIssues} onIssueDoubleClick={onIssueDoubleClick} />
-      
+      <IssueTable
+        issues={activeIssues}
+        onIssueDoubleClick={onIssueDoubleClick}
+      />
+
       {doneIssues.length > 0 && (
         <>
           <SectionHeading>Done</SectionHeading>
-          <IssueTable issues={doneIssues} onIssueDoubleClick={onIssueDoubleClick} />
+          <IssueTable
+            issues={doneIssues}
+            onIssueDoubleClick={onIssueDoubleClick}
+          />
         </>
       )}
     </ViewContainer>

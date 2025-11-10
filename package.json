@@ -14,7 +14,8 @@
     "start": "npm run build:main && npm run build:dev && electron .",
     "start:dev": "npm run build:main && cross-env NODE_ENV=development electron .",
     "dev": "vite",
-    "package": "npm run build && electron-builder"
+    "package": "npm run build && electron-builder",
+    "format": "prettier --write ."
   },
   "keywords": [
     "jira",
@@ -61,6 +62,7 @@
     "electron": "^38.3.0",
     "electron-builder": "^26.0.12",
     "electron-rebuild": "^3.2.9",
+    "prettier": "^3.6.2",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.3",

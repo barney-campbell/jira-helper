@@ -15,11 +15,13 @@ This document lists all files created during the WPF to Electron migration.
 ## Documentation (7 files)
 
 ### Core Documentation
+
 1. `README.md` - Complete project documentation
 2. `QUICKSTART.md` - 5-minute getting started guide
 3. `SUMMARY.md` - Migration statistics and overview
 
 ### Technical Documentation
+
 4. `COMPONENTS.md` - Detailed component documentation
 5. `MIGRATION.md` - Architecture comparison and migration guide
 6. `ARCHITECTURE.md` - System design and data flow
@@ -41,11 +43,13 @@ This document lists all files created during the WPF to Electron migration.
 ### Main Process - Backend (6 files)
 
 #### Core Files
+
 1. `src/main/main.ts` - Electron main process entry point
 2. `src/main/preload.ts` - Secure IPC bridge (context isolation)
 3. `src/main/ipc-handlers.ts` - IPC request handlers
 
 #### Services
+
 4. `src/main/services/jira-service.ts` - Jira API integration
 5. `src/main/services/time-tracking-service.ts` - Time tracking with SQLite
 6. `src/main/services/settings-service.ts` - Settings management
@@ -53,10 +57,12 @@ This document lists all files created during the WPF to Electron migration.
 ### Renderer Process - Frontend (18 files)
 
 #### React Entry Points
+
 1. `src/renderer/index.tsx` - React application entry point
 2. `src/renderer/App.tsx` - Root React component with routing
 
 #### Reusable Components (7 files)
+
 3. `src/renderer/components/Button.tsx` - Button component
 4. `src/renderer/components/Input.tsx` - Input component
 5. `src/renderer/components/DataGrid.tsx` - Table/grid component
@@ -66,6 +72,7 @@ This document lists all files created during the WPF to Electron migration.
 9. `src/renderer/components/index.ts` - Component exports
 
 #### Views (5 files)
+
 10. `src/renderer/views/DashboardView.tsx` - Dashboard page
 11. `src/renderer/views/AssignedIssuesView.tsx` - Assigned issues page
 12. `src/renderer/views/IssueSearchView.tsx` - Search page
@@ -73,11 +80,13 @@ This document lists all files created during the WPF to Electron migration.
 14. `src/renderer/views/SettingsView.tsx` - Settings page
 
 #### Styles (3 files)
+
 15. `src/renderer/styles/app.css` - Application-wide styles
 16. `src/renderer/styles/components.css` - Component styles
 17. `src/renderer/styles/views.css` - View-specific styles
 
 #### Types
+
 18. `src/renderer/types/index.ts` - TypeScript type definitions
 
 ---
@@ -173,14 +182,14 @@ src/renderer/
 
 ## Component Reusability Matrix
 
-| Component | File | LOC | Used In | Times Used |
-|-----------|------|-----|---------|------------|
-| Button | Button.tsx | 30 | 5 views | 15+ |
-| Input | Input.tsx | 35 | 3 views | 8 |
-| DataGrid | DataGrid.tsx | 70 | 4 views | 5 |
-| LoadingSpinner | LoadingSpinner.tsx | 15 | 3 views | 6 |
-| Modal | Modal.tsx | 35 | 1 view | 1 |
-| UnuploadedWidget | UnuploadedTimeTrackingWidget.tsx | 100 | 1 view | 1 |
+| Component        | File                             | LOC | Used In | Times Used |
+| ---------------- | -------------------------------- | --- | ------- | ---------- |
+| Button           | Button.tsx                       | 30  | 5 views | 15+        |
+| Input            | Input.tsx                        | 35  | 3 views | 8          |
+| DataGrid         | DataGrid.tsx                     | 70  | 4 views | 5          |
+| LoadingSpinner   | LoadingSpinner.tsx               | 15  | 3 views | 6          |
+| Modal            | Modal.tsx                        | 35  | 1 view  | 1          |
+| UnuploadedWidget | UnuploadedTimeTrackingWidget.tsx | 100 | 1 view  | 1          |
 
 **Reusability Score**: 5/6 components used in multiple places = **83% reusability**
 
@@ -189,6 +198,7 @@ src/renderer/
 ## Configuration Files Explained
 
 ### package.json
+
 ```json
 {
   "main": "dist/main.js",
@@ -203,6 +213,7 @@ src/renderer/
 ```
 
 **Key Dependencies**:
+
 - electron: Desktop framework
 - react + react-dom: UI library
 - typescript: Type safety
@@ -210,6 +221,7 @@ src/renderer/
 - better-sqlite3: Database
 
 ### tsconfig.json
+
 - Target: ES2020
 - Module: CommonJS
 - JSX: React
@@ -217,6 +229,7 @@ src/renderer/
 - Output: dist/
 
 ### webpack.config.js
+
 - 3 separate builds:
   1. Main process (main.ts → main.js)
   2. Preload script (preload.ts → preload.js)
@@ -227,18 +240,21 @@ src/renderer/
 ## File Size Distribution
 
 ### Source Files (uncompiled)
+
 - TypeScript/React: ~1,500 lines
 - CSS: ~420 lines
 - Configuration: ~150 lines
 - Documentation: ~32,000 words
 
 ### Compiled Output (development)
+
 - main.js: 70 KB
 - preload.js: 4 KB
 - renderer.js: 1.2 MB (includes React)
 - Total: ~1.3 MB
 
 ### Compiled Output (production)
+
 - main.js: 35 KB (minified)
 - preload.js: 2 KB (minified)
 - renderer.js: 236 KB (minified + tree-shaken)
@@ -263,16 +279,19 @@ src/renderer/
 ## Technology Stack
 
 ### Frontend
+
 - React 19.2
 - TypeScript 5.9
 - CSS3
 
 ### Backend
+
 - Electron 38
 - Node.js 20
 - better-sqlite3 12
 
 ### Build Tools
+
 - Webpack 5
 - TypeScript Compiler
 - Electron Builder
@@ -286,13 +305,14 @@ src/renderer/
 ✅ Webpack build: Successful  
 ✅ Production build: Optimized (270 KB)  
 ✅ All components: Functional and reusable  
-✅ Documentation: Comprehensive  
+✅ Documentation: Comprehensive
 
 ---
 
 ## Preservation of Original Code
 
 **Important**: All original WPF C# code has been preserved in:
+
 - `JiraHelper.Core/` - WPF UI layer
 - `JiraHelper.JiraApi/` - API integration
 - `JiraHelper.TimeTracking/` - Time tracking service

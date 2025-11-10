@@ -56,6 +56,7 @@
 ## Item Card Structure
 
 ### Simple Card (No Jira Link)
+
 ```
 ┌──────────────────────────────┐
 │ Setup Database               │ ← Title (bold)
@@ -68,6 +69,7 @@
 ```
 
 ### Card with Jira Link
+
 ```
 ┌──────────────────────────────┐
 │ Fix login validation         │ ← Title
@@ -80,6 +82,7 @@
 ```
 
 ### Card While Dragging
+
 ```
 ┌──────────────────────────────┐
 │ Setup Database               │ ← 50% opacity
@@ -92,6 +95,7 @@
 ```
 
 ### Column During Drag-Over
+
 ```
 ┌──────────────────────────────┐
 │ In Progress              [1] │
@@ -108,6 +112,7 @@
 ## Add/Edit Modal
 
 ### Create New Item
+
 ```
 ┌─────────────────────────────────────────────┐
 │ Add New Item                            × │
@@ -137,6 +142,7 @@
 ```
 
 ### Edit Item with Linked Issue
+
 ```
 ┌─────────────────────────────────────────────┐
 │ Edit Item                               × │
@@ -167,6 +173,7 @@
 ```
 
 ### Issue Linking - Error State
+
 ```
 ┌─────────────────────────────────────────────┐
 │ Add New Item                            × │
@@ -187,33 +194,39 @@
 ### Hover States
 
 **Item Card Hover:**
+
 - Card slightly elevates (2px up)
 - Shadow becomes more prominent
 - Border becomes more visible
 
 **Button Hover:**
+
 - Background color lightens
 - Cursor changes to pointer
 - Slight scale transformation
 
 **Action Icon Hover:**
+
 - Opacity increases from 60% to 100%
 - Cursor changes to pointer
 
 ### Drag States
 
 **Dragging Item:**
+
 1. User clicks and holds on card
 2. Card becomes semi-transparent (50% opacity)
 3. Cursor changes to "move" cursor
 4. Card follows mouse movement
 
 **Drop Target:**
+
 1. Column background changes to blue tint
 2. Border appears around column
 3. Visual feedback that drop is allowed
 
 **Drop Complete:**
+
 1. Card animates to new position
 2. Other cards shift to accommodate
 3. Opacity returns to 100%
@@ -221,6 +234,7 @@
 ### Loading States
 
 **Initial Load:**
+
 ```
 ┌─────────────────────────────────────────────┐
 │ 📋 Kanban Board                             │
@@ -232,6 +246,7 @@
 ```
 
 **Searching Issue:**
+
 ```
 │ [Searching...]                              │
 │ ⏳ Loading issue information...             │
@@ -240,28 +255,33 @@
 ## Color Scheme
 
 ### Background Colors
+
 - **Board**: `#f5f5f5` (light gray)
 - **Columns**: `#f5f5f5` (light gray)
 - **Cards**: `#ffffff` (white)
 - **Modal**: `#ffffff` (white)
 
 ### Border Colors
+
 - **Default**: `#ddd` (light gray)
 - **Focus**: `#0052cc` (Jira blue)
 - **Hover**: `#666` (dark gray)
 
 ### Text Colors
+
 - **Title**: `#333` (dark gray)
 - **Body**: `#666` (medium gray)
 - **Badge**: `#ffffff` on `#0052cc` (white on blue)
 
 ### Interactive Colors
+
 - **Primary Button**: `#0052cc` (Jira blue)
 - **Secondary Button**: `#f0f0f0` (light gray)
 - **Danger**: `#d32f2f` (red)
 - **Drag-Over**: `#e8f4f8` (light blue)
 
 ### Status Colors
+
 - **Jira Badge**: `#0052cc` (blue)
 - **Status Badge**: `#42a5f5` (light blue)
 - **Error**: `#d32f2f` (red)
@@ -269,6 +289,7 @@
 ## Responsive Behavior
 
 ### Desktop (>1024px)
+
 ```
 ┌─────────────────────────────────────────────┐
 │  [Column 1] [Column 2] [Column 3]          │
@@ -277,6 +298,7 @@
 ```
 
 ### Tablet (768px - 1024px)
+
 ```
 ┌───────────────────────────┐
 │  [Column 1]               │
@@ -287,6 +309,7 @@
 ```
 
 ### Mobile (<768px)
+
 ```
 ┌─────────────┐
 │ [Column 1]  │
@@ -302,18 +325,21 @@
 ## Accessibility
 
 ### Keyboard Navigation
+
 - **Tab**: Move between interactive elements
 - **Enter**: Open modal or submit form
 - **Escape**: Close modal
 - **Arrow Keys**: Navigate between cards (future)
 
 ### Screen Reader Support
+
 - Card titles announced with position
 - Button purposes clearly labeled
 - Form fields have associated labels
 - Modal has proper ARIA attributes
 
 ### Visual Indicators
+
 - Focus rings on interactive elements
 - Clear hover states
 - Loading spinners for async operations

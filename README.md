@@ -32,6 +32,7 @@ Electron desktop application for managing Jira-related tasks such as time tracki
 ## Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/barney-campbell/jira-helper.git
    cd jira-helper
@@ -45,11 +46,13 @@ Electron desktop application for managing Jira-related tasks such as time tracki
 ## Development
 
 Start the development server with hot reload:
+
 ```bash
 npm run dev
 ```
 
 In another terminal, start the application:
+
 ```bash
 npm run start:dev
 ```
@@ -57,6 +60,7 @@ npm run start:dev
 ## Building for Production
 
 Build and package the application:
+
 ```bash
 npm run package
 ```
@@ -114,6 +118,7 @@ npm version patch   # 1.2.0 → 1.2.1
 npm version minor   # 1.2.0 → 1.3.0
 npm version major   # 1.2.0 → 2.0.0
 ```
+
 ## License
 
 ISC
