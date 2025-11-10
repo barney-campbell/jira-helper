@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ipc } from '../ipc';
 import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
@@ -56,7 +57,7 @@ export const IssueSearchView: React.FC<IssueSearchViewProps> = ({ onIssueDoubleC
 
       if (isJiraKey) {
         // Try to get the specific issue by key
-        const issue = await window.electronAPI.getIssue(searchQuery);
+        const issue = await ipc.getIssue(searchQuery);
         if (issue) {
           data = [issue];
         } else {

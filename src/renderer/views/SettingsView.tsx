@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { ipc } from '../ipc';
 import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
@@ -163,7 +164,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
     loadSettings();
     loadVersionInfo();
 
-    const unsubscribe = window.electronAPI.onUpdateStatus(payload => {
+    const unsubscribe = ipc.onUpdateStatus(payload => {
       setUpdateStatus(payload);
 
       setVersionInfo(prev => {
@@ -207,14 +208,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
   }, []);
 
   const loadSettings = async () => {
-    const loaded = await window.electronAPI.loadSettings();
+  const loaded = await ipc.loadSettings();
     if (loaded) {
       setSettings(loaded);
     }
   };
 
   const loadVersionInfo = async () => {
-    const info = await window.electronAPI.getVersionInfo();
+  const info = await ipc.getVersionInfo();
     setVersionInfo(info);
   };
 
@@ -222,7 +223,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
     setCheckingUpdates(true);
     setUpdateStatus({ status: 'checking' });
     try {
-      const info = await window.electronAPI.checkForUpdates();
+  const info = await ipc.checkForUpdates();
       setVersionInfo(info);
 
       if (info.updateAvailable) {
@@ -237,7 +238,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ currentTheme, onThem
 
   const handleSave = async () => {
     try {
-      await window.electronAPI.saveSettings(settings);
+  await ipc.saveSettings(settings);
       setMessage('Settings saved successfully!');
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { ipc } from '../ipc';
 import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { KanbanItemModal } from '../components/KanbanItemModal';
-import type { KanbanItem, KanbanColumnType, JiraIssue } from '../../common/types';
+import type { KanbanItem, KanbanColumnType } from '../../common/types';
 
 const ViewContainer = styled.div`
   background-color: ${props => props.theme.colors.surface};
@@ -188,7 +189,7 @@ export const KanbanView: React.FC = () => {
   const loadItems = async () => {
     try {
       setLoading(true);
-      const allItems = await window.electronAPI.getAllKanbanItems();
+  const allItems = await ipc.getAllKanbanItems();
       setItems(allItems);
     } catch (error) {
       console.error('Failed to load kanban items:', error);
@@ -212,7 +213,7 @@ export const KanbanView: React.FC = () => {
   const handleDeleteItem = async (id: number) => {
     if (confirm('Are you sure you want to delete this item?')) {
       try {
-        await window.electronAPI.deleteKanbanItem(id);
+  await ipc.deleteKanbanItem(id);
         await loadItems();
       } catch (error) {
         console.error('Failed to delete item:', error);
@@ -224,10 +225,10 @@ export const KanbanView: React.FC = () => {
     try {
       if (selectedItem) {
         // Update existing item
-        await window.electronAPI.updateKanbanItem(selectedItem.id, title, description, linkedIssueKey);
+  await ipc.updateKanbanItem(selectedItem.id, title, description, linkedIssueKey);
       } else if (newItemColumn) {
         // Create new item
-        await window.electronAPI.createKanbanItem(title, description, newItemColumn, linkedIssueKey);
+  await ipc.createKanbanItem(title, description, newItemColumn, linkedIssueKey);
       }
       await loadItems();
       setModalOpen(false);
@@ -273,7 +274,7 @@ export const KanbanView: React.FC = () => {
     const newPosition = columnItems.length;
 
     try {
-      await window.electronAPI.moveKanbanItem(draggedItem.id, targetColumn, newPosition);
+  await ipc.moveKanbanItem(draggedItem.id, targetColumn, newPosition);
       await loadItems();
     } catch (error) {
       console.error('Failed to move item:', error);
@@ -282,10 +283,10 @@ export const KanbanView: React.FC = () => {
 
   const handleViewIssue = async (issueKey: string) => {
     try {
-      const settings = await window.electronAPI.loadSettings();
+  const settings = await ipc.loadSettings();
       if (settings?.baseUrl) {
         const url = `${settings.baseUrl}/browse/${issueKey}`;
-        await window.electronAPI.openExternal(url);
+  await ipc.openExternal(url);
       }
     } catch (error) {
       console.error('Failed to open issue:', error);
