@@ -33,15 +33,15 @@ Electron desktop application for managing Jira-related tasks such as time tracki
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/barney-campbell/jira-helper.git
-   cd jira-helper
-   ```
+    ```bash
+    git clone https://github.com/barney-campbell/jira-helper.git
+    cd jira-helper
+    ```
 
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
 ## Development
 

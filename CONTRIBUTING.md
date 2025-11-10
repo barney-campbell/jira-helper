@@ -16,7 +16,7 @@ Thank you for your interest in contributing to Jira Helper!
 - Use concise, clear language.
 - Indicate the type of change: Added, Changed, Fixed, Removed, etc.
 - If your change relates to an issue or PR, reference it.
-  - This should be a commit hash as `([reference](link))`
+    - This should be a commit hash as `([reference](link))`
 
 **Example:**
 

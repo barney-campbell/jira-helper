@@ -5,7 +5,7 @@ This document describes how to implement a feature that allows users to log in d
 ## 1. Register Your App with Atlassian
 
 - Go to the Atlassian developer portal.
-  - https://developer.atlassian.com/console/myapps/
+    - https://developer.atlassian.com/console/myapps/
 - Register a new application.
 - Obtain your **Client ID** and **Client Secret**.
 - Set a **Redirect URI** (e.g., `http://localhost:PORT/callback`).
@@ -19,9 +19,9 @@ This document describes how to implement a feature that allows users to log in d
 
 - When the button is clicked, open Atlassian’s authorization URL in a new Electron `BrowserWindow`.
 - Example URL:
-  ```
-  https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=YOUR_CLIENT_ID&scope=REQUESTED_SCOPES&redirect_uri=YOUR_REDIRECT_URI&state=RANDOM_STRING&response_type=code&prompt=consent
-  ```
+    ```
+    https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=YOUR_CLIENT_ID&scope=REQUESTED_SCOPES&redirect_uri=YOUR_REDIRECT_URI&state=RANDOM_STRING&response_type=code&prompt=consent
+    ```
 - Replace placeholders with your actual values.
 
 ## 4. Handle the Redirect and Extract the Code
@@ -32,17 +32,17 @@ This document describes how to implement a feature that allows users to log in d
 ## 5. Exchange the Code for an Access Token
 
 - Use the authorization code to request an access token from Atlassian’s token endpoint:
-  ```
-  POST https://auth.atlassian.com/oauth/token
-  Content-Type: application/json
-  {
-    "grant_type": "authorization_code",
-    "client_id": "YOUR_CLIENT_ID",
-    "client_secret": "YOUR_CLIENT_SECRET",
-    "code": "AUTHORIZATION_CODE",
-    "redirect_uri": "YOUR_REDIRECT_URI"
-  }
-  ```
+    ```
+    POST https://auth.atlassian.com/oauth/token
+    Content-Type: application/json
+    {
+      "grant_type": "authorization_code",
+      "client_id": "YOUR_CLIENT_ID",
+      "client_secret": "YOUR_CLIENT_SECRET",
+      "code": "AUTHORIZATION_CODE",
+      "redirect_uri": "YOUR_REDIRECT_URI"
+    }
+    ```
 - This should be done in the Electron main process or a secure backend.
 
 ## 6. Store the Access Token Securely
@@ -61,47 +61,47 @@ For distributed apps like Electron, use PKCE (Proof Key for Code Exchange) to av
 ### PKCE Flow Steps
 
 1. **Generate a Code Verifier and Code Challenge**
-   - Code verifier: a random string (43-128 chars).
-   - Code challenge: a base64url-encoded SHA256 hash of the verifier.
-   - Example (Node.js):
-     ```js
-     // Generate code verifier
-     const codeVerifier = crypto.randomBytes(64).toString("base64url");
-     // Generate code challenge
-     const codeChallenge = crypto
-       .createHash("sha256")
-       .update(codeVerifier)
-       .digest("base64")
-       .replace(/\+/g, "-")
-       .replace(/\//g, "_")
-       .replace(/=+$/, "");
-     ```
+    - Code verifier: a random string (43-128 chars).
+    - Code challenge: a base64url-encoded SHA256 hash of the verifier.
+    - Example (Node.js):
+        ```js
+        // Generate code verifier
+        const codeVerifier = crypto.randomBytes(64).toString("base64url")
+        // Generate code challenge
+        const codeChallenge = crypto
+            .createHash("sha256")
+            .update(codeVerifier)
+            .digest("base64")
+            .replace(/\+/g, "-")
+            .replace(/\//g, "_")
+            .replace(/=+$/, "")
+        ```
 
 2. **Start Authorization Request**
-   - Add `code_challenge` and `code_challenge_method=S256` to the authorization URL:
-     ```
-     https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=YOUR_CLIENT_ID&scope=REQUESTED_SCOPES&redirect_uri=YOUR_REDIRECT_URI&state=RANDOM_STRING&response_type=code&prompt=consent&code_challenge=CODE_CHALLENGE&code_challenge_method=S256
-     ```
+    - Add `code_challenge` and `code_challenge_method=S256` to the authorization URL:
+        ```
+        https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=YOUR_CLIENT_ID&scope=REQUESTED_SCOPES&redirect_uri=YOUR_REDIRECT_URI&state=RANDOM_STRING&response_type=code&prompt=consent&code_challenge=CODE_CHALLENGE&code_challenge_method=S256
+        ```
 
 3. **Handle Redirect and Extract Code**
-   - As before, listen for the redirect URI and extract the `code` parameter.
+    - As before, listen for the redirect URI and extract the `code` parameter.
 
 4. **Exchange Code for Access Token (No Client Secret Needed)**
-   - Send a POST request to the token endpoint with the code verifier:
-     ```json
-     POST https://auth.atlassian.com/oauth/token
-     Content-Type: application/json
-     {
-       "grant_type": "authorization_code",
-       "client_id": "YOUR_CLIENT_ID",
-       "code": "AUTHORIZATION_CODE",
-       "redirect_uri": "YOUR_REDIRECT_URI",
-       "code_verifier": "CODE_VERIFIER"
-     }
-     ```
+    - Send a POST request to the token endpoint with the code verifier:
+        ```json
+        POST https://auth.atlassian.com/oauth/token
+        Content-Type: application/json
+        {
+          "grant_type": "authorization_code",
+          "client_id": "YOUR_CLIENT_ID",
+          "code": "AUTHORIZATION_CODE",
+          "redirect_uri": "YOUR_REDIRECT_URI",
+          "code_verifier": "CODE_VERIFIER"
+        }
+        ```
 
 5. **Store and Use the Access Token**
-   - As before, store securely and use for API requests.
+    - As before, store securely and use for API requests.
 
 ### References
 

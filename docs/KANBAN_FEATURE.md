@@ -121,9 +121,9 @@ window.electronAPI.deleteKanbanItem(id): Promise<{success: boolean}>
 2. Enter title (required)
 3. Enter description (optional)
 4. Optionally link a Jira issue:
-   - Enter issue key (e.g., PROJ-123)
-   - Click "Link Issue"
-   - Review issue details
+    - Enter issue key (e.g., PROJ-123)
+    - Click "Link Issue"
+    - Review issue details
 5. Click "Save"
 
 ### Editing an Item
@@ -183,14 +183,14 @@ onDrop={async (e, targetColumn) => {
 When moving items, the service uses a transaction-based approach:
 
 1. **Same Column Move:**
-   - Calculate shift direction (up/down)
-   - Update positions of items between old and new position
-   - Update item position
+    - Calculate shift direction (up/down)
+    - Update positions of items between old and new position
+    - Update item position
 
 2. **Cross-Column Move:**
-   - Shift items in old column up to fill gap
-   - Shift items in new column down to make space
-   - Update item position and column
+    - Shift items in old column up to fill gap
+    - Shift items in new column down to make space
+    - Update item position and column
 
 This ensures consistent, gap-free positioning.
 

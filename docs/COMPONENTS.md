@@ -126,9 +126,9 @@ A table component for displaying tabular data with support for custom columns an
 
 ```tsx
 interface Column<T> {
-  header: string;
-  accessor: keyof T | ((row: T) => React.ReactNode);
-  width?: string;
+    header: string
+    accessor: keyof T | ((row: T) => React.ReactNode)
+    width?: string
 }
 ```
 
@@ -137,28 +137,30 @@ interface Column<T> {
 ```tsx
 // Simple grid with property accessors
 const columns: Column<JiraIssue>[] = [
-  { header: "Key", accessor: "key", width: "100px" },
-  { header: "Summary", accessor: "summary", width: "700px" },
-  { header: "Status", accessor: "status", width: "200px" },
-];
+    { header: "Key", accessor: "key", width: "100px" },
+    { header: "Summary", accessor: "summary", width: "700px" },
+    { header: "Status", accessor: "status", width: "200px" },
+]
 
-<DataGrid
-  columns={columns}
-  data={issues}
-  onRowDoubleClick={handleIssueClick}
-/>;
+;<DataGrid
+    columns={columns}
+    data={issues}
+    onRowDoubleClick={handleIssueClick}
+/>
 
 // Grid with custom cell renderers
 const columns: Column<TimeRecord>[] = [
-  { header: "Started", accessor: "started" },
-  { header: "Duration", accessor: "duration" },
-  {
-    header: "Actions",
-    accessor: (row) => <Button onClick={() => handleEdit(row)}>Edit</Button>,
-  },
-];
+    { header: "Started", accessor: "started" },
+    { header: "Duration", accessor: "duration" },
+    {
+        header: "Actions",
+        accessor: (row) => (
+            <Button onClick={() => handleEdit(row)}>Edit</Button>
+        ),
+    },
+]
 
-<DataGrid columns={columns} data={records} />;
+;<DataGrid columns={columns} data={records} />
 ```
 
 **Where Used**:
@@ -294,52 +296,52 @@ Components can be composed together to create more complex UIs:
 ```tsx
 // Example: Custom confirmation dialog
 const ConfirmDialog = ({ isOpen, onConfirm, onCancel, message }) => (
-  <Modal
-    isOpen={isOpen}
-    onClose={onCancel}
-    title="Confirm"
-    footer={
-      <>
-        <Button onClick={onCancel} variant="secondary">
-          Cancel
-        </Button>
-        <Button onClick={onConfirm} variant="danger">
-          Confirm
-        </Button>
-      </>
-    }
-  >
-    <p>{message}</p>
-  </Modal>
-);
+    <Modal
+        isOpen={isOpen}
+        onClose={onCancel}
+        title="Confirm"
+        footer={
+            <>
+                <Button onClick={onCancel} variant="secondary">
+                    Cancel
+                </Button>
+                <Button onClick={onConfirm} variant="danger">
+                    Confirm
+                </Button>
+            </>
+        }
+    >
+        <p>{message}</p>
+    </Modal>
+)
 
 // Example: Form with validation
 const EditForm = ({ data, onSave, onCancel }) => {
-  const [name, setName] = useState(data.name);
-  const [isValid, setIsValid] = useState(true);
+    const [name, setName] = useState(data.name)
+    const [isValid, setIsValid] = useState(true)
 
-  return (
-    <Modal isOpen={true} onClose={onCancel} title="Edit Item">
-      <Input
-        value={name}
-        onChange={(value) => {
-          setName(value);
-          setIsValid(value.length > 0);
-        }}
-        placeholder="Enter name"
-      />
-      {!isValid && <span className="error">Name is required</span>}
-      <div className="button-group">
-        <Button onClick={onCancel} variant="secondary">
-          Cancel
-        </Button>
-        <Button onClick={() => onSave(name)} disabled={!isValid}>
-          Save
-        </Button>
-      </div>
-    </Modal>
-  );
-};
+    return (
+        <Modal isOpen={true} onClose={onCancel} title="Edit Item">
+            <Input
+                value={name}
+                onChange={(value) => {
+                    setName(value)
+                    setIsValid(value.length > 0)
+                }}
+                placeholder="Enter name"
+            />
+            {!isValid && <span className="error">Name is required</span>}
+            <div className="button-group">
+                <Button onClick={onCancel} variant="secondary">
+                    Cancel
+                </Button>
+                <Button onClick={() => onSave(name)} disabled={!isValid}>
+                    Save
+                </Button>
+            </div>
+        </Modal>
+    )
+}
 ```
 
 ## Styling
@@ -354,7 +356,7 @@ Example:
 
 ```tsx
 <Button className="large-button special-style" onClick={handleClick}>
-  Custom Styled Button
+    Custom Styled Button
 </Button>
 ```
 
@@ -381,19 +383,19 @@ When creating a new reusable component:
 Example template:
 
 ```tsx
-import React from "react";
-import "../styles/components.css";
+import React from "react"
+import "../styles/components.css"
 
 interface MyComponentProps {
-  // Define your props here
-  required: string;
-  optional?: number;
+    // Define your props here
+    required: string
+    optional?: number
 }
 
 export const MyComponent: React.FC<MyComponentProps> = ({
-  required,
-  optional = 0,
+    required,
+    optional = 0,
 }) => {
-  return <div className="my-component">{/* Component implementation */}</div>;
-};
+    return <div className="my-component">{/* Component implementation */}</div>
+}
 ```

@@ -1,71 +1,72 @@
 {
-  "name": "jira-helper",
-  "version": "1.6.0",
-  "description": "App for managing Jira related tasks such as time tracking.",
-  "main": "dist/main/main/main.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/barney-campbell/jira-helper.git"
-  },
-  "scripts": {
-    "build": "npm run build:main && vite build",
-    "build:main": "tsc --project tsconfig.main.json",
-    "build:dev": "vite build --mode development",
-    "start": "npm run build:main && npm run build:dev && electron .",
-    "start:dev": "npm run build:main && cross-env NODE_ENV=development electron .",
-    "dev": "vite",
-    "package": "npm run build && electron-builder",
-    "format": "prettier --write ."
-  },
-  "keywords": [
-    "jira",
-    "time-tracking",
-    "electron"
-  ],
-  "author": "",
-  "license": "ISC",
-  "build": {
-    "appId": "com.jirahelper.app",
-    "productName": "Jira Helper",
-    "icon": "assets/jira-helper-icon.jpg",
-    "files": [
-      "dist/**/*",
-      "package.json"
-    ],
-    "directories": {
-      "output": "release"
+    "name": "jira-helper",
+    "version": "1.6.0",
+    "description": "App for managing Jira related tasks such as time tracking.",
+    "main": "dist/main/main/main.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/barney-campbell/jira-helper.git"
     },
-    "artifactName": "Jira-Helper-Setup-${version}.${ext}",
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "barney-campbell",
-        "repo": "jira-helper"
-      }
-    ]
-  },
-  "dependencies": {
-    "@types/better-sqlite3": "^7.6.13",
-    "better-sqlite3": "^12.4.1",
-    "electron-updater": "^6.6.2",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "styled-components": "^6.1.19"
-  },
-  "devDependencies": {
-    "@types/node": "^24.7.2",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "@vitejs/plugin-react": "^5.0.4",
-    "cross-env": "^10.1.0",
-    "css-loader": "^7.1.2",
-    "electron": "^38.3.0",
-    "electron-builder": "^26.0.12",
-    "electron-rebuild": "^3.2.9",
-    "prettier": "^3.6.2",
-    "style-loader": "^4.0.0",
-    "ts-loader": "^9.5.4",
-    "typescript": "^5.9.3",
-    "vite": "^7.1.10"
-  }
+    "scripts": {
+        "build": "npm run build:main && vite build",
+        "build:main": "tsc --project tsconfig.main.json",
+        "build:dev": "vite build --mode development",
+        "start": "npm run build:main && npm run build:dev && electron .",
+        "start:dev": "npm run build:main && cross-env NODE_ENV=development electron .",
+        "dev": "vite",
+        "package": "npm run build && electron-builder",
+        "format": "prettier --write .",
+        "format:report": "prettier --check ."
+    },
+    "keywords": [
+        "jira",
+        "time-tracking",
+        "electron"
+    ],
+    "author": "",
+    "license": "ISC",
+    "build": {
+        "appId": "com.jirahelper.app",
+        "productName": "Jira Helper",
+        "icon": "assets/jira-helper-icon.jpg",
+        "files": [
+            "dist/**/*",
+            "package.json"
+        ],
+        "directories": {
+            "output": "release"
+        },
+        "artifactName": "Jira-Helper-Setup-${version}.${ext}",
+        "publish": [
+            {
+                "provider": "github",
+                "owner": "barney-campbell",
+                "repo": "jira-helper"
+            }
+        ]
+    },
+    "dependencies": {
+        "@types/better-sqlite3": "^7.6.13",
+        "better-sqlite3": "^12.4.1",
+        "electron-updater": "^6.6.2",
+        "react": "^19.2.0",
+        "react-dom": "^19.2.0",
+        "styled-components": "^6.1.19"
+    },
+    "devDependencies": {
+        "@types/node": "^24.7.2",
+        "@types/react": "^19.2.2",
+        "@types/react-dom": "^19.2.2",
+        "@vitejs/plugin-react": "^5.0.4",
+        "cross-env": "^10.1.0",
+        "css-loader": "^7.1.2",
+        "electron": "^38.3.0",
+        "electron-builder": "^26.0.12",
+        "electron-rebuild": "^3.2.9",
+        "prettier": "^3.6.2",
+        "style-loader": "^4.0.0",
+        "ts-loader": "^9.5.4",
+        "typescript": "^5.9.3",
+        "vite": "^7.1.10"
+    }
 }

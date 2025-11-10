@@ -201,14 +201,14 @@ src/renderer/
 
 ```json
 {
-  "main": "dist/main.js",
-  "scripts": {
-    "build": "webpack --mode production",
-    "build:dev": "webpack --mode development",
-    "start": "npm run build:dev && electron .",
-    "dev": "webpack --mode development --watch",
-    "package": "npm run build && electron-builder"
-  }
+    "main": "dist/main.js",
+    "scripts": {
+        "build": "webpack --mode production",
+        "build:dev": "webpack --mode development",
+        "start": "npm run build:dev && electron .",
+        "dev": "webpack --mode development --watch",
+        "package": "npm run build && electron-builder"
+    }
 }
 ```
 
@@ -231,9 +231,9 @@ src/renderer/
 ### webpack.config.js
 
 - 3 separate builds:
-  1. Main process (main.ts → main.js)
-  2. Preload script (preload.ts → preload.js)
-  3. Renderer process (index.tsx → renderer.js)
+    1. Main process (main.ts → main.js)
+    2. Preload script (preload.ts → preload.js)
+    3. Renderer process (index.tsx → renderer.js)
 
 ---
 

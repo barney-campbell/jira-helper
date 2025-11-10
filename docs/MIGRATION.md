@@ -62,7 +62,7 @@ All UI components are built as reusable React components that can be used throug
 
 ```tsx
 <Button onClick={handleClick} variant="primary">
-  Click Me
+    Click Me
 </Button>
 
 // Variants: primary, secondary, danger
@@ -80,12 +80,12 @@ All UI components are built as reusable React components that can be used throug
 
 ```tsx
 <DataGrid
-  columns={[
-    { header: "Name", accessor: "name" },
-    { header: "Status", accessor: (row) => <Badge>{row.status}</Badge> },
-  ]}
-  data={items}
-  onRowDoubleClick={handleRowClick}
+    columns={[
+        { header: "Name", accessor: "name" },
+        { header: "Status", accessor: (row) => <Badge>{row.status}</Badge> },
+    ]}
+    data={items}
+    onRowDoubleClick={handleRowClick}
 />
 ```
 
@@ -101,12 +101,12 @@ All UI components are built as reusable React components that can be used throug
 
 ```tsx
 <Modal
-  isOpen={open}
-  onClose={handleClose}
-  title="Edit Record"
-  footer={<Button onClick={handleSave}>Save</Button>}
+    isOpen={open}
+    onClose={handleClose}
+    title="Edit Record"
+    footer={<Button onClick={handleSave}>Save</Button>}
 >
-  {/* Modal content */}
+    {/* Modal content */}
 </Modal>
 ```
 
@@ -193,26 +193,26 @@ src/
 
 1. Build the application:
 
-   ```bash
-   npm run build:dev
-   ```
+    ```bash
+    npm run build:dev
+    ```
 
 2. Run the application:
 
-   ```bash
-   npm start
-   ```
+    ```bash
+    npm start
+    ```
 
 3. Configure settings:
-   - Click the gear icon (⚙️) at the bottom of the sidebar
-   - Enter your Jira Base URL, Email, and API Token
-   - Click Save
+    - Click the gear icon (⚙️) at the bottom of the sidebar
+    - Enter your Jira Base URL, Email, and API Token
+    - Click Save
 
 4. Test features:
-   - Dashboard: View unuploaded time logs
-   - Assigned Issues: Browse your Jira issues
-   - Search: Use JQL to find issues
-   - Issue Details: View and track time on specific issues
+    - Dashboard: View unuploaded time logs
+    - Assigned Issues: Browse your Jira issues
+    - Search: Use JQL to find issues
+    - Issue Details: View and track time on specific issues
 
 ## Future Enhancements
 

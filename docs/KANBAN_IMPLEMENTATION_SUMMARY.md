@@ -17,79 +17,79 @@ A full-featured Kanban board with drag-and-drop functionality, integrated with J
 ### Backend Services
 
 1. **src/main/services/kanban-service.ts** (172 lines)
-   - SQLite database service for Kanban items
-   - CRUD operations (Create, Read, Update, Delete)
-   - Position management for drag-and-drop
-   - Transaction-based move operations
-   - Database schema initialization
+    - SQLite database service for Kanban items
+    - CRUD operations (Create, Read, Update, Delete)
+    - Position management for drag-and-drop
+    - Transaction-based move operations
+    - Database schema initialization
 
 ### Frontend Components
 
 2. **src/renderer/views/KanbanView.tsx** (397 lines)
-   - Main Kanban board view with three columns
-   - Drag-and-drop implementation
-   - Item management interface
-   - Column rendering and state management
-   - Integration with modal for item editing
+    - Main Kanban board view with three columns
+    - Drag-and-drop implementation
+    - Item management interface
+    - Column rendering and state management
+    - Integration with modal for item editing
 
 3. **src/renderer/components/KanbanItemModal.tsx** (292 lines)
-   - Modal for creating and editing items
-   - Form validation
-   - Jira issue search and linking
-   - Live issue information display
-   - Unlink functionality
+    - Modal for creating and editing items
+    - Form validation
+    - Jira issue search and linking
+    - Live issue information display
+    - Unlink functionality
 
 ### Documentation
 
 4. **KANBAN_FEATURE.md** (294 lines)
-   - Technical documentation
-   - Architecture overview
-   - Database schema
-   - API documentation
-   - Implementation details
+    - Technical documentation
+    - Architecture overview
+    - Database schema
+    - API documentation
+    - Implementation details
 
 5. **KANBAN_UI_GUIDE.md** (347 lines)
-   - UI/UX specifications
-   - Visual mockups
-   - Color scheme
-   - Typography
-   - Responsive design guidelines
+    - UI/UX specifications
+    - Visual mockups
+    - Color scheme
+    - Typography
+    - Responsive design guidelines
 
 6. **KANBAN_SCREENSHOTS.md** (429 lines)
-   - Visual documentation with ASCII art representations
-   - User journey examples
-   - State diagrams
-   - Interaction patterns
+    - Visual documentation with ASCII art representations
+    - User journey examples
+    - State diagrams
+    - Interaction patterns
 
 ## Files Modified
 
 ### Type Definitions
 
 1. **src/common/types/index.ts**
-   - Added `KanbanItem` interface
-   - Added `KanbanColumnType` type
-   - Added `'kanban'` to `ViewType`
+    - Added `KanbanItem` interface
+    - Added `KanbanColumnType` type
+    - Added `'kanban'` to `ViewType`
 
 2. **src/renderer/types/index.ts**
-   - Added `'kanban'` to `ViewType`
+    - Added `'kanban'` to `ViewType`
 
 ### IPC Communication
 
 3. **src/main/ipc-handlers.ts**
-   - Imported `KanbanService`
-   - Registered 6 new IPC handlers for kanban operations
-   - Instantiated `kanbanService`
+    - Imported `KanbanService`
+    - Registered 6 new IPC handlers for kanban operations
+    - Instantiated `kanbanService`
 
 4. **src/main/preload.ts**
-   - Exposed 6 kanban API methods to renderer
-   - Added TypeScript declarations for window.electronAPI
+    - Exposed 6 kanban API methods to renderer
+    - Added TypeScript declarations for window.electronAPI
 
 ### UI Integration
 
 5. **src/renderer/App.tsx**
-   - Imported `KanbanView` component
-   - Added kanban button to sidebar (📝 icon)
-   - Added kanban case to view renderer
+    - Imported `KanbanView` component
+    - Added kanban button to sidebar (📝 icon)
+    - Added kanban case to view renderer
 
 ## Code Statistics
 

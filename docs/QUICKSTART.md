@@ -14,16 +14,16 @@ Ensure you have the following installed:
 
 1. **Clone the repository**:
 
-   ```bash
-   git clone https://github.com/barney-campbell/jira-helper.git
-   cd jira-helper
-   ```
+    ```bash
+    git clone https://github.com/barney-campbell/jira-helper.git
+    cd jira-helper
+    ```
 
 2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-   This will take 1-2 minutes to download all packages.
+    ```bash
+    npm install
+    ```
+    This will take 1-2 minutes to download all packages.
 
 ## Building and Running
 
@@ -31,14 +31,14 @@ Ensure you have the following installed:
 
 1. **Build the application**:
 
-   ```bash
-   npm run build:dev
-   ```
+    ```bash
+    npm run build:dev
+    ```
 
 2. **Start the app**:
-   ```bash
-   npm start
-   ```
+    ```bash
+    npm start
+    ```
 
 The application window will open automatically.
 
@@ -66,9 +66,9 @@ When you first launch the app:
 
 1. **Click the Settings icon** (⚙️) at the bottom of the sidebar
 2. **Enter your Jira credentials**:
-   - **Base URL**: Your Jira instance (e.g., `https://your-company.atlassian.net`)
-   - **Email**: Your Atlassian account email
-   - **API Token**: [Generate one here](https://id.atlassian.com/manage-profile/security/api-tokens)
+    - **Base URL**: Your Jira instance (e.g., `https://your-company.atlassian.net`)
+    - **Email**: Your Atlassian account email
+    - **API Token**: [Generate one here](https://id.atlassian.com/manage-profile/security/api-tokens)
 3. **Click Save**
 
 ## Basic Usage
