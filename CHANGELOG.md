@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Changed
+
+- Abstracted all renderer IPC calls to a new `src/renderer/ipc.ts` module for easier backend swapping (Electron/Tauri).
+
 # 1.6.0
 
 ### Added

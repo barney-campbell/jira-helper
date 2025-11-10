@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ipc } from '../ipc';
 import styled from 'styled-components';
 import { Button } from '../components/Button';
 import { DataGrid, Column } from '../components/DataGrid';
@@ -273,7 +274,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
 
   const loadIssue = async () => {
     try {
-      const data = await window.electronAPI.getIssue(issueKey);
+  const data = await ipc.getIssue(issueKey);
       setIssue(data);
     } catch (error) {
       console.error('Error loading issue:', error);
@@ -282,7 +283,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
 
   const loadKanbanItems = async () => {
     try {
-      const items = await window.electronAPI.getKanbanItemsByIssue(issueKey);
+  const items = await ipc.getKanbanItemsByIssue(issueKey);
       setKanbanItems(items);
     } catch (error) {
       console.error('Error loading kanban items:', error);
@@ -291,13 +292,13 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
 
   const loadTimeTracking = async () => {
     try {
-      const records = await window.electronAPI.getTimeTrackingRecords(issueKey);
+  const records = await ipc.getTimeTrackingRecords(issueKey);
       setTimeRecords(records);
       
       const hasActive = records.some(r => !r.endTime);
       setIsTracking(hasActive);
 
-      const worklogs = await window.electronAPI.getWorklogs(issueKey);
+  const worklogs = await ipc.getWorklogs(issueKey);
       setJiraWorklogs(worklogs);
     } catch (error) {
       console.error('Error loading time tracking:', error);
@@ -306,7 +307,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
 
   const loadBaseUrl = async () => {
     try {
-      const url = await window.electronAPI.getBaseUrl();
+  const url = await ipc.getBaseUrl();
       setBaseUrl(url);
     } catch (error) {
       console.error('Error loading base URL:', error);
@@ -315,7 +316,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
 
   const handleStartTracking = async () => {
     try {
-      await window.electronAPI.startTracking(issueKey);
+  await ipc.startTracking(issueKey);
       await loadTimeTracking();
     } catch (error) {
       console.error('Error starting tracking:', error);
@@ -324,7 +325,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
 
   const handleStopTracking = async () => {
     try {
-      await window.electronAPI.stopTracking(issueKey);
+  await ipc.stopTracking(issueKey);
       await loadTimeTracking();
     } catch (error) {
       console.error('Error stopping tracking:', error);
@@ -460,7 +461,7 @@ export const IssueDetailsView: React.FC<IssueDetailsViewProps> = ({ issueKey, on
 
   const openInJira = (url: string, issueKey: string) => {
     const fullUrl = `${url}/browse/${issueKey}`;
-    window.electronAPI.openExternal(fullUrl);
+  ipc.openExternal(fullUrl);
   }
 
   const timeTrackingColumns: Column<TimeTrackingDisplay>[] = [
