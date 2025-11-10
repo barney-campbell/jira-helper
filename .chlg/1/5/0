@@ -1,0 +1,4 @@
+{"change":"Added column sorting for issue tables. Headers can be clicked to toggle direction","time":"1762535492922"}
+{"change":"Added separate table for 'Done' issues in assigned issues view","time":"1762535533029"}
+{"change":"Added navigation history state and alt+left/right navigation as well as native menu option","time":"1762535581882"}
+{"change":"Issue details page now displays parent issue where available, ability to navigate to parent issue details","time":"1762535655115"}

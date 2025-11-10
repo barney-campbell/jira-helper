@@ -1,0 +1,5 @@
+{"change":"Added filtering of issue table by status, assignee, project","time":"1762535068385"}
+{"change":"Added project column to issues tables","time":"1762535097693"}
+{"change":"Added calendar view which displays worklogs for the current week","time":"1762535117872"}
+{"change":"Added error logging service","time":"1762535143637"}
+{"change":"Added log viewer in settings next to creds, themes settings","time":"1762535163555"}

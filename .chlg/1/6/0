@@ -1,0 +1,4 @@
+{"change":"Double clicking uploaded time tracking log now displays the associated issue details","time":"1762535775835"}
+{"change":"Compact view for yesterday time tracking is now the default","time":"1762535794908"}
+{"change":"Calendar view time blocks now visually match time axis","time":"1762535826037"}
+{"change":"Worklog edit modal now uses date time picker","time":"1762535848582"}

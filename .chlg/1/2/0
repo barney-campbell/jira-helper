@@ -1,0 +1,3 @@
+{"change":"Added dark, light, and system themes which persist in the database","time":"1762534635779"}
+{"change":"Added summary column in yesterday time tracking widget, which now spans full dashboard full width","time":"1762534675566"}
+{"change":"Display version in settings","time":"1762534692744"}

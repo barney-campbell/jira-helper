@@ -1,0 +1,3 @@
+{"change":"Fixed incorrect contrast on code block (light mode -> light block, dark mode -> dark block)","time":"1762534841568"}
+{"change":"Ensure correct colour scheme is present in kanban area (borders, colours were difficult to read)","time":"1762534980293"}
+{"change":"Disable automatic version tagging, best to be more flexible with when a version is tagged","time":"1762535018414"}
