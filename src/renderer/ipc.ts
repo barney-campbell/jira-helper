@@ -63,4 +63,9 @@ export interface ElectronAPI {
 }
 
 
+if (!window.electronAPI) {
+  throw new Error(
+    "window.electronAPI is undefined. This usually means the Electron preload script did not properly expose the API. Please check your preload configuration."
+  );
+}
 export const ipc: ElectronAPI = window.electronAPI as ElectronAPI;
