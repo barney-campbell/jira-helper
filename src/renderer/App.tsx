@@ -8,6 +8,7 @@ import { SettingsView } from "./views/SettingsView"
 import { KanbanView } from "./views/KanbanView"
 import { CalendarView } from "./views/CalendarView"
 import { AnalyticsView } from "./views/AnalyticsView"
+import { MilestonesView } from "./views/MilestonesView"
 import type { ViewType, JiraIssue, ThemeMode } from "./types"
 import { lightTheme, darkTheme } from "./theme"
 
@@ -313,6 +314,8 @@ export const App: React.FC = () => {
                 return <CalendarView />
             case "analytics":
                 return <AnalyticsView />
+            case "milestones":
+                return <MilestonesView />
             case "settings":
                 return (
                     <SettingsView
@@ -385,6 +388,13 @@ export const App: React.FC = () => {
                         title="Analytics"
                     >
                         <span className="icon">📈</span>
+                    </SidebarButton>
+                    <SidebarButton
+                        $active={currentView === "milestones"}
+                        onClick={() => navigateToView("milestones")}
+                        title="Milestones"
+                    >
+                        <span className="icon">🏁</span>
                     </SidebarButton>
                     <SidebarSpacer />
                     <SidebarButton

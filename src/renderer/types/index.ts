@@ -61,3 +61,4 @@ export type ViewType =
     | "kanban"
     | "calendar"
     | "analytics"
+    | "milestones"

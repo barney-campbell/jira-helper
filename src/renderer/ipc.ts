@@ -13,6 +13,7 @@ import type {
     IssueStats,
     ProductivityInsights,
     TimeTrackingRecord,
+    Milestone,
 } from "../common/types"
 
 export interface ElectronAPI {
@@ -71,6 +72,13 @@ export interface ElectronAPI {
     getHourlyStats(): Promise<HourlyStats[]>
     getIssueStats(limit: number): Promise<IssueStats[]>
     getProductivityInsights(): Promise<ProductivityInsights>
+    // Milestones
+    addMilestone(description: string, issueKey?: string): Promise<Milestone>
+    getAllMilestones(): Promise<Milestone[]>
+    getLast12MonthsMilestones(): Promise<Milestone[]>
+    generateMilestonesPdf(
+        fileName?: string
+    ): Promise<{ success: boolean; path: string }>
     // Time tracking events
     onTimeTrackingChanged(callback: () => void): () => void
     updateNavigationState(canGoBack: boolean, canGoForward: boolean): void

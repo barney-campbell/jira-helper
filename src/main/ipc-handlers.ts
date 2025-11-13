@@ -6,6 +6,7 @@ import { KanbanService } from "./services/kanban-service"
 import { VersionService } from "./services/version-service"
 import { LoggingService } from "./services/logging-service"
 import { AnalyticsService } from "./services/analytics-service"
+import { MilestoneService } from "./services/milestone-service"
 import type { UserSettings, KanbanColumnType } from "../common/types"
 
 let jiraService: JiraService | null = null
@@ -15,6 +16,7 @@ const kanbanService = new KanbanService()
 const versionService = new VersionService()
 const loggingService = new LoggingService()
 const analyticsService = new AnalyticsService()
+const milestoneService = new MilestoneService()
 
 export function notifyTimeTrackingChanged() {
     const windows = BrowserWindow.getAllWindows()
@@ -337,4 +339,90 @@ export function registerIpcHandlers() {
     ipcMain.handle("analytics:getProductivityInsights", async () => {
         return analyticsService.getProductivityInsights()
     })
+
+    // Milestones handlers
+    ipcMain.handle(
+        "milestone:add",
+        async (_, description: string, issueKey?: string | null) => {
+            try {
+                const added = milestoneService.addMilestone(
+                    description,
+                    issueKey
+                )
+                return added
+            } catch (error) {
+                loggingService.logError(
+                    "Failed to add milestone",
+                    error,
+                    "milestone:add"
+                )
+                throw error
+            }
+        }
+    )
+
+    ipcMain.handle("milestone:getAll", async () => {
+        try {
+            return milestoneService.getAll()
+        } catch (error) {
+            loggingService.logError(
+                "Failed to get milestones",
+                error,
+                "milestone:getAll"
+            )
+            throw error
+        }
+    })
+
+    ipcMain.handle("milestone:getLast12Months", async () => {
+        try {
+            return milestoneService.getLast12Months()
+        } catch (error) {
+            loggingService.logError(
+                "Failed to get last 12 months milestones",
+                error,
+                "milestone:getLast12Months"
+            )
+            throw error
+        }
+    })
+
+    ipcMain.handle(
+        "milestone:generatePdf",
+        async (_, saveFileName?: string) => {
+            try {
+                const window = new BrowserWindow({
+                    show: false,
+                    webPreferences: { offscreen: true },
+                })
+                const milestones = milestoneService.getAll()
+
+                const html = `<!doctype html><html><head><meta charset="utf-8"><title>Milestones Report</title><style>body{font-family: Arial, sans-serif;padding:20px}h1{font-size:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f4f4f4}</style></head><body><h1>Milestones Report</h1><table><thead><tr><th>Date</th><th>Issue</th><th>Description</th></tr></thead><tbody>${milestones.map((m) => `<tr><td>${m.loggedAt.toISOString().split("T")[0]}</td><td>${m.issueKey || ""}</td><td>${m.description}</td></tr>`).join("")}</tbody></table></body></html>`
+
+                await window.loadURL(
+                    `data:text/html,${encodeURIComponent(html)}`
+                )
+                const pdfBuffer = await window.webContents.printToPDF({})
+
+                const userDataPath = require("electron").app.getPath("userData")
+                const path = require("path")
+                const fs = require("fs")
+                const fileName =
+                    saveFileName ||
+                    `milestones-${new Date().toISOString().split("T")[0]}.pdf`
+                const fullPath = path.join(userDataPath, fileName)
+                fs.writeFileSync(fullPath, pdfBuffer)
+
+                window.destroy()
+                return { success: true, path: fullPath }
+            } catch (error) {
+                loggingService.logError(
+                    "Failed to generate milestones PDF",
+                    error,
+                    "milestone:generatePdf"
+                )
+                throw error
+            }
+        }
+    )
 }

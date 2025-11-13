@@ -66,6 +66,7 @@ export type ViewType =
     | "kanban"
     | "calendar"
     | "analytics"
+    | "milestones"
 
 export type KanbanColumnType = "todo" | "inProgress" | "done"
 
@@ -144,4 +145,11 @@ export interface ProductivityInsights {
         duration: number
         date: Date
     } | null
+}
+
+export interface Milestone {
+    id: number
+    description: string
+    issueKey?: string | null
+    loggedAt: Date
 }
