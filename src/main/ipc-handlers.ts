@@ -428,10 +428,21 @@ export function registerIpcHandlers() {
 
     ipcMain.handle(
         "milestone:update",
-        async (_, id: number, description: string, issueKey?: string | null, loggedAt?: string) => {
+        async (
+            _,
+            id: number,
+            description: string,
+            issueKey?: string | null,
+            loggedAt?: string
+        ) => {
             try {
                 const date = loggedAt ? new Date(loggedAt) : new Date()
-                const updated = milestoneService.updateMilestone(id, description, issueKey || null, date)
+                const updated = milestoneService.updateMilestone(
+                    id,
+                    description,
+                    issueKey || null,
+                    date
+                )
                 return updated
             } catch (error) {
                 loggingService.logError(
@@ -449,7 +460,11 @@ export function registerIpcHandlers() {
             const ok = milestoneService.deleteMilestone(id)
             return { success: ok }
         } catch (error) {
-            loggingService.logError("Failed to delete milestone", error, "milestone:delete")
+            loggingService.logError(
+                "Failed to delete milestone",
+                error,
+                "milestone:delete"
+            )
             throw error
         }
     })

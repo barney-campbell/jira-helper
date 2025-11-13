@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import styled from "styled-components"
+import styled, { keyframes } from "styled-components"
 import { Button as PrimaryButton } from "../components/Button"
 import { Modal } from "../components/Modal"
 import { Input as TextInput } from "../components/Input"
@@ -73,6 +73,32 @@ const DateInput = styled.input`
         border-color: ${(p) => p.theme.colors.primary};
         box-shadow: 0 0 0 2px ${(p) => p.theme.colors.primary}33;
     }
+`
+
+const spin = keyframes`
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+`
+
+const LoadingOverlay = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 0;
+`
+
+const Spinner = styled.div`
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 4px solid ${(p) => p.theme.colors.border};
+    border-top-color: ${(p) => p.theme.colors.primary};
+    animation: ${spin} 1s linear infinite;
+    margin-right: 12px;
+`
+
+const LoadingText = styled.div`
+    color: ${(p) => p.theme.colors.textSecondary};
 `
 
 export const MilestonesView: React.FC = () => {
@@ -236,15 +262,20 @@ export const MilestonesView: React.FC = () => {
                 </ButtonWrapper>
             </FormRow>
 
-            <h3>Last 12 months</h3>
             {loading ? (
-                <div>Loading...</div>
+                <LoadingOverlay>
+                    <Spinner aria-hidden="true" />
+                    <LoadingText>Loading milestones…</LoadingText>
+                </LoadingOverlay>
             ) : (
-                <DataGrid
-                    columns={columns}
-                    data={milestones}
-                    onRowDoubleClick={(row) => openEditModal(row)}
-                />
+                <>
+                    <h3>Last 12 months</h3>
+                    <DataGrid
+                        columns={columns}
+                        data={milestones}
+                        onRowDoubleClick={(row) => openEditModal(row)}
+                    />
+                </>
             )}
 
             <Modal

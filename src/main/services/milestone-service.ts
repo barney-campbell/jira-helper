@@ -86,7 +86,12 @@ export class MilestoneService {
         }))
     }
 
-    updateMilestone(id: number, description: string, issueKey: string | null, loggedAt: Date): Milestone {
+    updateMilestone(
+        id: number,
+        description: string,
+        issueKey: string | null,
+        loggedAt: Date
+    ): Milestone {
         const loggedAtIso = loggedAt.toISOString()
         this.db
             .prepare(
