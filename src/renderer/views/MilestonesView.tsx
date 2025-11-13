@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import styled, { keyframes } from "styled-components"
 import { Button as PrimaryButton } from "../components/Button"
+import { LoadingSpinner } from "../components/LoadingSpinner"
 import { Modal } from "../components/Modal"
 import { Input as TextInput } from "../components/Input"
 import type { Milestone } from "../../common/types"
@@ -75,26 +76,12 @@ const DateInput = styled.input`
     }
 `
 
-const spin = keyframes`
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-`
-
 const LoadingOverlay = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 12px;
     padding: 32px 0;
-`
-
-const Spinner = styled.div`
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 4px solid ${(p) => p.theme.colors.border};
-    border-top-color: ${(p) => p.theme.colors.primary};
-    animation: ${spin} 1s linear infinite;
-    margin-right: 12px;
 `
 
 const LoadingText = styled.div`
@@ -264,7 +251,7 @@ export const MilestonesView: React.FC = () => {
 
             {loading ? (
                 <LoadingOverlay>
-                    <Spinner aria-hidden="true" />
+                    <LoadingSpinner size="large" />
                     <LoadingText>Loading milestones…</LoadingText>
                 </LoadingOverlay>
             ) : (
