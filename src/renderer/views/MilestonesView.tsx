@@ -316,7 +316,10 @@ export const MilestonesView: React.FC = () => {
                     />
                 </div>
             </Modal>
-            <ExportManager isOpen={exportsModalOpen} onClose={() => setExportsModalOpen(false)} />
+            <ExportManager
+                isOpen={exportsModalOpen}
+                onClose={() => setExportsModalOpen(false)}
+            />
         </Container>
     )
 }

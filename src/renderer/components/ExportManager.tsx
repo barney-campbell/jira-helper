@@ -102,26 +102,55 @@ export const ExportManager: React.FC<ExportManagerProps> = ({
     )
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Manage Exports" footer={footer}>
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Manage Exports"
+            footer={footer}
+        >
             {loading ? (
-                <div style={{ display: "flex", justifyContent: "center", padding: 24 }}>
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        padding: 24,
+                    }}
+                >
                     <LoadingSpinner size="large" />
                 </div>
             ) : (
                 <>
                     {files.length === 0 ? (
-                        <div style={{ padding: 24, color: "var(--text-secondary)" }}>No exported milestone PDFs found.</div>
+                        <div
+                            style={{
+                                padding: 24,
+                                color: "var(--text-secondary)",
+                            }}
+                        >
+                            No exported milestone PDFs found.
+                        </div>
                     ) : (
                         <List>
                             {files.map((f) => (
                                 <Item key={f.path}>
                                     <Meta>
                                         <Name>{f.name}</Name>
-                                        <Created>{new Date(f.createdAt).toLocaleString()}</Created>
+                                        <Created>
+                                            {new Date(
+                                                f.createdAt
+                                            ).toLocaleString()}
+                                        </Created>
                                     </Meta>
                                     <div style={{ display: "flex", gap: 8 }}>
-                                        <Button onClick={() => handleOpen(f)}>Open</Button>
-                                        <Button variant="danger" onClick={() => handleDelete(f)}>Delete</Button>
+                                        <Button onClick={() => handleOpen(f)}>
+                                            Open
+                                        </Button>
+                                        <Button
+                                            variant="danger"
+                                            onClick={() => handleDelete(f)}
+                                        >
+                                            Delete
+                                        </Button>
                                     </div>
                                 </Item>
                             ))}
