@@ -4,6 +4,10 @@
 
 - Abstracted all renderer IPC calls to a new `src/renderer/ipc.ts` module for easier backend swapping (Electron/Tauri).
 
+### Added
+
+- Milestone work completion logging: add milestone entries (optional Jira issue), view entries from the last 12 months, and generate a PDF report. (New page: Milestones)
+
 # 1.6.0
 
 ### Added

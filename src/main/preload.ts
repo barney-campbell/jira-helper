@@ -11,6 +11,7 @@ import type {
     IssueStats,
     ProductivityInsights,
     UpdateStatusPayload,
+    Milestone,
 } from "../common/types"
 
 contextBridge.exposeInMainWorld("electronAPI", {
@@ -128,6 +129,34 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ipcRenderer.invoke("analytics:getIssueStats", limit),
     getProductivityInsights: () =>
         ipcRenderer.invoke("analytics:getProductivityInsights"),
+
+    // Milestones
+    addMilestone: (description: string, issueKey?: string) =>
+        ipcRenderer.invoke("milestone:add", description, issueKey),
+    getAllMilestones: () => ipcRenderer.invoke("milestone:getAll"),
+    getLast12MonthsMilestones: () =>
+        ipcRenderer.invoke("milestone:getLast12Months"),
+    generateMilestonesPdf: (fileName?: string) =>
+        ipcRenderer.invoke("milestone:generatePdf", fileName),
+    updateMilestone: (
+        id: number,
+        description: string,
+        issueKey?: string | null,
+        loggedAt?: string
+    ) =>
+        ipcRenderer.invoke(
+            "milestone:update",
+            id,
+            description,
+            issueKey,
+            loggedAt
+        ),
+    deleteMilestone: (id: number) => ipcRenderer.invoke("milestone:delete", id),
+
+    // Exports management
+    listMilestonePdfs: () => ipcRenderer.invoke("exports:listMilestonePdfs"),
+    deleteExportedFile: (filePath: string) =>
+        ipcRenderer.invoke("exports:delete", filePath),
 
     // Event listeners
     onTimeTrackingChanged: (callback: () => void) => {
@@ -251,6 +280,31 @@ declare global {
             getHourlyStats: () => Promise<HourlyStats[]>
             getIssueStats: (limit: number) => Promise<IssueStats[]>
             getProductivityInsights: () => Promise<ProductivityInsights>
+
+            // Milestones
+            addMilestone: (
+                description: string,
+                issueKey?: string
+            ) => Promise<Milestone>
+            getAllMilestones: () => Promise<Milestone[]>
+            getLast12MonthsMilestones: () => Promise<Milestone[]>
+            generateMilestonesPdf: (
+                fileName?: string
+            ) => Promise<{ success: boolean; path: string }>
+            updateMilestone: (
+                id: number,
+                description: string,
+                issueKey?: string | null,
+                loggedAt?: string
+            ) => Promise<Milestone>
+            deleteMilestone: (id: number) => Promise<{ success: boolean }>
+            listMilestonePdfs: () => Promise<
+                { name: string; path: string; createdAt: string }[]
+            >
+            deleteExportedFile: (
+                filePath: string
+            ) => Promise<{ success: boolean }>
+
             onTimeTrackingChanged: (callback: () => void) => () => void
             onSetTheme: (callback: (theme: string) => void) => () => void
             onUpdateStatus: (
