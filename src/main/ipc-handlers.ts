@@ -7,6 +7,9 @@ import { VersionService } from "./services/version-service"
 import { LoggingService } from "./services/logging-service"
 import { AnalyticsService } from "./services/analytics-service"
 import { MilestoneService } from "./services/milestone-service"
+import { app } from "electron"
+import path from "path"
+import fs from "fs"
 import type { UserSettings, KanbanColumnType } from "../common/types"
 
 let jiraService: JiraService | null = null
@@ -404,9 +407,8 @@ export function registerIpcHandlers() {
                 )
                 const pdfBuffer = await window.webContents.printToPDF({})
 
-                const userDataPath = require("electron").app.getPath("userData")
-                const path = require("path")
-                const fs = require("fs")
+                const userDataPath = app.getPath("userData")
+
                 const fileName =
                     saveFileName ||
                     `milestones-${new Date().toISOString().split("T")[0]}.pdf`
@@ -425,6 +427,51 @@ export function registerIpcHandlers() {
             }
         }
     )
+
+    // Exports management - list and delete milestone PDF exports from userData
+    ipcMain.handle("exports:listMilestonePdfs", async () => {
+        try {
+            const userDataPath = app.getPath("userData")
+            const files = fs.readdirSync(userDataPath)
+            const pdfs = files
+                .filter((f) => f.toLowerCase().endsWith(".pdf"))
+                .filter((f) => f.toLowerCase().includes("milestones"))
+                .map((name) => {
+                    const fullPath = path.join(userDataPath, name)
+                    const stat = fs.statSync(fullPath)
+                    return {
+                        name,
+                        path: fullPath,
+                        createdAt: stat.ctime.toISOString(),
+                    }
+                })
+            // sort by createdAt descending
+            pdfs.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+            return pdfs
+        } catch (error) {
+            loggingService.logError(
+                "Failed to list exported milestone PDFs",
+                error,
+                "exports:listMilestonePdfs"
+            )
+            throw error
+        }
+    })
+
+    ipcMain.handle("exports:delete", async (_, filePath: string) => {
+        try {
+            if (!filePath) return { success: false }
+            fs.unlinkSync(filePath)
+            return { success: true }
+        } catch (error) {
+            loggingService.logError(
+                "Failed to delete exported file",
+                error,
+                "exports:delete"
+            )
+            throw error
+        }
+    })
 
     ipcMain.handle(
         "milestone:update",

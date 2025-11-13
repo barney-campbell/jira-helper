@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import styled, { keyframes } from "styled-components"
 import { Button as PrimaryButton } from "../components/Button"
 import { LoadingSpinner } from "../components/LoadingSpinner"
+import { ExportManager } from "../components/ExportManager"
 import { Modal } from "../components/Modal"
 import { Input as TextInput } from "../components/Input"
 import type { Milestone } from "../../common/types"
@@ -94,6 +95,7 @@ export const MilestonesView: React.FC = () => {
     const [milestones, setMilestones] = useState<Milestone[]>([])
     const [loading, setLoading] = useState(false)
     const [editModalOpen, setEditModalOpen] = useState(false)
+    const [exportsModalOpen, setExportsModalOpen] = useState(false)
     const [editing, setEditing] = useState<Milestone | null>(null)
     const [editDescription, setEditDescription] = useState("")
     const [editIssueKey, setEditIssueKey] = useState("")
@@ -135,7 +137,7 @@ export const MilestonesView: React.FC = () => {
         try {
             const items = await window.electronAPI.getLast12MonthsMilestones()
             // convert loggedAt strings to Date objects if necessary
-            const converted = items.map((it: any) => ({
+            const converted = items.map((it: Milestone) => ({
                 ...it,
                 loggedAt: new Date(it.loggedAt),
             }))
@@ -247,6 +249,11 @@ export const MilestonesView: React.FC = () => {
                         Generate PDF
                     </PrimaryButton>
                 </ButtonWrapper>
+                <ButtonWrapper style={{ marginLeft: 8 }}>
+                    <PrimaryButton onClick={() => setExportsModalOpen(true)}>
+                        Manage Exports
+                    </PrimaryButton>
+                </ButtonWrapper>
             </FormRow>
 
             {loading ? (
@@ -268,7 +275,7 @@ export const MilestonesView: React.FC = () => {
             <Modal
                 isOpen={editModalOpen}
                 onClose={() => setEditModalOpen(false)}
-                title={editing ? "Edit Milestone" : "Edit Milestone"}
+                title="Edit Milestone"
                 footer={
                     <div style={{ display: "flex", gap: 8 }}>
                         <PrimaryButton
@@ -309,6 +316,7 @@ export const MilestonesView: React.FC = () => {
                     />
                 </div>
             </Modal>
+            <ExportManager isOpen={exportsModalOpen} onClose={() => setExportsModalOpen(false)} />
         </Container>
     )
 }
