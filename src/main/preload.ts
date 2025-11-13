@@ -138,6 +138,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ipcRenderer.invoke("milestone:getLast12Months"),
     generateMilestonesPdf: (fileName?: string) =>
         ipcRenderer.invoke("milestone:generatePdf", fileName),
+    updateMilestone: (id: number, description: string, issueKey?: string | null, loggedAt?: string) =>
+        ipcRenderer.invoke("milestone:update", id, description, issueKey, loggedAt),
+    deleteMilestone: (id: number) => ipcRenderer.invoke("milestone:delete", id),
 
     // Event listeners
     onTimeTrackingChanged: (callback: () => void) => {
@@ -272,6 +275,8 @@ declare global {
             generateMilestonesPdf: (
                 fileName?: string
             ) => Promise<{ success: boolean; path: string }>
+            updateMilestone: (id: number, description: string, issueKey?: string | null, loggedAt?: string) => Promise<Milestone>
+            deleteMilestone: (id: number) => Promise<{ success: boolean }>
 
             onTimeTrackingChanged: (callback: () => void) => () => void
             onSetTheme: (callback: (theme: string) => void) => () => void

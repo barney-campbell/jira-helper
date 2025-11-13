@@ -86,6 +86,29 @@ export class MilestoneService {
         }))
     }
 
+    updateMilestone(id: number, description: string, issueKey: string | null, loggedAt: Date): Milestone {
+        const loggedAtIso = loggedAt.toISOString()
+        this.db
+            .prepare(
+                `UPDATE Milestones SET Description = ?, IssueKey = ?, LoggedAt = ? WHERE Id = ?`
+            )
+            .run(description, issueKey || null, loggedAtIso, id)
+
+        return {
+            id,
+            description,
+            issueKey: issueKey || null,
+            loggedAt: new Date(loggedAtIso),
+        }
+    }
+
+    deleteMilestone(id: number): boolean {
+        const info = this.db
+            .prepare(`DELETE FROM Milestones WHERE Id = ?`)
+            .run(id)
+        return info.changes > 0
+    }
+
     close(): void {
         try {
             this.db.close()

@@ -1,10 +1,29 @@
 import React, { useEffect, useState } from "react"
 import styled from "styled-components"
+import { Button as PrimaryButton } from "../components/Button"
+import { Modal } from "../components/Modal"
+import { Input as TextInput } from "../components/Input"
 import type { Milestone } from "../../common/types"
+import { DataGrid, Column } from "../components/DataGrid"
 
 const Container = styled.div`
-    max-width: 900px;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
+    background-color: ${(p) => p.theme.colors.surface};
+    padding: 24px;
+    border-radius: 8px;
+    border: 1px solid ${(p) => p.theme.colors.border};
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+
+    h2 {
+        color: ${(p) => p.theme.colors.text};
+        margin-bottom: 8px;
+    }
+
+    p {
+        color: ${(p) => p.theme.colors.textSecondary};
+        margin-bottom: 16px;
+    }
 `
 
 const FormRow = styled.div`
@@ -16,10 +35,16 @@ const FormRow = styled.div`
 const Input = styled.input`
     padding: 8px;
     flex: 1;
+    border: 1px solid ${(p) => p.theme.colors.border};
+    border-radius: 4px;
+    background-color: ${(p) => p.theme.colors.surface};
+    color: ${(p) => p.theme.colors.text};
 `
 
-const Button = styled.button`
-    padding: 8px 12px;
+// local button wrapper to control spacing when using the shared Button
+const ButtonWrapper = styled.div`
+    display: inline-flex;
+    align-items: center;
 `
 
 const Table = styled.table`
@@ -35,11 +60,62 @@ const Table = styled.table`
     }
 `
 
+const DateInput = styled.input`
+    padding: 8px 12px;
+    border: 1px solid ${(p) => p.theme.colors.border};
+    border-radius: 4px;
+    background-color: ${(p) => p.theme.colors.surface};
+    color: ${(p) => p.theme.colors.text};
+    width: 200px;
+
+    &:focus {
+        outline: none;
+        border-color: ${(p) => p.theme.colors.primary};
+        box-shadow: 0 0 0 2px ${(p) => p.theme.colors.primary}33;
+    }
+`
+
 export const MilestonesView: React.FC = () => {
     const [description, setDescription] = useState("")
     const [issueKey, setIssueKey] = useState("")
     const [milestones, setMilestones] = useState<Milestone[]>([])
     const [loading, setLoading] = useState(false)
+    const [editModalOpen, setEditModalOpen] = useState(false)
+    const [editing, setEditing] = useState<Milestone | null>(null)
+    const [editDescription, setEditDescription] = useState("")
+    const [editIssueKey, setEditIssueKey] = useState("")
+    const [editDate, setEditDate] = useState("")
+
+    const columns: Column<Milestone>[] = [
+        {
+            header: "Date",
+            accessor: (row) =>
+                row.loggedAt instanceof Date
+                    ? row.loggedAt.toISOString().split("T")[0]
+                    : new Date(row.loggedAt).toISOString().split("T")[0],
+            width: "160px",
+            sortable: true,
+        },
+        { header: "Issue", accessor: "issueKey", width: "160px" },
+        { header: "Description", accessor: "description" },
+        {
+            header: "Action",
+            accessor: (row) => (
+                <div onClick={(e) => e.stopPropagation()}>
+                    <PrimaryButton
+                        variant="danger"
+                        onClick={() => {
+                            void deleteRow(row)
+                        }}
+                    >
+                        Delete
+                    </PrimaryButton>
+                </div>
+            ),
+            width: "100px",
+            sortable: false,
+        },
+    ]
 
     const load = async () => {
         setLoading(true)
@@ -59,6 +135,51 @@ export const MilestonesView: React.FC = () => {
     useEffect(() => {
         load()
     }, [])
+
+    const openEditModal = (row: Milestone) => {
+        setEditing(row)
+        setEditDescription(row.description)
+        setEditIssueKey(row.issueKey || "")
+        const isoDate =
+            row.loggedAt instanceof Date
+                ? row.loggedAt.toISOString().split("T")[0]
+                : new Date(row.loggedAt).toISOString().split("T")[0]
+        setEditDate(isoDate)
+        setEditModalOpen(true)
+    }
+
+    const handleSaveEdit = async () => {
+        if (!editing) return
+        const loggedAtIso = new Date(editDate + "T00:00:00").toISOString()
+        const updated = await window.electronAPI.updateMilestone(
+            editing.id,
+            editDescription.trim(),
+            editIssueKey || undefined,
+            loggedAtIso
+        )
+        setMilestones((prev) =>
+            prev.map((m) =>
+                m.id === updated.id
+                    ? { ...updated, loggedAt: new Date(updated.loggedAt) }
+                    : m
+            )
+        )
+        setEditModalOpen(false)
+        setEditing(null)
+    }
+
+    const deleteRow = async (row: Milestone) => {
+        const ok = window.confirm(
+            "Are you sure you want to delete this milestone?"
+        )
+        if (!ok) return
+        const res = await window.electronAPI.deleteMilestone(row.id)
+        if (res && res.success) {
+            setMilestones((prev) => prev.filter((m) => m.id !== row.id))
+        } else {
+            alert("Failed to delete milestone")
+        }
+    }
 
     const handleAdd = async () => {
         if (!description.trim()) return
@@ -87,13 +208,11 @@ export const MilestonesView: React.FC = () => {
             setLoading(false)
         }
     }
-
     return (
         <Container>
-            <h2>Milestone Work Completion</h2>
+            <h2>Milestones</h2>
             <p>
-                Log milestone work completion entries and optionally link to a
-                Jira issue.
+                Log milestone work completion and generate a printable report.
             </p>
 
             <FormRow>
@@ -103,41 +222,75 @@ export const MilestonesView: React.FC = () => {
                     onChange={(e) => setDescription(e.target.value)}
                 />
                 <Input
-                    placeholder="Jira Issue (optional)"
+                    placeholder="Jira issue (optional)"
                     value={issueKey}
                     onChange={(e) => setIssueKey(e.target.value)}
                 />
-                <Button onClick={handleAdd}>Add</Button>
-                <Button onClick={handleGenerate} disabled={loading}>
-                    Generate PDF
-                </Button>
+                <ButtonWrapper>
+                    <PrimaryButton onClick={handleAdd}>Add</PrimaryButton>
+                </ButtonWrapper>
+                <ButtonWrapper style={{ marginLeft: 8 }}>
+                    <PrimaryButton onClick={handleGenerate} disabled={loading}>
+                        Generate PDF
+                    </PrimaryButton>
+                </ButtonWrapper>
             </FormRow>
 
             <h3>Last 12 months</h3>
             {loading ? (
                 <div>Loading...</div>
             ) : (
-                <Table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Issue</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {milestones.map((m) => (
-                            <tr key={m.id}>
-                                <td>
-                                    {m.loggedAt.toISOString().split("T")[0]}
-                                </td>
-                                <td>{m.issueKey || ""}</td>
-                                <td>{m.description}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
+                <DataGrid
+                    columns={columns}
+                    data={milestones}
+                    onRowDoubleClick={(row) => openEditModal(row)}
+                />
             )}
+
+            <Modal
+                isOpen={editModalOpen}
+                onClose={() => setEditModalOpen(false)}
+                title={editing ? "Edit Milestone" : "Edit Milestone"}
+                footer={
+                    <div style={{ display: "flex", gap: 8 }}>
+                        <PrimaryButton
+                            variant="secondary"
+                            onClick={() => setEditModalOpen(false)}
+                        >
+                            Cancel
+                        </PrimaryButton>
+                        <PrimaryButton
+                            variant="primary"
+                            onClick={handleSaveEdit}
+                        >
+                            Save
+                        </PrimaryButton>
+                    </div>
+                }
+            >
+                <div style={{ display: "grid", gap: 12 }}>
+                    <label style={{ color: "inherit" }}>Description</label>
+                    <TextInput
+                        value={editDescription}
+                        onChange={setEditDescription}
+                    />
+
+                    <label style={{ color: "inherit" }}>
+                        Jira Issue (optional)
+                    </label>
+                    <TextInput
+                        value={editIssueKey}
+                        onChange={setEditIssueKey}
+                    />
+
+                    <label style={{ color: "inherit" }}>Date</label>
+                    <DateInput
+                        type="date"
+                        value={editDate}
+                        onChange={(e) => setEditDate(e.target.value)}
+                    />
+                </div>
+            </Modal>
         </Container>
     )
 }

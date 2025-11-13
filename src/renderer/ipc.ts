@@ -79,6 +79,8 @@ export interface ElectronAPI {
     generateMilestonesPdf(
         fileName?: string
     ): Promise<{ success: boolean; path: string }>
+    updateMilestone(id: number, description: string, issueKey?: string | null, loggedAt?: string): Promise<Milestone>
+    deleteMilestone(id: number): Promise<{ success: boolean }>
     // Time tracking events
     onTimeTrackingChanged(callback: () => void): () => void
     updateNavigationState(canGoBack: boolean, canGoForward: boolean): void
