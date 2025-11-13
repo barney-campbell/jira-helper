@@ -1,2 +1,3 @@
 {"change":"Abstract ipc calls from renderer so backends can be swapped out","time":"1762772298110"}
 {"change":"Add code formatting with prettier","time":"1762774080223"}
+{"change":"Implement milestone area where users can log important moments and view previous milestones","time":"1763029410889"}
