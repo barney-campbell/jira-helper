@@ -7,6 +7,7 @@ The Kanban Board feature provides a visual task management system integrated int
 ## Features
 
 ### Core Functionality
+
 - **Three-Column Board**: Todo, In Progress, and Done columns
 - **Drag-and-Drop**: Move items between columns with visual feedback
 - **Item Management**: Create, edit, and delete kanban items
@@ -14,12 +15,14 @@ The Kanban Board feature provides a visual task management system integrated int
 - **Persistent Storage**: All items stored in local SQLite database
 
 ### User Interface
+
 - **Sidebar Button**: Access via 📝 icon in the sidebar
 - **Modal Interface**: Add/edit items in a clean modal dialog
 - **Visual Indicators**: Column counts, item positions, and drag-over states
 - **Responsive Design**: Adapts to different window sizes
 
 ### Jira Integration
+
 - **Issue Linking**: Search and link Jira issues to kanban items
 - **Live Information**: Display issue key, summary, and status
 - **Quick Access**: Click linked issue badge to open in Jira
@@ -45,9 +48,11 @@ CREATE TABLE KanbanItems (
 ### Components
 
 #### KanbanView (`src/renderer/views/KanbanView.tsx`)
+
 Main view component that renders the kanban board with three columns.
 
 **Key Features:**
+
 - Grid layout with three equal columns
 - Drag-and-drop event handlers
 - Item CRUD operations
@@ -56,15 +61,18 @@ Main view component that renders the kanban board with three columns.
 **Props:** None (standalone view)
 
 #### KanbanItemModal (`src/renderer/components/KanbanItemModal.tsx`)
+
 Modal component for creating and editing kanban items.
 
 **Key Features:**
+
 - Form validation
 - Jira issue search and linking
 - Live issue information display
 - Unlink issue capability
 
 **Props:**
+
 - `isOpen: boolean` - Modal visibility
 - `item: KanbanItem | null` - Item to edit (null for new item)
 - `onClose: () => void` - Close handler
@@ -73,9 +81,11 @@ Modal component for creating and editing kanban items.
 ### Services
 
 #### KanbanService (`src/main/services/kanban-service.ts`)
+
 Backend service handling all database operations.
 
 **Methods:**
+
 - `getAllItems(): KanbanItem[]` - Get all items
 - `getItemsByColumn(column): KanbanItem[]` - Get items in specific column
 - `createItem(title, description, column, linkedIssueKey?): KanbanItem` - Create new item
@@ -85,6 +95,7 @@ Backend service handling all database operations.
 
 **Position Management:**
 The service automatically manages item positions within columns:
+
 - New items are added to the end of their column
 - Moved items trigger position adjustments for affected items
 - Deleted items trigger position consolidation
@@ -92,6 +103,7 @@ The service automatically manages item positions within columns:
 ### IPC Communication
 
 #### Exposed API (preload.ts)
+
 ```typescript
 window.electronAPI.getAllKanbanItems(): Promise<KanbanItem[]>
 window.electronAPI.getKanbanItemsByColumn(column): Promise<KanbanItem[]>
@@ -104,32 +116,37 @@ window.electronAPI.deleteKanbanItem(id): Promise<{success: boolean}>
 ## User Workflows
 
 ### Creating a New Item
+
 1. Click "Add Item" button in any column
 2. Enter title (required)
 3. Enter description (optional)
 4. Optionally link a Jira issue:
-   - Enter issue key (e.g., PROJ-123)
-   - Click "Link Issue"
-   - Review issue details
+    - Enter issue key (e.g., PROJ-123)
+    - Click "Link Issue"
+    - Review issue details
 5. Click "Save"
 
 ### Editing an Item
+
 1. Click edit (✏️) button on item card
 2. Modify title, description, or linked issue
 3. Click "Save"
 
 ### Moving Items
+
 1. Click and hold on an item card
 2. Drag to desired column
 3. Release to drop
 4. Item automatically positioned at end of target column
 
 ### Deleting an Item
+
 1. Click delete (🗑️) button on item card
 2. Confirm deletion
 3. Item removed and positions adjusted
 
 ### Linking to Jira Issue
+
 1. Open item modal (create or edit)
 2. Enter Jira issue key in "Link to Jira Issue" field
 3. Click "Link Issue" or press Enter
@@ -140,6 +157,7 @@ window.electronAPI.deleteKanbanItem(id): Promise<{success: boolean}>
 ## Implementation Details
 
 ### Drag-and-Drop
+
 The drag-and-drop system uses native HTML5 drag-and-drop APIs:
 
 ```typescript
@@ -153,30 +171,33 @@ onDragStart={(e) => {
 onDrop={async (e, targetColumn) => {
   e.preventDefault();
   await window.electronAPI.moveKanbanItem(
-    draggedItem.id, 
-    targetColumn, 
+    draggedItem.id,
+    targetColumn,
     newPosition
   );
 }}
 ```
 
 ### Position Management Algorithm
+
 When moving items, the service uses a transaction-based approach:
 
 1. **Same Column Move:**
-   - Calculate shift direction (up/down)
-   - Update positions of items between old and new position
-   - Update item position
+    - Calculate shift direction (up/down)
+    - Update positions of items between old and new position
+    - Update item position
 
 2. **Cross-Column Move:**
-   - Shift items in old column up to fill gap
-   - Shift items in new column down to make space
-   - Update item position and column
+    - Shift items in old column up to fill gap
+    - Shift items in new column down to make space
+    - Update item position and column
 
 This ensures consistent, gap-free positioning.
 
 ### Jira Integration
+
 Issue linking uses existing Jira service:
+
 - Validates issue exists before linking
 - Displays live issue information
 - Uses same authentication as other Jira features
@@ -185,12 +206,14 @@ Issue linking uses existing Jira service:
 ## Styling
 
 ### Theme
+
 - **Background**: White cards on gray (#f5f5f5) columns
 - **Hover**: Elevation and shadow on hover
 - **Drag State**: Semi-transparent when dragging
 - **Drop Zone**: Blue tint when dragging over
 
 ### Responsive Behavior
+
 - Three equal columns on desktop
 - Scrollable columns with fixed header
 - Automatic text wrapping in cards
@@ -199,6 +222,7 @@ Issue linking uses existing Jira service:
 ## Database Location
 
 The kanban database is stored separately from time tracking:
+
 - **Path**: `{userData}/kanban.db`
 - **Format**: SQLite 3
 - **Backup**: Follows standard Electron userData backup patterns
@@ -206,11 +230,13 @@ The kanban database is stored separately from time tracking:
 ## Error Handling
 
 ### Common Errors
+
 - **Invalid Issue Key**: Displays error message, doesn't save link
 - **Database Error**: Console logged, operation aborted
 - **Network Error**: Falls back gracefully for Jira operations
 
 ### User Feedback
+
 - Confirmation dialogs for destructive actions
 - Loading states during async operations
 - Error messages in modal for invalid inputs
@@ -218,6 +244,7 @@ The kanban database is stored separately from time tracking:
 ## Future Enhancements
 
 ### Potential Improvements
+
 1. **Custom Columns**: Allow users to define custom columns
 2. **Due Dates**: Add deadline tracking
 3. **Labels/Tags**: Categorize items with tags
@@ -230,6 +257,7 @@ The kanban database is stored separately from time tracking:
 10. **Collaboration**: Sync boards across team members
 
 ### Technical Improvements
+
 1. **Virtual Scrolling**: For large number of items
 2. **Undo/Redo**: Action history
 3. **Keyboard Navigation**: Tab/arrow key support
@@ -239,6 +267,7 @@ The kanban database is stored separately from time tracking:
 ## Testing
 
 ### Manual Testing Checklist
+
 - [ ] Create item in each column
 - [ ] Edit item title and description
 - [ ] Link Jira issue to item
@@ -253,6 +282,7 @@ The kanban database is stored separately from time tracking:
 - [ ] Verify database persistence across app restarts
 
 ### Known Limitations
+
 - No real-time sync between multiple app instances
 - Maximum ~1000 items recommended for performance
 - Requires Jira configuration for issue linking
@@ -261,16 +291,19 @@ The kanban database is stored separately from time tracking:
 ## Troubleshooting
 
 ### Items Not Appearing
+
 - Check database file exists at `{userData}/kanban.db`
 - Verify console for database errors
 - Try creating a new item
 
 ### Drag-and-Drop Not Working
+
 - Ensure browser supports HTML5 drag-and-drop
 - Check console for JavaScript errors
 - Verify item has `draggable` attribute
 
 ### Jira Linking Fails
+
 - Verify Settings have valid Jira credentials
 - Check network connectivity
 - Ensure issue key format is correct
@@ -288,6 +321,7 @@ The Kanban feature follows the application's modular architecture:
 - **No External Dependencies**: Uses existing libraries only
 
 This design allows the feature to be:
+
 - Easily maintained independently
 - Potentially extracted to a plugin
 - Extended without affecting other features

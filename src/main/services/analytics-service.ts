@@ -1,58 +1,60 @@
-import Database from 'better-sqlite3';
-import { app } from 'electron';
-import * as path from 'path';
-import type { TimeTrackingRecord } from '../../common/types';
+import Database from "better-sqlite3"
+import { app } from "electron"
+import * as path from "path"
+import type { TimeTrackingRecord } from "../../common/types"
 
 export interface DailyStats {
-  date: string;
-  totalSeconds: number;
-  issueCount: number;
-  issues: { [key: string]: number };
+    date: string
+    totalSeconds: number
+    issueCount: number
+    issues: { [key: string]: number }
 }
 
 export interface HourlyStats {
-  hour: number;
-  totalSeconds: number;
-  sessionCount: number;
+    hour: number
+    totalSeconds: number
+    sessionCount: number
 }
 
 export interface IssueStats {
-  issueKey: string;
-  totalSeconds: number;
-  sessionCount: number;
-  firstSession: Date;
-  lastSession: Date;
+    issueKey: string
+    totalSeconds: number
+    sessionCount: number
+    firstSession: Date
+    lastSession: Date
 }
 
 export interface ProductivityInsights {
-  mostProductiveHours: number[];
-  mostWorkedIssues: IssueStats[];
-  dailyAverage: number;
-  weeklyTrend: DailyStats[];
-  totalTimeThisWeek: number;
-  totalTimeLastWeek: number;
-  longestSession: {
-    issueKey: string;
-    duration: number;
-    date: Date;
-  } | null;
+    mostProductiveHours: number[]
+    mostWorkedIssues: IssueStats[]
+    dailyAverage: number
+    weeklyTrend: DailyStats[]
+    totalTimeThisWeek: number
+    totalTimeLastWeek: number
+    longestSession: {
+        issueKey: string
+        duration: number
+        date: Date
+    } | null
 }
 
 export class AnalyticsService {
-  private db: Database.Database;
+    private db: Database.Database
 
-  constructor() {
-    const userDataPath = app.getPath('userData');
-    const dbPath = path.join(userDataPath, 'time_tracking.db');
-    this.db = new Database(dbPath);
-  }
+    constructor() {
+        const userDataPath = app.getPath("userData")
+        const dbPath = path.join(userDataPath, "time_tracking.db")
+        this.db = new Database(dbPath)
+    }
 
-  getDailyStats(days: number = 30): DailyStats[] {
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
-    startDate.setHours(0, 0, 0, 0);
+    getDailyStats(days: number = 30): DailyStats[] {
+        const startDate = new Date()
+        startDate.setDate(startDate.getDate() - days)
+        startDate.setHours(0, 0, 0, 0)
 
-    const rows = this.db.prepare(`
+        const rows = this.db
+            .prepare(
+                `
       SELECT 
         DATE(StartTime) as date,
         IssueKey,
@@ -67,31 +69,36 @@ export class AnalyticsService {
       WHERE StartTime >= ? AND EndTime IS NOT NULL
       GROUP BY DATE(StartTime), IssueKey
       ORDER BY date DESC
-    `).all(startDate.toISOString()) as any[];
+    `
+            )
+            .all(startDate.toISOString()) as any[]
 
-    const dailyMap = new Map<string, DailyStats>();
+        const dailyMap = new Map<string, DailyStats>()
 
-    rows.forEach(row => {
-      if (!dailyMap.has(row.date)) {
-        dailyMap.set(row.date, {
-          date: row.date,
-          totalSeconds: 0,
-          issueCount: 0,
-          issues: {}
-        });
-      }
+        rows.forEach((row) => {
+            if (!dailyMap.has(row.date)) {
+                dailyMap.set(row.date, {
+                    date: row.date,
+                    totalSeconds: 0,
+                    issueCount: 0,
+                    issues: {},
+                })
+            }
 
-      const dayStats = dailyMap.get(row.date)!;
-      dayStats.totalSeconds += row.totalSeconds;
-      dayStats.issues[row.IssueKey] = (dayStats.issues[row.IssueKey] || 0) + row.totalSeconds;
-      dayStats.issueCount = Object.keys(dayStats.issues).length;
-    });
+            const dayStats = dailyMap.get(row.date)!
+            dayStats.totalSeconds += row.totalSeconds
+            dayStats.issues[row.IssueKey] =
+                (dayStats.issues[row.IssueKey] || 0) + row.totalSeconds
+            dayStats.issueCount = Object.keys(dayStats.issues).length
+        })
 
-    return Array.from(dailyMap.values());
-  }
+        return Array.from(dailyMap.values())
+    }
 
-  getHourlyStats(): HourlyStats[] {
-    const rows = this.db.prepare(`
+    getHourlyStats(): HourlyStats[] {
+        const rows = this.db
+            .prepare(
+                `
       SELECT 
         CAST(strftime('%H', StartTime) AS INTEGER) as hour,
         COUNT(*) as sessionCount,
@@ -106,17 +113,21 @@ export class AnalyticsService {
       WHERE EndTime IS NOT NULL
       GROUP BY hour
       ORDER BY hour
-    `).all() as any[];
+    `
+            )
+            .all() as any[]
 
-    return rows.map(row => ({
-      hour: row.hour,
-      totalSeconds: row.totalSeconds || 0,
-      sessionCount: row.sessionCount
-    }));
-  }
+        return rows.map((row) => ({
+            hour: row.hour,
+            totalSeconds: row.totalSeconds || 0,
+            sessionCount: row.sessionCount,
+        }))
+    }
 
-  getIssueStats(limit: number = 10): IssueStats[] {
-    const rows = this.db.prepare(`
+    getIssueStats(limit: number = 10): IssueStats[] {
+        const rows = this.db
+            .prepare(
+                `
       SELECT 
         IssueKey,
         COUNT(*) as sessionCount,
@@ -134,65 +145,88 @@ export class AnalyticsService {
       GROUP BY IssueKey
       ORDER BY totalSeconds DESC
       LIMIT ?
-    `).all(limit) as any[];
+    `
+            )
+            .all(limit) as any[]
 
-    return rows.map(row => ({
-      issueKey: row.IssueKey,
-      totalSeconds: row.totalSeconds || 0,
-      sessionCount: row.sessionCount,
-      firstSession: new Date(row.firstSession),
-      lastSession: new Date(row.lastSession)
-    }));
-  }
+        return rows.map((row) => ({
+            issueKey: row.IssueKey,
+            totalSeconds: row.totalSeconds || 0,
+            sessionCount: row.sessionCount,
+            firstSession: new Date(row.firstSession),
+            lastSession: new Date(row.lastSession),
+        }))
+    }
 
-  getProductivityInsights(): ProductivityInsights {
-    const MAX_WEEKLY_DAYS = 7;
-    const TOP_PRODUCTIVE_HOURS_COUNT = 3;
-    const TOP_ISSUES_COUNT = 5;
-    const STATS_PERIOD_DAYS = 30;
+    getProductivityInsights(): ProductivityInsights {
+        const MAX_WEEKLY_DAYS = 7
+        const TOP_PRODUCTIVE_HOURS_COUNT = 3
+        const TOP_ISSUES_COUNT = 5
+        const STATS_PERIOD_DAYS = 30
 
-    const hourlyStats = this.getHourlyStats();
-    const issueStats = this.getIssueStats(TOP_ISSUES_COUNT);
-    const dailyStats = this.getDailyStats(STATS_PERIOD_DAYS);
+        const hourlyStats = this.getHourlyStats()
+        const issueStats = this.getIssueStats(TOP_ISSUES_COUNT)
+        const dailyStats = this.getDailyStats(STATS_PERIOD_DAYS)
 
-    // Find most productive hours (top 3)
-    const sortedHours = [...hourlyStats].sort((a, b) => b.totalSeconds - a.totalSeconds);
-    const mostProductiveHours = sortedHours.slice(0, TOP_PRODUCTIVE_HOURS_COUNT).map(h => h.hour);
+        // Find most productive hours (top 3)
+        const sortedHours = [...hourlyStats].sort(
+            (a, b) => b.totalSeconds - a.totalSeconds
+        )
+        const mostProductiveHours = sortedHours
+            .slice(0, TOP_PRODUCTIVE_HOURS_COUNT)
+            .map((h) => h.hour)
 
-    // Calculate daily average
-    const totalSeconds = dailyStats.reduce((sum, day) => sum + day.totalSeconds, 0);
-    const dailyAverage = dailyStats.length > 0 ? totalSeconds / dailyStats.length : 0;
+        // Calculate daily average
+        const totalSeconds = dailyStats.reduce(
+            (sum, day) => sum + day.totalSeconds,
+            0
+        )
+        const dailyAverage =
+            dailyStats.length > 0 ? totalSeconds / dailyStats.length : 0
 
-    // Get this week's stats
-    const today = new Date();
-    const monday = new Date(today);
-    const dayOfWeek = today.getDay();
-    const daysFromMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    monday.setDate(today.getDate() + daysFromMonday);
-    monday.setHours(0, 0, 0, 0);
+        // Get this week's stats
+        const today = new Date()
+        const monday = new Date(today)
+        const dayOfWeek = today.getDay()
+        const daysFromMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+        monday.setDate(today.getDate() + daysFromMonday)
+        monday.setHours(0, 0, 0, 0)
 
-    const thisWeekStart = monday.toISOString();
-    
-    // For fair comparison, calculate the same point in time last week
-    const sameTimeLastWeek = new Date(today);
-    sameTimeLastWeek.setDate(today.getDate() - MAX_WEEKLY_DAYS);
-    
-    const lastWeekStart = new Date(monday);
-    lastWeekStart.setDate(monday.getDate() - MAX_WEEKLY_DAYS);
+        const thisWeekStart = monday.toISOString()
 
-    const weeklyTrend = dailyStats.filter(day => day.date >= thisWeekStart.split('T')[0]).slice(0, MAX_WEEKLY_DAYS);
-    const totalTimeThisWeek = weeklyTrend.reduce((sum, day) => sum + day.totalSeconds, 0);
+        // For fair comparison, calculate the same point in time last week
+        const sameTimeLastWeek = new Date(today)
+        sameTimeLastWeek.setDate(today.getDate() - MAX_WEEKLY_DAYS)
 
-    // Compare like-for-like: same days/time last week
-    const lastWeekData = dailyStats.filter(day => {
-      const dayDate = day.date;
-      const lastWeekEnd = sameTimeLastWeek.toISOString().split('T')[0];
-      return dayDate >= lastWeekStart.toISOString().split('T')[0] && dayDate <= lastWeekEnd;
-    });
-    const totalTimeLastWeek = lastWeekData.reduce((sum, day) => sum + day.totalSeconds, 0);
+        const lastWeekStart = new Date(monday)
+        lastWeekStart.setDate(monday.getDate() - MAX_WEEKLY_DAYS)
 
-    // Find longest session
-    const longestSessionRow = this.db.prepare(`
+        const weeklyTrend = dailyStats
+            .filter((day) => day.date >= thisWeekStart.split("T")[0])
+            .slice(0, MAX_WEEKLY_DAYS)
+        const totalTimeThisWeek = weeklyTrend.reduce(
+            (sum, day) => sum + day.totalSeconds,
+            0
+        )
+
+        // Compare like-for-like: same days/time last week
+        const lastWeekData = dailyStats.filter((day) => {
+            const dayDate = day.date
+            const lastWeekEnd = sameTimeLastWeek.toISOString().split("T")[0]
+            return (
+                dayDate >= lastWeekStart.toISOString().split("T")[0] &&
+                dayDate <= lastWeekEnd
+            )
+        })
+        const totalTimeLastWeek = lastWeekData.reduce(
+            (sum, day) => sum + day.totalSeconds,
+            0
+        )
+
+        // Find longest session
+        const longestSessionRow = this.db
+            .prepare(
+                `
       SELECT 
         IssueKey,
         StartTime,
@@ -201,26 +235,30 @@ export class AnalyticsService {
       WHERE EndTime IS NOT NULL
       ORDER BY duration DESC
       LIMIT 1
-    `).get() as any;
+    `
+            )
+            .get() as any
 
-    const longestSession = longestSessionRow ? {
-      issueKey: longestSessionRow.IssueKey,
-      duration: longestSessionRow.duration,
-      date: new Date(longestSessionRow.StartTime)
-    } : null;
+        const longestSession = longestSessionRow
+            ? {
+                  issueKey: longestSessionRow.IssueKey,
+                  duration: longestSessionRow.duration,
+                  date: new Date(longestSessionRow.StartTime),
+              }
+            : null
 
-    return {
-      mostProductiveHours,
-      mostWorkedIssues: issueStats,
-      dailyAverage,
-      weeklyTrend,
-      totalTimeThisWeek,
-      totalTimeLastWeek,
-      longestSession
-    };
-  }
+        return {
+            mostProductiveHours,
+            mostWorkedIssues: issueStats,
+            dailyAverage,
+            weeklyTrend,
+            totalTimeThisWeek,
+            totalTimeLastWeek,
+            longestSession,
+        }
+    }
 
-  close(): void {
-    this.db.close();
-  }
+    close(): void {
+        this.db.close()
+    }
 }

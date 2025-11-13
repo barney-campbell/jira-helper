@@ -15,6 +15,7 @@ A customizable button component with multiple variants.
 **Location**: `src/renderer/components/Button.tsx`
 
 **Props**:
+
 - `children`: ReactNode - Button content
 - `onClick?`: () => void - Click handler
 - `disabled?`: boolean - Disabled state (default: false)
@@ -23,6 +24,7 @@ A customizable button component with multiple variants.
 - `className?`: string - Additional CSS classes
 
 **Usage Examples**:
+
 ```tsx
 // Primary button (default)
 <Button onClick={handleSave}>Save</Button>
@@ -38,6 +40,7 @@ A customizable button component with multiple variants.
 ```
 
 **Where Used**:
+
 - SettingsView - Save button
 - AssignedIssuesView - Refresh button
 - IssueSearchView - Search button
@@ -53,6 +56,7 @@ A text input component with support for different input types.
 **Location**: `src/renderer/components/Input.tsx`
 
 **Props**:
+
 - `value`: string - Input value
 - `onChange`: (value: string) => void - Change handler
 - `placeholder?`: string - Placeholder text
@@ -62,6 +66,7 @@ A text input component with support for different input types.
 - `onKeyDown?`: (e: React.KeyboardEvent) => void - Key event handler
 
 **Usage Examples**:
+
 ```tsx
 // Text input
 <Input
@@ -97,6 +102,7 @@ A text input component with support for different input types.
 ```
 
 **Where Used**:
+
 - SettingsView - Base URL, Email, API Token inputs
 - IssueSearchView - Search query input
 - IssueDetailsView - Edit time tracking modal inputs
@@ -110,51 +116,55 @@ A table component for displaying tabular data with support for custom columns an
 **Location**: `src/renderer/components/DataGrid.tsx`
 
 **Props**:
+
 - `columns`: Column<T>[] - Column definitions
 - `data`: T[] - Array of data to display
 - `onRowDoubleClick?`: (row: T) => void - Double-click handler
 - `className?`: string - Additional CSS classes
 
 **Column Definition**:
+
 ```tsx
 interface Column<T> {
-  header: string;
-  accessor: keyof T | ((row: T) => React.ReactNode);
-  width?: string;
+    header: string
+    accessor: keyof T | ((row: T) => React.ReactNode)
+    width?: string
 }
 ```
 
 **Usage Examples**:
+
 ```tsx
 // Simple grid with property accessors
 const columns: Column<JiraIssue>[] = [
-  { header: 'Key', accessor: 'key', width: '100px' },
-  { header: 'Summary', accessor: 'summary', width: '700px' },
-  { header: 'Status', accessor: 'status', width: '200px' }
-];
+    { header: "Key", accessor: "key", width: "100px" },
+    { header: "Summary", accessor: "summary", width: "700px" },
+    { header: "Status", accessor: "status", width: "200px" },
+]
 
-<DataGrid 
-  columns={columns} 
-  data={issues} 
-  onRowDoubleClick={handleIssueClick}
+;<DataGrid
+    columns={columns}
+    data={issues}
+    onRowDoubleClick={handleIssueClick}
 />
 
 // Grid with custom cell renderers
 const columns: Column<TimeRecord>[] = [
-  { header: 'Started', accessor: 'started' },
-  { header: 'Duration', accessor: 'duration' },
-  { 
-    header: 'Actions', 
-    accessor: (row) => (
-      <Button onClick={() => handleEdit(row)}>Edit</Button>
-    )
-  }
-];
+    { header: "Started", accessor: "started" },
+    { header: "Duration", accessor: "duration" },
+    {
+        header: "Actions",
+        accessor: (row) => (
+            <Button onClick={() => handleEdit(row)}>Edit</Button>
+        ),
+    },
+]
 
-<DataGrid columns={columns} data={records} />
+;<DataGrid columns={columns} data={records} />
 ```
 
 **Where Used**:
+
 - AssignedIssuesView - Display assigned Jira issues
 - IssueSearchView - Display search results
 - IssueDetailsView - Display time tracking records
@@ -169,9 +179,11 @@ A loading indicator component with configurable size.
 **Location**: `src/renderer/components/LoadingSpinner.tsx`
 
 **Props**:
+
 - `size?`: 'small' | 'medium' | 'large' - Spinner size (default: 'medium')
 
 **Usage Examples**:
+
 ```tsx
 // Medium spinner (default)
 <LoadingSpinner />
@@ -187,6 +199,7 @@ A loading indicator component with configurable size.
 ```
 
 **Where Used**:
+
 - AssignedIssuesView - Loading assigned issues
 - IssueSearchView - Loading search results
 - UnuploadedTimeTrackingWidget - Uploading records
@@ -200,6 +213,7 @@ A dialog/modal component for forms and confirmations.
 **Location**: `src/renderer/components/Modal.tsx`
 
 **Props**:
+
 - `isOpen`: boolean - Modal visibility
 - `onClose`: () => void - Close handler
 - `title`: string - Modal title
@@ -207,6 +221,7 @@ A dialog/modal component for forms and confirmations.
 - `footer?`: ReactNode - Optional footer content
 
 **Usage Examples**:
+
 ```tsx
 // Simple modal
 <Modal
@@ -239,6 +254,7 @@ A dialog/modal component for forms and confirmations.
 ```
 
 **Where Used**:
+
 - IssueDetailsView - Edit time tracking record modal
 
 ---
@@ -252,12 +268,14 @@ A specialized widget for displaying and uploading unsynced time tracking logs.
 **Props**: None (self-contained component)
 
 **Features**:
+
 - Automatically refreshes every second
 - Displays issue key, start time, and elapsed time
 - Bulk upload functionality
 - Error handling and user feedback
 
 **Usage Examples**:
+
 ```tsx
 // Simple usage in dashboard
 <UnuploadedTimeTrackingWidget />
@@ -266,6 +284,7 @@ A specialized widget for displaying and uploading unsynced time tracking logs.
 ```
 
 **Where Used**:
+
 - DashboardView - Main dashboard widget
 
 ---
@@ -277,46 +296,52 @@ Components can be composed together to create more complex UIs:
 ```tsx
 // Example: Custom confirmation dialog
 const ConfirmDialog = ({ isOpen, onConfirm, onCancel, message }) => (
-  <Modal
-    isOpen={isOpen}
-    onClose={onCancel}
-    title="Confirm"
-    footer={
-      <>
-        <Button onClick={onCancel} variant="secondary">Cancel</Button>
-        <Button onClick={onConfirm} variant="danger">Confirm</Button>
-      </>
-    }
-  >
-    <p>{message}</p>
-  </Modal>
-);
+    <Modal
+        isOpen={isOpen}
+        onClose={onCancel}
+        title="Confirm"
+        footer={
+            <>
+                <Button onClick={onCancel} variant="secondary">
+                    Cancel
+                </Button>
+                <Button onClick={onConfirm} variant="danger">
+                    Confirm
+                </Button>
+            </>
+        }
+    >
+        <p>{message}</p>
+    </Modal>
+)
 
 // Example: Form with validation
 const EditForm = ({ data, onSave, onCancel }) => {
-  const [name, setName] = useState(data.name);
-  const [isValid, setIsValid] = useState(true);
+    const [name, setName] = useState(data.name)
+    const [isValid, setIsValid] = useState(true)
 
-  return (
-    <Modal isOpen={true} onClose={onCancel} title="Edit Item">
-      <Input
-        value={name}
-        onChange={(value) => {
-          setName(value);
-          setIsValid(value.length > 0);
-        }}
-        placeholder="Enter name"
-      />
-      {!isValid && <span className="error">Name is required</span>}
-      <div className="button-group">
-        <Button onClick={onCancel} variant="secondary">Cancel</Button>
-        <Button onClick={() => onSave(name)} disabled={!isValid}>
-          Save
-        </Button>
-      </div>
-    </Modal>
-  );
-};
+    return (
+        <Modal isOpen={true} onClose={onCancel} title="Edit Item">
+            <Input
+                value={name}
+                onChange={(value) => {
+                    setName(value)
+                    setIsValid(value.length > 0)
+                }}
+                placeholder="Enter name"
+            />
+            {!isValid && <span className="error">Name is required</span>}
+            <div className="button-group">
+                <Button onClick={onCancel} variant="secondary">
+                    Cancel
+                </Button>
+                <Button onClick={() => onSave(name)} disabled={!isValid}>
+                    Save
+                </Button>
+            </div>
+        </Modal>
+    )
+}
 ```
 
 ## Styling
@@ -328,9 +353,10 @@ All components use CSS classes defined in `src/renderer/styles/components.css`. 
 3. **Theme variables**: Add CSS variables for consistent theming
 
 Example:
+
 ```tsx
 <Button className="large-button special-style" onClick={handleClick}>
-  Custom Styled Button
+    Custom Styled Button
 </Button>
 ```
 
@@ -355,24 +381,21 @@ When creating a new reusable component:
 6. Use the component in at least one view to validate it works
 
 Example template:
+
 ```tsx
-import React from 'react';
-import '../styles/components.css';
+import React from "react"
+import "../styles/components.css"
 
 interface MyComponentProps {
-  // Define your props here
-  required: string;
-  optional?: number;
+    // Define your props here
+    required: string
+    optional?: number
 }
 
 export const MyComponent: React.FC<MyComponentProps> = ({
-  required,
-  optional = 0
+    required,
+    optional = 0,
 }) => {
-  return (
-    <div className="my-component">
-      {/* Component implementation */}
-    </div>
-  );
-};
+    return <div className="my-component">{/* Component implementation */}</div>
+}
 ```

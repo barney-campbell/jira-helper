@@ -4,8 +4,8 @@
 - [ ] Calendar view with time tracking for the week blocked out
 - [x] Personal kanban board where issues can be added and moved along to determine what work to do
 - [x] Provide web links to view the issue online
-- [ ] Filtering for assigned issues and search results
+- [x] Filtering for assigned issues and search results
 - [ ] Checking API connection
 - [ ] Proper messages when nothing can be loaded
-- [ ] Logging
-- [ ] When repo is public, test checking for an update
+- [x] Logging
+- [x] When repo is public, test checking for an update

@@ -1,3 +1,13 @@
+## [Unreleased]
+
+### Changed
+
+- Abstracted all renderer IPC calls to a new `src/renderer/ipc.ts` module for easier backend swapping (Electron/Tauri).
+
+### Added
+
+- Milestone work completion logging: add milestone entries (optional Jira issue), view entries from the last 12 months, and generate a PDF report. (New page: Milestones)
+
 # 1.6.0
 
 ### Added
@@ -50,7 +60,6 @@
 
 - Navigation menu now has background matching widgets to differentiate it from page contents
 - Settings area now fills available space by removing max-width constraint
-
 
 # 1.3.0
 

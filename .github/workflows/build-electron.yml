@@ -1,94 +1,94 @@
 name: Build Electron App
 
 on:
-  push:
-    tags:
-      - '*.*.*'
-  workflow_dispatch:
+    push:
+        tags:
+            - "*.*.*"
+    workflow_dispatch:
 
 permissions:
-  contents: write
+    contents: write
 
 jobs:
-  build:
-    runs-on: windows-latest
+    build:
+        runs-on: windows-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
+            - name: Install dependencies
+              run: npm ci
 
-      - name: Build Electron app
-        run: npm run package
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Build Electron app
+              run: npm run package
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Windows build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: jira-helper-windows-${{ github.sha }}
-          path: |
-            release/*.exe
-            release/*.msi
-          retention-days: 30
+            - name: Upload Windows build artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: jira-helper-windows-${{ github.sha }}
+                  path: |
+                      release/*.exe
+                      release/*.msi
+                  retention-days: 30
 
-      - name: Upload Windows unpacked artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: jira-helper-windows-unpacked-${{ github.sha }}
-          path: release/win-unpacked/
-          retention-days: 7
+            - name: Upload Windows unpacked artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: jira-helper-windows-unpacked-${{ github.sha }}
+                  path: release/win-unpacked/
+                  retention-days: 7
 
-      - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-          body: |
-            ## Changes in this release
-            
-            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/CHANGELOG.md) for details.
+            - name: Create GitHub Release
+              if: startsWith(github.ref, 'refs/tags/')
+              id: create_release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ github.ref_name }}
+                  release_name: Release ${{ github.ref_name }}
+                  draft: false
+                  prerelease: false
+                  body: |
+                      ## Changes in this release
 
-      - name: Upload installer to release
-        if: startsWith(github.ref, 'refs/tags/')
-        shell: pwsh
-        run: |
-          Get-ChildItem release/*.exe, release/*.blockmap, release/*.yml | ForEach-Object {
-            gh release upload "${{ github.ref_name }}" $_.FullName --repo "${{ github.repository }}" --clobber
-          }
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                      See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/CHANGELOG.md) for details.
 
-      - name: Get latest release tag (for branch builds)
-        if: "!startsWith(github.ref, 'refs/tags/')"
-        id: get_release
-        shell: pwsh
-        run: |
-          $TAG = gh release list --limit 1 --repo "${{ github.repository }}" --json tagName --jq '.[0].tagName'
-          echo "LATEST_TAG=$TAG" >> $env:GITHUB_ENV
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Upload installer to release
+              if: startsWith(github.ref, 'refs/tags/')
+              shell: pwsh
+              run: |
+                  Get-ChildItem release/*.exe, release/*.blockmap, release/*.yml | ForEach-Object {
+                    gh release upload "${{ github.ref_name }}" $_.FullName --repo "${{ github.repository }}" --clobber
+                  }
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload .exe and .msi to latest release
-        if: "!startsWith(github.ref, 'refs/tags/') && env.LATEST_TAG != ''"
-        shell: pwsh
-        run: |
-          Get-ChildItem release/*.exe, release/*.msi | ForEach-Object {
-            gh release upload "$env:LATEST_TAG" $_.FullName --repo "${{ github.repository }}" --clobber
-          }
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Get latest release tag (for branch builds)
+              if: "!startsWith(github.ref, 'refs/tags/')"
+              id: get_release
+              shell: pwsh
+              run: |
+                  $TAG = gh release list --limit 1 --repo "${{ github.repository }}" --json tagName --jq '.[0].tagName'
+                  echo "LATEST_TAG=$TAG" >> $env:GITHUB_ENV
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Upload .exe and .msi to latest release
+              if: "!startsWith(github.ref, 'refs/tags/') && env.LATEST_TAG != ''"
+              shell: pwsh
+              run: |
+                  Get-ChildItem release/*.exe, release/*.msi | ForEach-Object {
+                    gh release upload "$env:LATEST_TAG" $_.FullName --repo "${{ github.repository }}" --clobber
+                  }
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
